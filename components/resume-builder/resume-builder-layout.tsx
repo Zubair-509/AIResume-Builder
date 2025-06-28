@@ -2,21 +2,27 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Edit } from 'lucide-react';
+import { Edit, Save, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ResumePreview } from './resume-preview';
 import { TemplateSelector } from './template-selector';
 import { ResumeFormData } from '@/lib/validations';
+import { supabase } from '@/lib/supabase/client';
+import { toast } from 'sonner';
 import Link from 'next/link';
 
 interface ResumeBuilderLayoutProps {
   formData: ResumeFormData;
+  resumeId?: string;
   onDataChange?: (data: ResumeFormData) => void;
 }
 
-export function ResumeBuilderLayout({ formData, onDataChange }: ResumeBuilderLayoutProps) {
+export function ResumeBuilderLayout({ formData, resumeId, onDataChange }: ResumeBuilderLayoutProps) {
   const [selectedTemplate, setSelectedTemplate] = useState<'modern' | 'classic' | 'compact'>('modern');
   const [isSticky, setIsSticky] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,10 +34,92 @@ export function ResumeBuilderLayout({ formData, onDataChange }: ResumeBuilderLay
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Check authentication status
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const { data: { user }, error } = await supabase.auth.getUser();
+        
+        if (error) {
+          throw error;
+        }
+        
+        setUser(user);
+        setIsAuthenticated(!!user);
+      } catch (error) {
+        console.error('Error checking auth status:', error);
+      }
+    };
+    
+    checkAuth();
+  }, []);
+
   // Save form data to session storage for editor access
   useEffect(() => {
     sessionStorage.setItem('resume-data', JSON.stringify(formData));
   }, [formData]);
+
+  const handleSaveResume = async () => {
+    if (!isAuthenticated) {
+      toast.error('You need to be logged in to save your resume', {
+        description: 'Please sign in or create an account to save your resume.',
+        action: {
+          label: 'Sign In',
+          onClick: () => window.location.href = '/auth/login',
+        },
+      });
+      return;
+    }
+    
+    setIsSaving(true);
+    
+    try {
+      const resumeData = {
+        user_id: user.id,
+        title: `${formData.fullName}'s Resume`,
+        data: formData,
+        template: selectedTemplate,
+        is_public: false,
+        last_modified: new Date().toISOString()
+      };
+      
+      if (resumeId) {
+        // Update existing resume
+        const { error } = await supabase
+          .from('resumes')
+          .update(resumeData)
+          .eq('id', resumeId);
+        
+        if (error) {
+          throw error;
+        }
+        
+        toast.success('Resume updated successfully!', {
+          description: 'Your changes have been saved.',
+        });
+      } else {
+        // Create new resume
+        const { error } = await supabase
+          .from('resumes')
+          .insert(resumeData);
+        
+        if (error) {
+          throw error;
+        }
+        
+        toast.success('Resume saved successfully!', {
+          description: 'Your resume has been saved to your account.',
+        });
+      }
+    } catch (error) {
+      console.error('Error saving resume:', error);
+      toast.error('Failed to save resume', {
+        description: 'Please try again or contact support if the issue persists.',
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -94,6 +182,61 @@ export function ResumeBuilderLayout({ formData, onDataChange }: ResumeBuilderLay
                 onTemplateChange={setSelectedTemplate}
                 resumeData={formData}
               />
+            </motion.div>
+
+            {/* Save Resume Section */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800 relative z-10 mb-8"
+            >
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                Save Your Resume
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                {isAuthenticated 
+                  ? 'Save your resume to access it anytime from your dashboard.'
+                  : 'Sign in to save your resume and access it from anywhere.'}
+              </p>
+              
+              {isAuthenticated ? (
+                <Button 
+                  onClick={handleSaveResume}
+                  disabled={isSaving}
+                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                >
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4 mr-2" />
+                      Save Resume
+                    </>
+                  )}
+                </Button>
+              ) : (
+                <div className="flex flex-col space-y-2">
+                  <Link href="/auth/login">
+                    <Button 
+                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                    >
+                      Sign In to Save
+                    </Button>
+                  </Link>
+                  <Link href="/auth/register">
+                    <Button 
+                      variant="outline"
+                      className="w-full"
+                    >
+                      Create Account
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </motion.div>
 
             {/* Edit Resume Section */}

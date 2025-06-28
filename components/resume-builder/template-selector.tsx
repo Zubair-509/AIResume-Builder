@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { ChevronDown, Download, Copy, ExternalLink, Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ResumeFormData } from '@/lib/validations';
+import { supabase } from '@/lib/supabase/client';
 import { toast } from 'sonner';
 
 interface TemplateSelectorProps {
@@ -28,6 +29,27 @@ export function TemplateSelector({
   const [isDownloading, setIsDownloading] = useState(false);
   const [isCopying, setIsCopying] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [downloadCount, setDownloadCount] = useState(0);
+
+  // Check authentication status
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const { data: { user }, error } = await supabase.auth.getUser();
+        
+        if (error) {
+          throw error;
+        }
+        
+        setIsAuthenticated(!!user);
+      } catch (error) {
+        console.error('Error checking auth status:', error);
+      }
+    };
+    
+    checkAuth();
+  }, []);
 
   const templates = [
     {
@@ -75,7 +97,6 @@ export function TemplateSelector({
       clonedElement.style.left = '-9999px';
       clonedElement.style.top = '0';
       clonedElement.style.width = '210mm'; // A4 width
-      clonedElement.style.height = 'auto'; // Let height adjust automatically
       clonedElement.style.minHeight = '297mm'; // A4 height
       clonedElement.style.backgroundColor = 'white';
       clonedElement.style.boxShadow = 'none';
@@ -98,9 +119,8 @@ export function TemplateSelector({
           scale: 2,
           useCORS: true,
           letterRendering: true,
-          allowTaint: true,
+          allowTaint: false,
           backgroundColor: '#ffffff',
-          logging: true,
           width: 794, // A4 width in pixels at 96 DPI
           height: 1123 // A4 height in pixels at 96 DPI
         },
@@ -120,6 +140,23 @@ export function TemplateSelector({
       
       // Clean up
       document.body.removeChild(clonedElement);
+      
+      // Track download in analytics
+      setDownloadCount(prev => prev + 1);
+      
+      // If authenticated, record download in database
+      if (isAuthenticated) {
+        try {
+          await supabase.from('resume_downloads').insert({
+            user_id: (await supabase.auth.getUser()).data.user?.id,
+            template: selectedTemplate,
+            format: 'pdf',
+            timestamp: new Date().toISOString()
+          });
+        } catch (error) {
+          console.error('Error recording download:', error);
+        }
+      }
       
       toast.success('PDF downloaded successfully!', {
         description: 'Your resume has been saved to your downloads folder.',

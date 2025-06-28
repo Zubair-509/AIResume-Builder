@@ -58,7 +58,6 @@ export function ResumePreview({ data, template }: ResumePreviewProps) {
           content: 'space-y-3',
         };
       default:
-        // Return modern template styles as fallback instead of recursive call
         return {
           container: 'font-sans text-gray-800',
           header: 'bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-lg',

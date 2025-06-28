@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, Sparkles, Menu, X, Home, Zap, Edit, FileImage } from 'lucide-react';
+import { FileText, Sparkles, Menu, X, Home, Zap, Edit, FileImage, User } from 'lucide-react';
 import { AnimatedButton } from '@/components/ui/animated-button';
 import { AnimatedLogo } from '@/components/ui/animated-logo';
+import { AuthButton } from '@/components/auth/auth-button';
 import Link from 'next/link';
 
 export function Navigation() {
@@ -26,7 +27,7 @@ export function Navigation() {
     { name: 'Templates', href: '/templates', icon: FileImage },
     { name: 'Build with AI', href: '/build-with-ai', icon: Sparkles },
     { name: 'Enhance Resume', href: '/enhance-resume', icon: Zap },
-    { name: 'Edit Resume', href: '/edit-resume', icon: Edit },
+    { name: 'Dashboard', href: '/dashboard', icon: User, authRequired: true },
   ];
 
   const mobileMenuVariants = {
@@ -102,10 +103,15 @@ export function Navigation() {
                 </Link>
               </motion.div>
             ))}
+            
+            {/* Auth Button */}
+            <AuthButton />
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center space-x-4">
+            <AuthButton />
+            
             <AnimatedButton
               variant="ghost"
               size="sm"

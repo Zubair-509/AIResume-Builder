@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,12 +17,18 @@ import { EducationForm } from './education-form';
 import { ResumeBuilderLayout } from './resume-builder-layout';
 import { resumeFormSchema, ResumeFormData } from '@/lib/validations';
 import { toast } from 'sonner';
+import { supabase } from '@/lib/supabase/client';
+import { useRouter } from 'next/navigation';
 
 export function ResumeForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string>('');
+  const [user, setUser] = useState<any>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   const {
     register,
@@ -58,6 +64,54 @@ export function ResumeForm() {
     },
   });
 
+  // Check authentication status
+  useEffect(() => {
+    const checkAuth = async () => {
+      setIsLoading(true);
+      try {
+        const { data: { user }, error } = await supabase.auth.getUser();
+        
+        if (error) {
+          throw error;
+        }
+        
+        setUser(user);
+        setIsAuthenticated(!!user);
+        
+        // Pre-fill form with user data if available
+        if (user) {
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+          
+          if (!profileError && profile) {
+            // Update form with profile data
+            const defaultValues: Partial<ResumeFormData> = {
+              fullName: profile.full_name || '',
+              email: user.email || '',
+              jobTitle: profile.job_title || '',
+            };
+            
+            Object.entries(defaultValues).forEach(([key, value]) => {
+              if (value) {
+                // @ts-ignore
+                register(key).onChange({ target: { value } });
+              }
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error checking auth status:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    checkAuth();
+  }, [register]);
+
   const formData = watch();
   const professionalSummary = watch('professionalSummary');
   const summaryLength = professionalSummary?.length || 0;
@@ -79,19 +133,52 @@ export function ResumeForm() {
     setIsSubmitting(true);
     
     try {
-      // Simulate form processing
-      await new Promise(resolve => setTimeout(resolve, 800));
+      // If user is not authenticated, save to session storage
+      if (!isAuthenticated) {
+        // Save to session storage
+        sessionStorage.setItem('resume-data', JSON.stringify(data));
+        
+        // Show preview
+        setShowPreview(true);
+        
+        toast.success('Resume form completed!', {
+          description: 'You can now preview and customize your resume.',
+        });
+        
+        return;
+      }
       
-      console.log('Form data:', data);
-      console.log('Profile photo:', profilePhoto);
+      // If user is authenticated, save to database
+      const resumeData = {
+        user_id: user.id,
+        title: `${data.fullName}'s Resume`,
+        data: data,
+        template: 'modern',
+        is_public: false,
+        last_modified: new Date().toISOString()
+      };
       
+      const { error } = await supabase
+        .from('resumes')
+        .insert(resumeData);
+      
+      if (error) {
+        throw error;
+      }
+      
+      // Save to session storage as well for the preview
+      sessionStorage.setItem('resume-data', JSON.stringify(data));
+      
+      // Show preview
       setShowPreview(true);
       
-      toast.success('Resume form completed!', {
-        description: 'You can now preview and customize your resume.',
+      toast.success('Resume saved successfully!', {
+        description: 'Your resume has been saved to your account.',
       });
+      
     } catch (error) {
-      toast.error('Failed to process form', {
+      console.error('Error saving resume:', error);
+      toast.error('Failed to save resume', {
         description: 'Please try again or contact support if the issue persists.',
       });
     } finally {
@@ -126,6 +213,17 @@ export function ResumeForm() {
     },
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
+          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -151,6 +249,34 @@ export function ResumeForm() {
           <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-sm sm:text-base">
             Fill out the form below to generate a beautiful, ATS-friendly resume that will help you stand out to employers.
           </p>
+          
+          {!isAuthenticated && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800 max-w-2xl mx-auto"
+            >
+              <p className="text-sm text-blue-700 dark:text-blue-300 mb-2">
+                <strong>Sign in to save your resume</strong>
+              </p>
+              <p className="text-xs text-blue-600 dark:text-blue-400 mb-3">
+                Create an account or sign in to save your resume and access it from anywhere.
+              </p>
+              <div className="flex justify-center space-x-4">
+                <Link href="/auth/login">
+                  <Button variant="outline" size="sm" className="border-blue-300 text-blue-700 hover:bg-blue-100">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link href="/auth/register">
+                  <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
+                    Create Account
+                  </Button>
+                </Link>
+              </div>
+            </motion.div>
+          )}
         </motion.div>
 
         <motion.form
