@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Download, Eye, FileText, CheckCircle, Info } from 'lucide-react';
+import { LivePreview } from '@/components/ui/live-preview';
 import Link from 'next/link';
 import { toast } from 'sonner';
 
@@ -204,6 +205,29 @@ export function TemplateGallery({ resumeData, onTemplateSelect }: TemplateGaller
         </CardContent>
       </Card>
 
+      {/* Selected Template Live Preview */}
+      <div className="mb-8">
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
+          Selected Template Preview
+        </h3>
+        <LivePreview 
+          title={`${templates.find(t => t.id === selectedTemplate)?.name} Template`}
+          templateId={selectedTemplate}
+          showEditButton={true}
+          showDownloadButton={true}
+          onDownload={() => {
+            saveResumeData();
+            toast.success('Template ready for download');
+          }}
+        >
+          <div className="p-4">
+            <div className="scale-[0.6] origin-top-left w-[167%] h-[167%]">
+              <TemplateRenderer templateId={selectedTemplate} data={resumeData || sampleData} showEditButton={true} />
+            </div>
+          </div>
+        </LivePreview>
+      </div>
+
       {/* Template Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {templates.map((template) => (
@@ -240,47 +264,6 @@ export function TemplateGallery({ resumeData, onTemplateSelect }: TemplateGaller
           onExportError={handleExportError}
         />
       </div>
-
-      {/* Preview Modal */}
-      {previewTemplate && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-              <h3 className="text-lg font-semibold">
-                {templates.find(t => t.id === previewTemplate)?.name} Template Preview
-              </h3>
-              <Button variant="ghost" size="sm" onClick={closePreview}>
-                ✕
-              </Button>
-            </div>
-            
-            <div className="overflow-y-auto max-h-[calc(90vh-120px)] p-4">
-              <div className="scale-75 origin-top-left w-[133%] h-[133%]">
-                <TemplateRenderer templateId={previewTemplate} data={resumeData || sampleData} showEditButton={true} />
-              </div>
-            </div>
-            
-            <div className="p-4 border-t border-gray-200 flex justify-between">
-              <Link href={`/edit-resume?template=${previewTemplate}`} onClick={saveResumeData}>
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                  <Eye className="w-4 h-4 mr-2" />
-                  Edit Resume
-                </Button>
-              </Link>
-              
-              <Button 
-                onClick={() => {
-                  handleTemplateSelect(previewTemplate);
-                  closePreview();
-                }}
-                variant="outline"
-              >
-                Select Template
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

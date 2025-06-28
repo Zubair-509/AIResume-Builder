@@ -7,7 +7,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, Eye, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { LivePreview } from '@/components/ui/live-preview';
+import { LoadingOverlay } from '@/components/ui/loading-overlay';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 interface TemplatePreviewProps {
   templateId: string;
@@ -25,6 +28,7 @@ export function TemplatePreview({
   className = '' 
 }: TemplatePreviewProps) {
   const [showPreview, setShowPreview] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   
   const templates = {
     'modern': { name: 'Modern', description: 'Clean, contemporary design with blue accents' },
@@ -45,6 +49,25 @@ export function TemplatePreview({
 
   const handleClosePreview = () => {
     setShowPreview(false);
+  };
+
+  const handleDownload = () => {
+    setIsLoading(true);
+    
+    // Save resume data to session storage for download functionality
+    sessionStorage.setItem('resume-data', JSON.stringify(data));
+    
+    setTimeout(() => {
+      setIsLoading(false);
+      toast.success('Template ready for download', {
+        description: 'Your resume has been prepared for download'
+      });
+    }, 1000);
+  };
+
+  // Save resume data to session storage for edit functionality
+  const saveResumeData = () => {
+    sessionStorage.setItem('resume-data', JSON.stringify(data));
   };
 
   return (
@@ -81,6 +104,8 @@ export function TemplatePreview({
               Preview
             </Button>
           </div>
+          
+          <LoadingOverlay isLoading={isLoading} message="Preparing template..." />
         </div>
         
         <CardContent className="p-4">
@@ -98,7 +123,7 @@ export function TemplatePreview({
         </CardContent>
       </Card>
 
-      {/* Preview Modal */}
+      {/* Full Preview Modal */}
       {showPreview && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={handleClosePreview}>
           <div className="bg-white rounded-lg shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden" onClick={e => e.stopPropagation()}>
@@ -112,13 +137,22 @@ export function TemplatePreview({
             </div>
             
             <div className="overflow-y-auto max-h-[calc(90vh-120px)] p-4">
-              <div className="scale-75 origin-top-left w-[133%] h-[133%]">
-                <TemplateRenderer templateId={templateId} data={data} showEditButton={true} />
-              </div>
+              <LivePreview 
+                title={`${template.name} Template`} 
+                templateId={templateId}
+                showEditButton={true}
+                showDownloadButton={true}
+                showShareButton={true}
+                onDownload={handleDownload}
+              >
+                <div className="scale-75 origin-top-left w-[133%] h-[133%] p-4">
+                  <TemplateRenderer templateId={templateId} data={data} showEditButton={true} />
+                </div>
+              </LivePreview>
             </div>
             
             <div className="p-4 border-t border-gray-200 flex justify-between">
-              <Link href={`/edit-resume?template=${templateId}`}>
+              <Link href={`/edit-resume?template=${templateId}`} onClick={saveResumeData}>
                 <Button className="bg-blue-600 hover:bg-blue-700 text-white">
                   <Edit className="w-4 h-4 mr-2" />
                   Edit Resume

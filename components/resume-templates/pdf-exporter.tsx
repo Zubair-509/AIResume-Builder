@@ -5,6 +5,7 @@ import { ResumeFormData } from '@/lib/validations';
 import { Button } from '@/components/ui/button';
 import { Download, Loader2, FileText } from 'lucide-react';
 import { toast } from 'sonner';
+import { LoadingOverlay } from '@/components/ui/loading-overlay';
 
 interface PDFExporterProps {
   resumeData: ResumeFormData;
@@ -36,6 +37,9 @@ export function PDFExporter({
     if (onExportStart) onExportStart();
     
     try {
+      // Save resume data to session storage for export functionality
+      sessionStorage.setItem('resume-data', JSON.stringify(resumeData));
+      
       // Dynamically import html2pdf to avoid SSR issues
       const html2pdf = (await import('html2pdf.js')).default;
       
@@ -103,23 +107,31 @@ export function PDFExporter({
   };
 
   return (
-    <Button
-      onClick={handleExport}
-      disabled={isExporting}
-      className="bg-blue-600 hover:bg-blue-700 text-white"
-    >
-      {isExporting ? (
-        <>
-          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-          Generating PDF...
-        </>
-      ) : (
-        <>
-          <Download className="w-4 h-4 mr-2" />
-          Download PDF
-        </>
-      )}
-    </Button>
+    <>
+      <Button
+        onClick={handleExport}
+        disabled={isExporting}
+        className="bg-blue-600 hover:bg-blue-700 text-white"
+      >
+        {isExporting ? (
+          <>
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            Generating PDF...
+          </>
+        ) : (
+          <>
+            <Download className="w-4 h-4 mr-2" />
+            Download PDF
+          </>
+        )}
+      </Button>
+      
+      <LoadingOverlay 
+        isLoading={isExporting} 
+        message="Generating your PDF..." 
+        fullScreen={true} 
+      />
+    </>
   );
 }
 

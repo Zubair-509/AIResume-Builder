@@ -21,10 +21,15 @@ interface TemplateRendererProps {
 }
 
 export function TemplateRenderer({ templateId, data, showEditButton = false, className = '' }: TemplateRendererProps) {
+  // Save resume data to session storage for edit functionality
+  const saveResumeData = () => {
+    sessionStorage.setItem('resume-data', JSON.stringify(data));
+  };
+
   // Edit button that will be passed to templates
   const editButton = showEditButton ? (
     <div className="absolute top-4 right-4 print:hidden">
-      <Link href={`/edit-resume?template=${templateId}`}>
+      <Link href={`/edit-resume?template=${templateId}`} onClick={saveResumeData}>
         <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
           <Edit className="w-4 h-4 mr-2" />
           Edit Resume

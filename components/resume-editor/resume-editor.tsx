@@ -29,6 +29,7 @@ import { ResumeEditForm } from './resume-edit-form';
 import { ResumePreview } from '@/components/resume-customizer/customizable-resume-preview';
 import { DownloadManager } from './download-manager';
 import { AutoSaveManager } from './auto-save-manager';
+import { LivePreview } from '@/components/ui/live-preview';
 import { toast } from 'sonner';
 
 interface CustomizationSettings {
@@ -218,7 +219,7 @@ export function ResumeEditor({
                     </div>
                   )}
                   {hasUnsavedChanges && (
-                    <Badge variant="secondary" className="bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-300">
+                    <Badge variant="secondary" className="bg-yellow-100 text-yellow-700">
                       <AlertCircle className="w-3 h-3 mr-1" />
                       Unsaved changes
                     </Badge>
@@ -413,48 +414,23 @@ export function ResumeEditor({
           {/* Preview Panel */}
           <div className="xl:col-span-2">
             <div className="sticky top-32">
-              <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center justify-between">
-                    <span className="flex items-center">
-                      <Eye className="w-5 h-5 mr-2 text-green-600" />
-                      Live Preview
-                    </span>
-                    <div className="flex items-center space-x-2">
-                      <div className="flex items-center space-x-1">
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">Real-time</span>
-                      </div>
-                    </div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-4">
-                  <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 overflow-hidden border border-gray-200 dark:border-gray-700">
-                    <div className="scale-[0.6] origin-top-left w-[167%] h-[167%] transform-gpu">
-                      <ResumePreview 
-                        data={formData} 
-                        settings={customizationSettings}
-                      />
-                    </div>
-                  </div>
-                  
-                  {/* Preview Info */}
-                  <div className="mt-4 space-y-2 text-xs">
-                    <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                      <span className="text-gray-600 dark:text-gray-400">Font:</span>
-                      <Badge variant="secondary" className="text-xs">{customizationSettings.font.family}</Badge>
-                    </div>
-                    <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                      <span className="text-gray-600 dark:text-gray-400">Template:</span>
-                      <Badge variant="secondary" className="text-xs capitalize">{customizationSettings.layout.template}</Badge>
-                    </div>
-                    <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                      <span className="text-gray-600 dark:text-gray-400">Sections:</span>
-                      <Badge variant="secondary" className="text-xs">{customizationSettings.sections.filter(s => s.visible).length} visible</Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <LivePreview 
+                title="Live Resume Preview" 
+                templateId={customizationSettings.layout.template}
+                showEditButton={true}
+                showDownloadButton={true}
+                onDownload={() => {
+                  // Save current data for download
+                  sessionStorage.setItem('resume-data', JSON.stringify(formData));
+                }}
+              >
+                <div className="p-4">
+                  <ResumePreview 
+                    data={formData} 
+                    settings={customizationSettings}
+                  />
+                </div>
+              </LivePreview>
             </div>
           </div>
         </div>

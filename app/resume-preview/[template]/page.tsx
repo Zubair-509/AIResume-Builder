@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Edit, Download, Share2 } from 'lucide-react';
+import { LivePreview } from '@/components/ui/live-preview';
+import { LoadingOverlay } from '@/components/ui/loading-overlay';
 import { toast } from 'sonner';
 import Link from 'next/link';
 
@@ -53,7 +55,7 @@ export default function ResumePreviewPage() {
   const handleShare = async () => {
     try {
       const shareData = {
-        title: `${resumeData.fullName}'s Resume`,
+        title: `${resumeData?.fullName || 'My'} Resume`,
         text: 'Check out my professional resume created with SnapCV',
         url: window.location.href
       };
@@ -70,13 +72,16 @@ export default function ResumePreviewPage() {
     }
   };
 
+  const handleDownload = () => {
+    toast.success('Preparing download...', {
+      description: 'Your resume will be downloaded shortly'
+    });
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading your resume...</p>
-        </div>
+        <LoadingOverlay isLoading={true} message="Loading your resume..." fullScreen={true} />
       </div>
     );
   }
@@ -149,17 +154,22 @@ export default function ResumePreviewPage() {
           </div>
           
           {/* Resume Preview */}
-          <Card className="border-0 shadow-xl bg-white dark:bg-gray-800 overflow-hidden">
-            <CardContent className="p-0">
-              <div className="bg-gray-100 dark:bg-gray-900 p-8">
-                <TemplateRenderer 
-                  templateId={templateId} 
-                  data={resumeData} 
-                  showEditButton={false}
-                />
-              </div>
-            </CardContent>
-          </Card>
+          <LivePreview 
+            title={`${resumeData.fullName}'s Resume`}
+            templateId={templateId}
+            showEditButton={true}
+            showDownloadButton={true}
+            showShareButton={true}
+            onDownload={handleDownload}
+          >
+            <div className="p-4">
+              <TemplateRenderer 
+                templateId={templateId} 
+                data={resumeData} 
+                showEditButton={true}
+              />
+            </div>
+          </LivePreview>
         </div>
       </div>
     </main>

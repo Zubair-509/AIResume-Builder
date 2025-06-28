@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ResumePreview } from './resume-preview';
 import { TemplateSelector } from './template-selector';
 import { ResumeFormData } from '@/lib/validations';
+import { LivePreview } from '@/components/ui/live-preview';
 import Link from 'next/link';
 
 interface ResumeBuilderLayoutProps {
@@ -47,27 +48,24 @@ export function ResumeBuilderLayout({ formData, onDataChange }: ResumeBuilderLay
                 isSticky ? 'lg:sticky lg:top-8' : ''
               }`}
             >
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-6 border border-gray-200 dark:border-gray-700">
-                <div className="mb-4 flex items-center justify-between">
-                  <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                    Resume Preview
-                  </h2>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">Live Preview</span>
+              <LivePreview 
+                title="Resume Preview" 
+                templateId={selectedTemplate}
+                showEditButton={true}
+                showDownloadButton={true}
+                onDownload={() => {
+                  sessionStorage.setItem('resume-data', JSON.stringify(formData));
+                }}
+              >
+                <div className="p-4">
+                  <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+                    <ResumePreview 
+                      data={formData} 
+                      template={selectedTemplate}
+                    />
                   </div>
                 </div>
-                
-                <div 
-                  className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-600"
-                  data-resume-preview
-                >
-                  <ResumePreview 
-                    data={formData} 
-                    template={selectedTemplate}
-                  />
-                </div>
-              </div>
+              </LivePreview>
             </motion.div>
           </div>
 

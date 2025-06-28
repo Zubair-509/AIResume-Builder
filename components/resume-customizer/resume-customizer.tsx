@@ -22,6 +22,7 @@ import { FontSelector } from './font-selector';
 import { ColorSchemeSelector } from './color-scheme-selector';
 import { DynamicSectionBuilder } from './dynamic-section-builder';
 import { ResumePreview } from './customizable-resume-preview';
+import { LivePreview } from '@/components/ui/live-preview';
 import { ResumeFormData } from '@/lib/validations';
 import { toast } from 'sonner';
 
@@ -110,7 +111,6 @@ export function ResumeCustomizer({ resumeData, onSave }: ResumeCustomizerProps) 
   const [dynamicSections, setDynamicSections] = useState<ResumeSection[]>([]);
   const [history, setHistory] = useState<CustomizationSettings[]>([settings]);
   const [historyIndex, setHistoryIndex] = useState(0);
-  const [showPreview, setShowPreview] = useState(true);
 
   // Load saved customization settings on mount
   useEffect(() => {
@@ -392,55 +392,24 @@ export function ResumeCustomizer({ resumeData, onSave }: ResumeCustomizerProps) 
           <div className="lg:col-span-1">
             <div className="sticky top-8 space-y-6">
               {/* Preview Card */}
-              <Card className="border-0 shadow-xl bg-white dark:bg-gray-800">
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center justify-between">
-                    <span className="flex items-center">
-                      <Eye className="w-5 h-5 mr-2 text-green-600" />
-                      Live Preview
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setShowPreview(!showPreview)}
-                    >
-                      {showPreview ? 'Hide' : 'Show'}
-                    </Button>
-                  </CardTitle>
-                </CardHeader>
-                
-                <CardContent>
-                  {showPreview && (
-                    <div className="aspect-[8.5/11] bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-                      <div className="scale-[0.3] origin-top-left w-[333%] h-[333%]">
-                        <ResumePreview 
-                          data={resumeData}
-                          settings={settings}
-                        />
-                      </div>
-                    </div>
-                  )}
-                  
-                  <div className="mt-4 space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600 dark:text-gray-400">Font:</span>
-                      <Badge variant="secondary">{settings.font.family}</Badge>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600 dark:text-gray-400">Template:</span>
-                      <Badge variant="secondary" className="capitalize">{settings.layout.template}</Badge>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600 dark:text-gray-400">Sections:</span>
-                      <Badge variant="secondary">{settings.sections.filter(s => s.visible).length} visible</Badge>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600 dark:text-gray-400">Dynamic Sections:</span>
-                      <Badge variant="secondary">{dynamicSections.length} custom</Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <LivePreview 
+                title="Resume Preview" 
+                templateId={settings.layout.template}
+                showEditButton={false}
+                showDownloadButton={true}
+                onDownload={() => {
+                  // Save current data for download
+                  sessionStorage.setItem('resume-data', JSON.stringify(resumeData));
+                  toast.success('Resume ready for download');
+                }}
+              >
+                <div className="p-4">
+                  <ResumePreview 
+                    data={resumeData}
+                    settings={settings}
+                  />
+                </div>
+              </LivePreview>
 
               {/* Action Buttons */}
               <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
@@ -458,6 +427,11 @@ export function ResumeCustomizer({ resumeData, onSave }: ResumeCustomizerProps) 
                     variant="outline"
                     className="w-full"
                     size="lg"
+                    onClick={() => {
+                      // Save current data for download
+                      sessionStorage.setItem('resume-data', JSON.stringify(resumeData));
+                      toast.success('Resume ready for download');
+                    }}
                   >
                     <Download className="w-4 h-4 mr-2" />
                     Download Resume
