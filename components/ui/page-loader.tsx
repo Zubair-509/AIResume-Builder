@@ -2,179 +2,96 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useLoading } from '@/hooks/use-loading';
 
-interface PageLoaderProps {
-  /**
-   * Maximum time in milliseconds the loader should be displayed
-   * @default 3000
-   */
-  maxDisplayTime?: number;
-  
-  /**
-   * Custom message to display during loading
-   * @default "Loading..."
-   */
-  message?: string;
-  
-  /**
-   * Whether to show the loader on initial page load
-   * @default true
-   */
-  showOnInitialLoad?: boolean;
-}
+export function PageLoader() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const { isLoading, startLoading, stopLoading } = useLoading({
+    minDuration: 500,
+    maxDuration: 3000
+  });
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
 
-export function PageLoader({
-  maxDisplayTime = 3000,
-  message = "Loading...",
-  showOnInitialLoad = true,
-}: PageLoaderProps) {
-  const [isLoading, setIsLoading] = useState(showOnInitialLoad);
-  const [isVisible, setIsVisible] = useState(showOnInitialLoad);
-  const router = useRouter();
-
-  // Handle route change events
+  // Handle route changes
   useEffect(() => {
-    // Function to handle start of navigation
-    const handleStart = () => {
-      setIsLoading(true);
-      setIsVisible(true);
-    };
-
-    // Function to handle end of navigation
-    const handleComplete = () => {
-      setIsLoading(false);
-    };
-
-    // Subscribe to router events
-    window.addEventListener('beforeunload', handleStart);
+    // Don't show loader on initial page load as PagePreloader handles that
+    if (isFirstLoad) {
+      setIsFirstLoad(false);
+      return;
+    }
     
-    // For Next.js navigation events
-    if (router) {
-      router.events?.on('routeChangeStart', handleStart);
-      router.events?.on('routeChangeComplete', handleComplete);
-      router.events?.on('routeChangeError', handleComplete);
-    }
-
-    // Cleanup function
+    startLoading();
+    
+    // This will run when the route change completes
     return () => {
-      window.removeEventListener('beforeunload', handleStart);
-      
-      if (router) {
-        router.events?.off('routeChangeStart', handleStart);
-        router.events?.off('routeChangeComplete', handleComplete);
-        router.events?.off('routeChangeError', handleComplete);
-      }
+      stopLoading();
     };
-  }, [router]);
-
-  // Handle initial page load
-  useEffect(() => {
-    if (showOnInitialLoad) {
-      // Hide loader after content is loaded or max time is reached
-      const contentLoadedTimer = setTimeout(() => {
-        setIsLoading(false);
-      }, Math.min(maxDisplayTime, 3000)); // Cap at 3 seconds max
-
-      // Listen for when page is fully loaded
-      const handleLoad = () => {
-        clearTimeout(contentLoadedTimer);
-        setIsLoading(false);
-      };
-
-      window.addEventListener('load', handleLoad);
-
-      return () => {
-        clearTimeout(contentLoadedTimer);
-        window.removeEventListener('load', handleLoad);
-      };
-    }
-  }, [maxDisplayTime, showOnInitialLoad]);
-
-  // Handle fade-out animation
-  useEffect(() => {
-    if (!isLoading) {
-      // Small delay before hiding to allow fade-out animation
-      const hideTimer = setTimeout(() => {
-        setIsVisible(false);
-      }, 500);
-
-      return () => clearTimeout(hideTimer);
-    }
-  }, [isLoading]);
+  }, [pathname, searchParams, startLoading, stopLoading, isFirstLoad]);
 
   return (
     <AnimatePresence>
-      {isVisible && (
+      {isLoading && (
         <motion.div
-          initial={{ opacity: 1 }}
+          initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+          transition={{ duration: 0.3 }}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
           role="alert"
           aria-live="assertive"
-          aria-label="Page loading"
+          aria-label="Loading page content"
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.3 }}
-            className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-8 max-w-sm w-full mx-4 flex flex-col items-center"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.8, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-2xl max-w-md w-full mx-4 text-center"
           >
-            <div className="relative">
-              {/* Primary spinner */}
+            <div className="relative w-20 h-20 mx-auto mb-6">
               <motion.div
                 animate={{ 
-                  rotate: 360,
                   scale: [1, 1.1, 1],
+                  rotate: [0, 180, 360],
                 }}
-                transition={{ 
-                  rotate: { duration: 1.5, ease: "linear", repeat: Infinity },
-                  scale: { duration: 2, ease: "easeInOut", repeat: Infinity }
-                }}
-                className="w-16 h-16 rounded-full border-4 border-blue-100 dark:border-gray-700 border-t-blue-600 dark:border-t-blue-400"
-              />
-              
-              {/* Secondary spinner (opposite direction) */}
-              <motion.div
-                animate={{ rotate: -360 }}
-                transition={{ duration: 3, ease: "linear", repeat: Infinity }}
-                className="absolute inset-0 w-16 h-16 rounded-full border-4 border-transparent border-b-purple-500 dark:border-b-purple-400 opacity-70"
-              />
-              
-              {/* Inner pulsing circle */}
-              <motion.div
-                animate={{ 
-                  opacity: [0.5, 1, 0.5],
-                  scale: [0.8, 1.1, 0.8],
-                }}
-                transition={{ 
+                transition={{
                   duration: 2,
-                  ease: "easeInOut",
                   repeat: Infinity,
+                  ease: "easeInOut"
                 }}
-                className="absolute inset-0 m-auto w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"
+                className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 opacity-30 blur-xl"
               />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Loader2 className="w-10 h-10 text-blue-600 dark:text-blue-400 animate-spin" />
+              </div>
             </div>
             
-            <motion.p
-              animate={{ opacity: [0.7, 1, 0.7] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              className="mt-6 text-gray-700 dark:text-gray-300 font-medium"
-            >
-              {message}
-            </motion.p>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+              Loading...
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              Preparing your content
+            </p>
             
-            {/* Fallback for browsers without animation support */}
-            <noscript>
-              <div className="flex items-center justify-center">
-                <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
-                <p className="ml-2">{message}</p>
-              </div>
-            </noscript>
+            <motion.div
+              className="w-full bg-gray-200 dark:bg-gray-700 h-1 mt-6 rounded-full overflow-hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              <motion.div
+                className="h-full bg-gradient-to-r from-blue-600 to-purple-600"
+                initial={{ width: "0%" }}
+                animate={{ width: "100%" }}
+                transition={{ 
+                  duration: 2.5,
+                  ease: "easeInOut"
+                }}
+              />
+            </motion.div>
           </motion.div>
         </motion.div>
       )}

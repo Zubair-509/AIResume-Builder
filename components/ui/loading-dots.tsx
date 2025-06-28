@@ -1,78 +1,64 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
 
 interface LoadingDotsProps {
-  /**
-   * Number of dots to display
-   * @default 3
-   */
-  count?: number;
-  
-  /**
-   * Size of each dot in pixels
-   * @default 8
-   */
-  size?: number;
-  
-  /**
-   * Color of the dots
-   * @default "bg-blue-600"
-   */
-  color?: string;
-  
-  /**
-   * Space between dots in pixels
-   * @default 4
-   */
-  spacing?: number;
-  
-  /**
-   * Additional CSS classes
-   */
+  size?: 'sm' | 'md' | 'lg';
+  color?: 'primary' | 'secondary' | 'white';
   className?: string;
 }
 
-export function LoadingDots({
-  count = 3,
-  size = 8,
-  color = "bg-blue-600",
-  spacing = 4,
-  className
+export function LoadingDots({ 
+  size = 'md', 
+  color = 'primary',
+  className = ''
 }: LoadingDotsProps) {
-  // Create an array of the specified count
-  const dots = Array.from({ length: count }, (_, i) => i);
+  const sizeMap = {
+    sm: 'w-1 h-1',
+    md: 'w-2 h-2',
+    lg: 'w-3 h-3'
+  };
   
+  const colorMap = {
+    primary: 'bg-blue-600 dark:bg-blue-400',
+    secondary: 'bg-gray-600 dark:bg-gray-400',
+    white: 'bg-white'
+  };
+
+  const containerVariants = {
+    animate: {
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  const dotVariants = {
+    initial: { y: 0 },
+    animate: { 
+      y: [0, -10, 0],
+      transition: {
+        duration: 0.8,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }
+    }
+  };
+
   return (
-    <div 
-      className={cn("flex items-center", className)}
-      style={{ gap: spacing }}
-      role="status"
-      aria-label="Loading"
+    <motion.div 
+      className={`flex space-x-2 ${className}`}
+      variants={containerVariants}
+      initial="initial"
+      animate="animate"
     >
-      {dots.map((i) => (
+      {[0, 1, 2].map((index) => (
         <motion.div
-          key={i}
-          animate={{ 
-            y: [0, -10, 0],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{ 
-            duration: 0.6,
-            repeat: Infinity,
-            repeatType: "loop",
-            delay: i * 0.1,
-            ease: "easeInOut"
-          }}
-          className={cn("rounded-full", color)}
-          style={{ 
-            width: size, 
-            height: size 
-          }}
+          key={index}
+          className={`rounded-full ${sizeMap[size]} ${colorMap[color]}`}
+          variants={dotVariants}
         />
       ))}
-      <span className="sr-only">Loading...</span>
-    </div>
+    </motion.div>
   );
 }

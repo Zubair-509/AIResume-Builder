@@ -1,74 +1,48 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
 
 interface LoadingSkeletonProps {
-  /**
-   * Width of the skeleton
-   * @default "100%"
-   */
-  width?: string | number;
-  
-  /**
-   * Height of the skeleton
-   * @default "1rem"
-   */
-  height?: string | number;
-  
-  /**
-   * Border radius of the skeleton
-   * @default "0.25rem"
-   */
-  borderRadius?: string | number;
-  
-  /**
-   * Whether to animate the skeleton
-   * @default true
-   */
-  animate?: boolean;
-  
-  /**
-   * Additional CSS classes
-   */
+  width?: string;
+  height?: string;
+  rounded?: 'none' | 'sm' | 'md' | 'lg' | 'full';
   className?: string;
+  animate?: boolean;
 }
 
 export function LoadingSkeleton({
-  width = "100%",
-  height = "1rem",
-  borderRadius = "0.25rem",
-  animate = true,
-  className
+  width = '100%',
+  height = '1rem',
+  rounded = 'md',
+  className = '',
+  animate = true
 }: LoadingSkeletonProps) {
+  const roundedMap = {
+    none: 'rounded-none',
+    sm: 'rounded-sm',
+    md: 'rounded-md',
+    lg: 'rounded-lg',
+    full: 'rounded-full'
+  };
+
   return (
-    <div
-      className={cn(
-        "relative overflow-hidden bg-gray-200 dark:bg-gray-700",
-        className
-      )}
-      style={{
-        width,
-        height,
-        borderRadius,
-      }}
-      role="status"
-      aria-label="Loading"
+    <div 
+      className={`bg-gray-200 dark:bg-gray-700 ${roundedMap[rounded]} ${className}`}
+      style={{ width, height }}
     >
       {animate && (
         <motion.div
+          className="h-full w-full bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700"
           animate={{
-            x: ["0%", "100%", "0%"],
+            x: ['0%', '100%', '0%'],
           }}
           transition={{
             duration: 1.5,
             repeat: Infinity,
-            ease: "easeInOut",
+            ease: "easeInOut"
           }}
-          className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent"
         />
       )}
-      <span className="sr-only">Loading...</span>
     </div>
   );
 }
