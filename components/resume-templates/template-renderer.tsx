@@ -9,6 +9,9 @@ import { TechnicalTemplate } from './technical-template';
 import { EntryLevelTemplate } from './entry-level-template';
 import { ExecutiveTemplate } from './executive-template';
 import { CreativeTemplate } from './creative-template';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Edit } from 'lucide-react';
 
 interface TemplateRendererProps {
   templateId: string;
@@ -18,6 +21,18 @@ interface TemplateRendererProps {
 }
 
 export function TemplateRenderer({ templateId, data, showEditButton = false, className = '' }: TemplateRendererProps) {
+  // Edit button that will be passed to templates
+  const editButton = showEditButton ? (
+    <div className="absolute top-4 right-4 print:hidden">
+      <Link href={`/edit-resume?template=${templateId}`}>
+        <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+          <Edit className="w-4 h-4 mr-2" />
+          Edit Resume
+        </Button>
+      </Link>
+    </div>
+  ) : null;
+
   switch (templateId) {
     case 'classic':
       return <ClassicTemplate data={data} showEditButton={showEditButton} className={className} />;

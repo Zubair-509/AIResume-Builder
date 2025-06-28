@@ -98,6 +98,15 @@ export function TemplateGallery({ resumeData, onTemplateSelect }: TemplateGaller
     });
   };
 
+  // Save resume data to session storage for edit functionality
+  const saveResumeData = () => {
+    if (resumeData) {
+      sessionStorage.setItem('resume-data', JSON.stringify(resumeData));
+    } else {
+      sessionStorage.setItem('resume-data', JSON.stringify(sampleData));
+    }
+  };
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -201,27 +210,31 @@ export function TemplateGallery({ resumeData, onTemplateSelect }: TemplateGaller
           <TemplatePreview
             key={template.id}
             templateId={template.id}
-            data={sampleData}
+            data={resumeData || sampleData}
             isSelected={selectedTemplate === template.id}
-            onClick={() => handleTemplateSelect(template.id)}
+            onClick={() => {
+              handleTemplateSelect(template.id);
+              saveResumeData(); // Save data for edit functionality
+            }}
           />
         ))}
       </div>
 
       {/* Action Buttons */}
       <div className="flex justify-center space-x-4 mt-8">
-        <Button
-          onClick={() => handlePreview(selectedTemplate)}
-          variant="outline"
-          size="lg"
-          className="border-2"
-        >
-          <Eye className="w-5 h-5 mr-2" />
-          Preview Template
-        </Button>
+        <Link href={`/edit-resume?template=${selectedTemplate}`} onClick={saveResumeData}>
+          <Button
+            variant="outline"
+            size="lg"
+            className="border-2"
+          >
+            <Eye className="w-5 h-5 mr-2" />
+            Edit Selected Template
+          </Button>
+        </Link>
         
         <PDFExporter
-          resumeData={sampleData}
+          resumeData={resumeData || sampleData}
           templateId={selectedTemplate}
           onExportComplete={handleExportComplete}
           onExportError={handleExportError}
@@ -243,20 +256,24 @@ export function TemplateGallery({ resumeData, onTemplateSelect }: TemplateGaller
             
             <div className="overflow-y-auto max-h-[calc(90vh-120px)] p-4">
               <div className="scale-75 origin-top-left w-[133%] h-[133%]">
-                <TemplateRenderer templateId={previewTemplate} data={sampleData} showEditButton={true} />
+                <TemplateRenderer templateId={previewTemplate} data={resumeData || sampleData} showEditButton={true} />
               </div>
             </div>
             
-            <div className="p-4 border-t border-gray-200 flex justify-end space-x-4">
-              <Button variant="outline" onClick={closePreview}>
-                Close
-              </Button>
+            <div className="p-4 border-t border-gray-200 flex justify-between">
+              <Link href={`/edit-resume?template=${previewTemplate}`} onClick={saveResumeData}>
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                  <Eye className="w-4 h-4 mr-2" />
+                  Edit Resume
+                </Button>
+              </Link>
+              
               <Button 
                 onClick={() => {
                   handleTemplateSelect(previewTemplate);
                   closePreview();
                 }}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                variant="outline"
               >
                 Select Template
               </Button>
