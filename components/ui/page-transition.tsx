@@ -1,49 +1,46 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
-import { ReactNode } from 'react';
+import { PageLoader } from './page-loader';
 
 interface PageTransitionProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
-
-const pageVariants = {
-  initial: {
-    opacity: 0,
-    y: 20,
-  },
-  in: {
-    opacity: 1,
-    y: 0,
-  },
-  out: {
-    opacity: 0,
-    y: -20,
-  },
-};
-
-const pageTransition = {
-  type: 'tween',
-  ease: 'easeOut',
-  duration: 0.4,
-};
 
 export function PageTransition({ children }: PageTransitionProps) {
   const pathname = usePathname();
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [displayChildren, setDisplayChildren] = useState(children);
+
+  // Update displayed children when pathname changes
+  useEffect(() => {
+    setIsNavigating(true);
+    
+    // Short delay to allow exit animation to play
+    const timer = setTimeout(() => {
+      setDisplayChildren(children);
+      setIsNavigating(false);
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, [pathname, children]);
 
   return (
-    <AnimatePresence mode="wait" initial={false}>
+    <AnimatePresence mode="wait">
       <motion.div
         key={pathname}
-        initial="initial"
-        animate="in"
-        exit="out"
-        variants={pageVariants}
-        transition={pageTransition}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ 
+          duration: 0.3,
+          ease: "easeInOut"
+        }}
         className="min-h-screen"
       >
-        {children}
+        {displayChildren}
       </motion.div>
     </AnimatePresence>
   );

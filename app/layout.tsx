@@ -6,6 +6,7 @@ import { PageTransition } from '@/components/ui/page-transition';
 import { ScrollToTop } from '@/components/ui/scroll-to-top';
 import { Toaster } from '@/components/ui/sonner';
 import { PagePreloader } from '@/components/ui/page-preloader';
+import { PageLoader } from '@/components/ui/page-loader';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -32,6 +33,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <PagePreloader />
+          <PageLoader />
           <PageTransition>
             {children}
           </PageTransition>
