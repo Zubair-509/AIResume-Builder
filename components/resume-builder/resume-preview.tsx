@@ -58,7 +58,17 @@ export function ResumePreview({ data, template }: ResumePreviewProps) {
           content: 'space-y-3',
         };
       default:
-        return getTemplateStyles();
+        // Return modern template styles as fallback instead of recursive call
+        return {
+          container: 'font-sans text-gray-800',
+          header: 'bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-lg',
+          name: 'text-3xl font-bold mb-2',
+          title: 'text-xl opacity-90',
+          contact: 'text-sm opacity-80 mt-4 space-y-1',
+          section: 'p-6 border-b border-gray-100 last:border-b-0',
+          sectionTitle: 'text-lg font-semibold text-blue-600 mb-4 pb-2 border-b border-blue-100',
+          content: 'space-y-4',
+        };
     }
   };
 
