@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ResumeFormData } from '@/lib/validations';
 import { TemplatePreview } from './template-preview';
+import { TemplateRenderer } from './template-renderer';
 import { PDFExporter } from './pdf-exporter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
