@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { ResumeFormData } from '@/lib/validations';
 import { toast } from 'sonner';
 import Link from 'next/link';
+import { generateChatResponse, GeminiMessage, parseResumeData } from '@/lib/gemini-ai';
 
 interface Message {
   id: string;
@@ -24,88 +25,60 @@ interface ChatInterfaceProps {
 }
 
 export function ChatInterface({ onComplete }: ChatInterfaceProps) {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      type: 'bot',
-      content: "Hi! I'm your AI resume assistant. I'll help you create a professional resume by asking you a few questions. Let's start with your basic information. What's your full name?",
-      timestamp: new Date(),
-      suggestions: ['John Smith', 'Sarah Johnson', 'Michael Brown']
-    }
-  ]);
-  
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
   const [collectedData, setCollectedData] = useState<Partial<ResumeFormData>>({});
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingSection, setEditingSection] = useState<string | null>(null);
   const [isCollectingAdditional, setIsCollectingAdditional] = useState(false);
   const [showTemplateInfo, setShowTemplateInfo] = useState(false);
+  const [chatHistory, setChatHistory] = useState<GeminiMessage[]>([]);
+  const [isDataComplete, setIsDataComplete] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const chatSteps = [
-    {
-      field: 'fullName',
-      question: "What's your full name?",
-      suggestions: ['John Smith', 'Sarah Johnson', 'Michael Brown'],
-      validation: (value: string) => value.length >= 2
-    },
-    {
-      field: 'email',
-      question: "What's your email address?",
-      suggestions: ['john@example.com', 'sarah@gmail.com', 'michael@company.com'],
-      validation: (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-    },
-    {
-      field: 'phone',
-      question: "What's your phone number?",
-      suggestions: ['+1 (555) 123-4567', '+1 (555) 987-6543', '+1 (555) 456-7890'],
-      validation: (value: string) => /^[\+]?[1-9][\d]{0,15}$/.test(value.replace(/[\s\-\(\)]/g, ''))
-    },
-    {
-      field: 'jobTitle',
-      question: "What's your current or desired job title?",
-      suggestions: ['Software Engineer', 'Marketing Manager', 'Data Scientist', 'Product Manager'],
-      validation: (value: string) => value.length >= 2
-    },
-    {
-      field: 'professionalSummary',
-      question: "Tell me about your professional background and key achievements. This will be your professional summary.",
-      suggestions: [
-        'Experienced software engineer with 5+ years in full-stack development...',
-        'Results-driven marketing professional with expertise in digital campaigns...',
-        'Data scientist with strong analytical skills and machine learning experience...'
-      ],
-      validation: (value: string) => value.length >= 50
-    },
-    {
-      field: 'skills',
-      question: "What are your key skills? Please list them separated by commas or new lines.",
-      suggestions: [
-        'JavaScript, React, Node.js, Python, AWS',
-        'Digital Marketing, SEO, Google Analytics, Social Media',
-        'Data Analysis, Python, SQL, Machine Learning, Tableau'
-      ],
-      validation: (value: string) => value.length >= 10
-    }
-  ];
+  // Initialize chat with a greeting
+  useEffect(() => {
+    const initializeChat = async () => {
+      setIsLoading(true);
+      try {
+        const initialMessage: GeminiMessage = {
+          role: 'user',
+          parts: 'Hello, I need help building my resume.'
+        };
+        
+        setChatHistory([initialMessage]);
+        const response = await generateChatResponse([initialMessage]);
+        
+        setMessages([
+          {
+            id: '1',
+            type: 'bot',
+            content: response,
+            timestamp: new Date(),
+            suggestions: ['John Smith', 'Sarah Johnson', 'Michael Brown']
+          }
+        ]);
+        
+        setChatHistory(prev => [...prev, { role: 'model', parts: response }]);
+      } catch (error) {
+        console.error('Failed to initialize chat:', error);
+        setMessages([
+          {
+            id: '1',
+            type: 'bot',
+            content: "Hi! I'm your AI resume assistant. I'll help you create a professional resume by asking you a few questions. Let's start with your basic information. What's your full name?",
+            timestamp: new Date(),
+            suggestions: ['John Smith', 'Sarah Johnson', 'Michael Brown']
+          }
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const resumeSections = [
-    { id: 1, name: 'Personal Information', field: 'personal' },
-    { id: 2, name: 'Professional Summary', field: 'professionalSummary' },
-    { id: 3, name: 'Skills', field: 'skills' },
-    { id: 4, name: 'Work Experience', field: 'workExperience' },
-    { id: 5, name: 'Education', field: 'education' }
-  ];
-
-  const resumeTemplates = [
-    { id: 'modern', name: 'Modern Minimalist', description: 'Clean design for tech and creative roles' },
-    { id: 'classic', name: 'Traditional Corporate', description: 'Professional layout for corporate positions' },
-    { id: 'executive', name: 'Executive Premium', description: 'Sophisticated design for leadership roles' },
-    { id: 'technical', name: 'Technical Specialist', description: 'Optimized for technical positions' },
-    { id: 'entry-level', name: 'Entry Level Fresh', description: 'Perfect for new graduates' }
-  ];
+    initializeChat();
+  }, []);
 
   useEffect(() => {
     scrollToBottom();
@@ -130,190 +103,60 @@ export function ChatInterface({ onComplete }: ChatInterfaceProps) {
     setInputValue(suggestion);
   };
 
-  const displayCurrentSectionInfo = (sectionField: string) => {
-    let content = '';
-    
-    switch (sectionField) {
-      case 'personal':
-        content = `Current Personal Information:
-• Name: ${collectedData.fullName || 'Not set'}
-• Email: ${collectedData.email || 'Not set'}
-• Phone: ${collectedData.phone || 'Not set'}
-• Job Title: ${collectedData.jobTitle || 'Not set'}`;
-        break;
-      case 'professionalSummary':
-        content = `Current Professional Summary:
-${collectedData.professionalSummary || 'Not set'}`;
-        break;
-      case 'skills':
-        content = `Current Skills:
-${collectedData.skills || 'Not set'}`;
-        break;
-      case 'workExperience':
-        const workExp = collectedData.workExperience || [];
-        content = `Current Work Experience (${workExp.length} entries):
-${workExp.map((exp, index) => `${index + 1}. ${exp.position} at ${exp.company} (${exp.startDate} - ${exp.current ? 'Present' : exp.endDate})`).join('\n') || 'No work experience added'}`;
-        break;
-      case 'education':
-        const education = collectedData.education || [];
-        content = `Current Education (${education.length} entries):
-${education.map((edu, index) => `${index + 1}. ${edu.degree} in ${edu.fieldOfStudy} from ${edu.institution} (${edu.graduationDate})`).join('\n') || 'No education added'}`;
-        break;
-    }
-    
-    return content;
+  const checkForCompleteData = (text: string): boolean => {
+    // Check if the text contains a formatted resume or indicates completion
+    return (
+      text.includes("============================") ||
+      text.includes("Here's your complete resume:") ||
+      text.includes("I've compiled all your information") ||
+      text.includes("SUMMARY") && text.includes("WORK EXPERIENCE") && text.includes("EDUCATION") && text.includes("SKILLS")
+    );
   };
 
-  const processAdditionalInfo = (userInput: string) => {
-    // Analyze the input and categorize it
-    const input = userInput.toLowerCase();
-    let updatedData = { ...collectedData };
-    
-    // Check for certifications
-    if (input.includes('certification') || input.includes('certified') || input.includes('certificate')) {
-      const certifications = collectedData.certifications || [];
-      certifications.push({
-        id: Date.now().toString(),
-        name: userInput,
-        issuer: 'To be specified',
-        date: new Date().getFullYear().toString()
-      });
-      updatedData.certifications = certifications;
-      addMessage('bot', `Great! I've added that certification to your resume. The certification "${userInput}" has been included in your certifications section.`);
-    }
-    // Check for projects
-    else if (input.includes('project') || input.includes('built') || input.includes('developed')) {
-      const projects = collectedData.projects || [];
-      projects.push({
-        id: Date.now().toString(),
-        name: userInput.split(' ').slice(0, 3).join(' '),
-        description: userInput,
-        technologies: [],
-        highlights: [userInput]
-      });
-      updatedData.projects = projects;
-      addMessage('bot', `Excellent! I've added that project to your resume. The project has been included in your projects section.`);
-    }
-    // Check for additional skills
-    else if (input.includes('skill') || input.includes('proficient') || input.includes('experience with')) {
-      const currentSkills = collectedData.skills || '';
-      updatedData.skills = currentSkills + '\n' + userInput;
-      addMessage('bot', `Perfect! I've added those additional skills to your resume.`);
-    }
-    // Check for languages
-    else if (input.includes('language') || input.includes('speak') || input.includes('fluent')) {
-      const languages = collectedData.languages || [];
-      languages.push(userInput);
-      updatedData.languages = languages;
-      addMessage('bot', `Great! I've added that language information to your resume.`);
-    }
-    // General additional information
-    else {
-      // Add to professional summary or create a new section
-      const currentSummary = collectedData.professionalSummary || '';
-      updatedData.professionalSummary = currentSummary + ' ' + userInput;
-      addMessage('bot', `Thank you! I've incorporated that information into your professional summary.`);
-    }
-    
-    setCollectedData(updatedData);
-    return updatedData;
-  };
-
-  const handleEditModeInput = async (userInput: string) => {
-    if (!editingSection) {
-      // User is selecting a section to edit
-      const sectionNumber = parseInt(userInput);
-      if (sectionNumber >= 1 && sectionNumber <= resumeSections.length) {
-        const selectedSection = resumeSections[sectionNumber - 1];
-        setEditingSection(selectedSection.field);
-        
-        const sectionInfo = displayCurrentSectionInfo(selectedSection.field);
-        addMessage('bot', `You've selected "${selectedSection.name}". Here's the current information:
-
-${sectionInfo}
-
-What would you like to modify? You can:
-- Add new information
-- Update existing details  
-- Delete specific items
-
-Please tell me what changes you'd like to make.`);
-      } else {
-        addMessage('bot', 'Please enter a valid section number (1-5). Which section would you like to edit?');
-      }
-      return;
-    }
-
-    // Process the edit request
-    const input = userInput.toLowerCase();
-    let updatedData = { ...collectedData };
-    let changesMade = false;
-
-    if (editingSection === 'personal') {
-      if (input.includes('name')) {
-        const nameMatch = userInput.match(/name.*?([A-Za-z\s]+)/i);
-        if (nameMatch) {
-          updatedData.fullName = nameMatch[1].trim();
-          changesMade = true;
-        }
-      }
-      if (input.includes('email')) {
-        const emailMatch = userInput.match(/email.*?([^\s@]+@[^\s@]+\.[^\s@]+)/i);
-        if (emailMatch) {
-          updatedData.email = emailMatch[1];
-          changesMade = true;
-        }
-      }
-      if (input.includes('phone')) {
-        const phoneMatch = userInput.match(/phone.*?([\+]?[1-9][\d\s\-\(\)]{8,})/i);
-        if (phoneMatch) {
-          updatedData.phone = phoneMatch[1];
-          changesMade = true;
-        }
-      }
-      if (input.includes('job title') || input.includes('title')) {
-        const titleMatch = userInput.match(/title.*?([A-Za-z\s]+)/i);
-        if (titleMatch) {
-          updatedData.jobTitle = titleMatch[1].trim();
-          changesMade = true;
-        }
-      }
-    } else if (editingSection === 'professionalSummary') {
-      if (input.includes('replace') || input.includes('change to')) {
-        const newSummary = userInput.replace(/.*?(replace|change to)\s*/i, '');
-        updatedData.professionalSummary = newSummary;
-        changesMade = true;
-      } else if (input.includes('add')) {
-        const addition = userInput.replace(/.*?add\s*/i, '');
-        updatedData.professionalSummary = (collectedData.professionalSummary || '') + ' ' + addition;
-        changesMade = true;
-      }
-    } else if (editingSection === 'skills') {
-      if (input.includes('add')) {
-        const newSkills = userInput.replace(/.*?add\s*/i, '');
-        updatedData.skills = (collectedData.skills || '') + '\n' + newSkills;
-        changesMade = true;
-      } else if (input.includes('replace') || input.includes('change to')) {
-        const newSkills = userInput.replace(/.*?(replace|change to)\s*/i, '');
-        updatedData.skills = newSkills;
-        changesMade = true;
-      }
-    }
-
-    if (changesMade) {
-      setCollectedData(updatedData);
-      const updatedSectionInfo = displayCurrentSectionInfo(editingSection);
-      addMessage('bot', `Perfect! I've updated your ${resumeSections.find(s => s.field === editingSection)?.name}. Here's the updated information:
-
-${updatedSectionInfo}
-
-Would you like to edit another section? (Yes/No)`);
-      setEditingSection(null);
-    } else {
-      addMessage('bot', `I couldn't understand the specific changes you want to make. Could you please be more specific? For example:
-- "Change name to John Doe"
-- "Add skill: Python programming"
-- "Replace summary with: [new summary]"`);
+  const extractResumeData = async (resumeText: string) => {
+    try {
+      setIsLoading(true);
+      // Try to parse the resume text into structured data
+      const parsedData = await parseResumeData(resumeText);
+      
+      // Convert the parsed data to match our ResumeFormData structure
+      const formattedData: Partial<ResumeFormData> = {
+        fullName: parsedData.fullName,
+        email: parsedData.email,
+        phone: parsedData.phone,
+        jobTitle: parsedData.jobTitle,
+        professionalSummary: parsedData.professionalSummary,
+        skills: Array.isArray(parsedData.skills) 
+          ? parsedData.skills.join('\n') 
+          : typeof parsedData.skills === 'string' 
+            ? parsedData.skills.replace(/,\s*/g, '\n') 
+            : '',
+        workExperience: parsedData.workExperience?.map((exp: any) => ({
+          id: Date.now().toString() + Math.random().toString(36).substring(2, 9),
+          company: exp.company,
+          position: exp.position,
+          startDate: exp.startDate,
+          endDate: exp.endDate || '',
+          current: exp.current || false,
+          responsibilities: exp.responsibilities
+        })) || [],
+        education: parsedData.education?.map((edu: any) => ({
+          id: Date.now().toString() + Math.random().toString(36).substring(2, 9),
+          institution: edu.institution,
+          degree: edu.degree,
+          fieldOfStudy: edu.fieldOfStudy,
+          graduationDate: edu.graduationDate
+        })) || []
+      };
+      
+      setCollectedData(formattedData);
+      return formattedData;
+    } catch (error) {
+      console.error('Failed to parse resume data:', error);
+      // If parsing fails, return the current collected data
+      return collectedData;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -327,143 +170,44 @@ Would you like to edit another section? (Yes/No)`);
 
     // Add user message
     addMessage('user', userMessage);
+    
+    // Update chat history with user message
+    const updatedHistory = [...chatHistory, { role: 'user', parts: userMessage }];
+    setChatHistory(updatedHistory);
 
-    // Simulate AI processing
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    // Handle edit mode
-    if (isEditMode) {
-      if (userMessage.toLowerCase() === 'no') {
-        setIsEditMode(false);
-        setEditingSection(null);
-        addMessage('bot', "Great! Your resume has been updated. Here's your complete updated resume ready for preview.");
+    try {
+      // Get response from Gemini
+      const response = await generateChatResponse(updatedHistory);
+      
+      // Add bot message
+      addMessage('bot', response);
+      
+      // Update chat history with bot response
+      setChatHistory([...updatedHistory, { role: 'model', parts: response }]);
+      
+      // Check if the response contains a complete resume
+      if (checkForCompleteData(response)) {
+        setIsDataComplete(true);
+        const resumeData = await extractResumeData(response);
         
         setTimeout(() => {
-          onComplete(collectedData);
-          toast.success('Resume updated successfully!', {
-            description: 'Your changes have been saved and your resume is ready for preview.'
-          });
-        }, 1500);
-        setIsLoading(false);
-        return;
-      } else if (userMessage.toLowerCase() === 'yes' && !editingSection) {
-        addMessage('bot', `Which section would you like to edit? Please enter the corresponding number:
-
-${resumeSections.map(section => `${section.id}. ${section.name}`).join('\n')}`, 
-        resumeSections.map(section => section.id.toString()));
-        setIsLoading(false);
-        return;
-      }
-      
-      await handleEditModeInput(userMessage);
-      setIsLoading(false);
-      return;
-    }
-
-    // Handle additional information collection
-    if (isCollectingAdditional) {
-      if (userMessage.toLowerCase().includes('no') || userMessage.toLowerCase().includes('nothing') || userMessage.toLowerCase().includes('done')) {
-        setIsCollectingAdditional(false);
-        
-        // Show template information
-        setShowTemplateInfo(true);
-        addMessage('bot', "Perfect! I have all the information I need. Now, let me tell you about our resume templates before I generate your professional resume templates for you to choose from.");
-        
-        addMessage('bot', `We offer several professional templates to showcase your experience:
-
-1. Modern Minimalist - Clean design perfect for tech and creative roles
-2. Traditional Corporate - Professional layout for corporate positions
-3. Executive Premium - Sophisticated design for leadership roles
-4. Technical Specialist - Optimized for technical positions
-5. Entry Level Fresh - Perfect for new graduates
-
-All templates are ATS-optimized to ensure your resume passes through applicant tracking systems. Would you like to see all templates or should I recommend the best one for your background?`, 
-        ['Show all templates', 'Recommend the best template', 'Continue to preview']);
-        
-        setIsLoading(false);
-        return;
-      }
-      
-      if (showTemplateInfo) {
-        if (userMessage.toLowerCase().includes('show all') || userMessage.toLowerCase().includes('all templates')) {
-          addMessage('bot', "Great! I'll show you all available templates. Let me generate your professional resume templates for you to choose from.");
-        } else if (userMessage.toLowerCase().includes('recommend') || userMessage.toLowerCase().includes('best')) {
-          // Simulate template recommendation based on job title
-          const jobTitle = collectedData.jobTitle?.toLowerCase() || '';
-          let recommendedTemplate = 'Modern Minimalist';
-          
-          if (jobTitle.includes('senior') || jobTitle.includes('director') || jobTitle.includes('manager')) {
-            recommendedTemplate = 'Executive Premium';
-          } else if (jobTitle.includes('engineer') || jobTitle.includes('developer') || jobTitle.includes('analyst')) {
-            recommendedTemplate = 'Technical Specialist';
-          } else if (jobTitle.includes('intern') || jobTitle.includes('assistant') || jobTitle.includes('junior')) {
-            recommendedTemplate = 'Entry Level Fresh';
-          }
-          
-          addMessage('bot', `Based on your background as a ${collectedData.jobTitle}, I recommend the "${recommendedTemplate}" template. It's designed to highlight your specific experience and skills effectively. Let me generate your professional resume templates for you to choose from.`);
-        } else {
-          addMessage('bot', "Perfect! Let me generate your professional resume templates for you to choose from.");
-        }
-        
-        setTimeout(() => {
-          onComplete(collectedData);
+          onComplete(resumeData);
           toast.success('Resume data collected successfully!', {
             description: 'Now let\'s create your professional resume templates.'
           });
         }, 2000);
-        setIsLoading(false);
-        return;
       }
-      
-      const updatedData = processAdditionalInfo(userMessage);
-      addMessage('bot', "Is there anything else you'd like to add to your resume? (certifications, projects, languages, achievements, etc.) If not, just say 'no' or 'done'.");
+    } catch (error) {
+      console.error('Failed to get AI response:', error);
+      addMessage('bot', "I'm sorry, I encountered an error. Please try again or check your connection.");
+    } finally {
       setIsLoading(false);
-      return;
     }
-
-    // Handle regular chat flow
-    if (currentStep < chatSteps.length) {
-      const currentStepData = chatSteps[currentStep];
-      
-      // Validate input
-      if (!currentStepData.validation(userMessage)) {
-        addMessage('bot', `I'm sorry, but that doesn't look like a valid ${currentStepData.field.replace(/([A-Z])/g, ' $1').toLowerCase()}. Could you please try again?`, currentStepData.suggestions);
-        setIsLoading(false);
-        return;
-      }
-
-      // Update collected data
-      const updatedData = {
-        ...collectedData,
-        [currentStepData.field]: userMessage
-      };
-      setCollectedData(updatedData);
-
-      // Move to next step or ask for additional info
-      if (currentStep < chatSteps.length - 1) {
-        const nextStep = currentStep + 1;
-        setCurrentStep(nextStep);
-        
-        addMessage('bot', `Great! ${chatSteps[nextStep].question}`, chatSteps[nextStep].suggestions);
-      } else {
-        // All required info collected, ask for additional info
-        setIsCollectingAdditional(true);
-        addMessage('bot', "Excellent! I have all the required information. Would you like to add any additional information to your resume? This could include certifications, projects, languages, achievements, or any other relevant details.", 
-        ['AWS Certified Solutions Architect', 'Built an e-commerce platform', 'Fluent in Spanish and French', 'No additional information']);
-      }
-    }
-
-    setIsLoading(false);
   };
 
   const handleEditResume = () => {
     setIsEditMode(true);
-    addMessage('bot', `I can help you edit your resume! Here are the sections available for editing:
-
-${resumeSections.map(section => `${section.id}. ${section.name}`).join('\n')}
-
-Which section would you like to edit? Please enter the corresponding number.`, 
-    resumeSections.map(section => section.id.toString()));
+    addMessage('bot', `I can help you edit your resume! What would you like to change?`);
   };
 
   return (
@@ -488,7 +232,7 @@ Which section would you like to edit? Please enter the corresponding number.`,
               </div>
               
               {/* Edit Button */}
-              {!isEditMode && !isCollectingAdditional && currentStep >= chatSteps.length && (
+              {!isEditMode && !isCollectingAdditional && isDataComplete && (
                 <Button
                   onClick={handleEditResume}
                   variant="secondary"
@@ -513,24 +257,6 @@ Which section would you like to edit? Please enter the corresponding number.`,
                 </Button>
               )}
             </div>
-            
-            {/* Progress Bar */}
-            {!isEditMode && !isCollectingAdditional && (
-              <div className="mt-4">
-                <div className="flex justify-between text-sm mb-2">
-                  <span>Progress</span>
-                  <span>{Math.round((currentStep / chatSteps.length) * 100)}%</span>
-                </div>
-                <div className="w-full bg-white/20 rounded-full h-2">
-                  <motion.div
-                    className="bg-white rounded-full h-2"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${(currentStep / chatSteps.length) * 100}%` }}
-                    transition={{ duration: 0.5 }}
-                  />
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Messages */}
@@ -616,15 +342,7 @@ Which section would you like to edit? Please enter the corresponding number.`,
               <Input
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder={
-                  isEditMode && editingSection 
-                    ? "Describe the changes you want to make..."
-                    : isEditMode 
-                    ? "Enter section number (1-5)..."
-                    : isCollectingAdditional
-                    ? "Add any additional information or type 'done'..."
-                    : "Type your response here..."
-                }
+                placeholder="Type your response here..."
                 disabled={isLoading}
                 className="flex-1"
                 autoFocus
@@ -650,7 +368,7 @@ Which section would you like to edit? Please enter the corresponding number.`,
             </p>
             
             {/* Template Info Link */}
-            {!isEditMode && currentStep >= chatSteps.length && (
+            {!isEditMode && isDataComplete && (
               <div className="mt-4 text-center">
                 <Link href="/templates">
                   <Button variant="link" size="sm" className="text-blue-600 dark:text-blue-400">
