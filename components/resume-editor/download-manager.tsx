@@ -140,6 +140,7 @@ export function DownloadManager({ resumeData, customizationSettings, onSave }: D
       clonedElement.style.left = '-9999px';
       clonedElement.style.top = '0';
       clonedElement.style.width = downloadSettings.pageSize === 'a4' ? '210mm' : '8.5in';
+      clonedElement.style.height = 'auto'; // Let height adjust automatically
       clonedElement.style.minHeight = downloadSettings.pageSize === 'a4' ? '297mm' : '11in';
       clonedElement.style.backgroundColor = downloadSettings.includeColors ? customizationSettings.colors.background : '#ffffff';
       clonedElement.style.boxShadow = 'none';
@@ -165,11 +166,11 @@ export function DownloadManager({ resumeData, customizationSettings, onSave }: D
           scale: downloadSettings.quality === 'high' ? 2 : downloadSettings.quality === 'medium' ? 1.5 : 1,
           useCORS: true,
           letterRendering: true,
-          allowTaint: false,
+          allowTaint: true,
           backgroundColor: downloadSettings.includeColors ? customizationSettings.colors.background : '#ffffff',
           width: downloadSettings.pageSize === 'a4' ? 794 : 816,
           height: downloadSettings.pageSize === 'a4' ? 1123 : 1056,
-          logging: false
+          logging: true
         },
         jsPDF: { 
           unit: 'mm', 

@@ -75,6 +75,7 @@ export function TemplateSelector({
       clonedElement.style.left = '-9999px';
       clonedElement.style.top = '0';
       clonedElement.style.width = '210mm'; // A4 width
+      clonedElement.style.height = 'auto'; // Let height adjust automatically
       clonedElement.style.minHeight = '297mm'; // A4 height
       clonedElement.style.backgroundColor = 'white';
       clonedElement.style.boxShadow = 'none';
@@ -97,8 +98,9 @@ export function TemplateSelector({
           scale: 2,
           useCORS: true,
           letterRendering: true,
-          allowTaint: false,
+          allowTaint: true,
           backgroundColor: '#ffffff',
+          logging: true,
           width: 794, // A4 width in pixels at 96 DPI
           height: 1123 // A4 height in pixels at 96 DPI
         },
