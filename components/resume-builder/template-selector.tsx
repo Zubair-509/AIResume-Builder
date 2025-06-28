@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ChevronDown, Download, Copy, ExternalLink, Loader2 } from 'lucide-react';
+import { ChevronDown, Download, Copy, ExternalLink, Loader2, Globe } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ResumeFormData } from '@/lib/validations';
+import { HTMLExporter } from '@/components/ui/html-exporter';
 import { toast } from 'sonner';
 
 interface TemplateSelectorProps {
@@ -244,6 +245,14 @@ export function TemplateSelector({
             </>
           )}
         </Button>
+
+        {/* Export HTML Button */}
+        <HTMLExporter
+          resumeData={resumeData}
+          templateId={selectedTemplate}
+          size="lg"
+          className="w-full border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        />
 
         {/* Copy HTML Button */}
         <Button

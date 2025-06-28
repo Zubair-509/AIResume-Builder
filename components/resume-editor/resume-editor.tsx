@@ -16,7 +16,9 @@ import {
   Redo,
   Settings,
   Sparkles,
-  Zap
+  Zap,
+  Globe,
+  Code
 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -28,6 +30,7 @@ import { ResumeFormData, resumeFormSchema } from '@/lib/validations';
 import { ResumeEditForm } from './resume-edit-form';
 import { ResumePreview } from '@/components/resume-customizer/customizable-resume-preview';
 import { DownloadManager } from './download-manager';
+import { HTMLExporter } from '@/components/ui/html-exporter';
 import { AutoSaveManager } from './auto-save-manager';
 import { LivePreview } from '@/components/ui/live-preview';
 import { toast } from 'sonner';
@@ -304,6 +307,16 @@ export function ResumeEditor({
                 Save
               </Button>
 
+              {/* HTML Export Button */}
+              <HTMLExporter
+                resumeData={formData}
+                templateId={customizationSettings.layout.template}
+                customizationSettings={customizationSettings}
+                variant="outline"
+                size="sm"
+                className="transition-all duration-300"
+              />
+
               {/* Download Manager */}
               <DownloadManager
                 resumeData={formData}
@@ -407,6 +420,54 @@ export function ResumeEditor({
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 text-center">
                   Switch to the Customize tab for advanced styling options
                 </p>
+              </CardContent>
+            </Card>
+
+            {/* Export Options */}
+            <Card className="border-0 shadow-lg bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Code className="w-5 h-5 mr-2 text-green-600" />
+                  Export Options
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Button
+                    onClick={handleManualSave}
+                    disabled={!hasUnsavedChanges || isSaving}
+                    className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white h-12"
+                  >
+                    {isSaving ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-4 h-4 mr-2" />
+                        Save Resume
+                      </>
+                    )}
+                  </Button>
+                  
+                  <HTMLExporter
+                    resumeData={formData}
+                    templateId={customizationSettings.layout.template}
+                    customizationSettings={customizationSettings}
+                    className="h-12 border-2 border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                  />
+                </div>
+                
+                <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg text-sm text-gray-600 dark:text-gray-400">
+                  <div className="flex items-start">
+                    <Info className="w-4 h-4 mr-2 text-blue-600 mt-0.5" />
+                    <p>
+                      The HTML export includes all necessary styles and is ready for use in other web projects. 
+                      It's also optimized for printing directly from a web browser.
+                    </p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>

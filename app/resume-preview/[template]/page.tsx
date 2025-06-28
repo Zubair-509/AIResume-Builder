@@ -4,11 +4,12 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { TemplateRenderer } from '@/components/resume-templates/template-renderer';
 import { PDFExporter } from '@/components/resume-templates/pdf-exporter';
+import { HTMLExporter } from '@/components/ui/html-exporter';
 import { Navigation } from '@/components/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Edit, Download, Share2 } from 'lucide-react';
+import { ArrowLeft, Edit, Download, Share2, Globe, Code } from 'lucide-react';
 import { LivePreview } from '@/components/ui/live-preview';
 import { LoadingOverlay } from '@/components/ui/loading-overlay';
 import { toast } from 'sonner';
@@ -133,7 +134,7 @@ export default function ResumePreviewPage() {
               </p>
             </div>
             
-            <div className="flex space-x-3 mt-4 md:mt-0">
+            <div className="flex flex-wrap space-x-3 mt-4 md:mt-0">
               <Link href={`/edit-resume?template=${templateId}`}>
                 <Button variant="outline">
                   <Edit className="w-4 h-4 mr-2" />
@@ -149,6 +150,13 @@ export default function ResumePreviewPage() {
               <PDFExporter
                 resumeData={resumeData}
                 templateId={templateId}
+              />
+              
+              <HTMLExporter
+                resumeData={resumeData}
+                templateId={templateId}
+                variant="outline"
+                className="border-blue-200 hover:border-blue-300"
               />
             </div>
           </div>
@@ -170,6 +178,51 @@ export default function ResumePreviewPage() {
               />
             </div>
           </LivePreview>
+          
+          {/* Export Options */}
+          <div className="mt-8">
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
+              <CardContent className="p-6">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
+                  <Code className="w-5 h-5 mr-2 text-blue-600" />
+                  Export Options
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Button
+                    className="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white h-12"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Download PDF
+                  </Button>
+                  
+                  <HTMLExporter
+                    resumeData={resumeData}
+                    templateId={templateId}
+                    className="h-12 border-2 border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                  />
+                  
+                  <Button
+                    variant="outline"
+                    className="h-12 border-2 border-purple-500 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20"
+                    onClick={handleShare}
+                  >
+                    <Share2 className="w-4 h-4 mr-2" />
+                    Share Resume
+                  </Button>
+                </div>
+                
+                <div className="mt-4 p-3 bg-white/50 dark:bg-gray-800/50 rounded-lg text-sm text-gray-600 dark:text-gray-400">
+                  <p className="flex items-start">
+                    <Globe className="w-4 h-4 mr-2 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <span>
+                      The HTML export includes all necessary styles and is ready for use in other web projects. 
+                      It's also optimized for printing directly from a web browser.
+                    </span>
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </main>

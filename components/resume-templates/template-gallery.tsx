@@ -6,10 +6,11 @@ import { ResumeFormData } from '@/lib/validations';
 import { TemplatePreview } from './template-preview';
 import { TemplateRenderer } from './template-renderer';
 import { PDFExporter } from './pdf-exporter';
+import { HTMLExporter } from '@/components/ui/html-exporter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Download, Eye, FileText, CheckCircle, Info } from 'lucide-react';
+import { Download, Eye, FileText, CheckCircle, Info, Code } from 'lucide-react';
 import { LivePreview } from '@/components/ui/live-preview';
 import Link from 'next/link';
 import { toast } from 'sonner';
@@ -245,7 +246,7 @@ export function TemplateGallery({ resumeData, onTemplateSelect }: TemplateGaller
       </div>
 
       {/* Action Buttons */}
-      <div className="flex justify-center space-x-4 mt-8">
+      <div className="flex flex-wrap justify-center gap-4 mt-8">
         <Link href={`/edit-resume?template=${selectedTemplate}`} onClick={saveResumeData}>
           <Button
             variant="outline"
@@ -260,6 +261,15 @@ export function TemplateGallery({ resumeData, onTemplateSelect }: TemplateGaller
         <PDFExporter
           resumeData={resumeData || sampleData}
           templateId={selectedTemplate}
+          onExportComplete={handleExportComplete}
+          onExportError={handleExportError}
+        />
+        
+        <HTMLExporter
+          resumeData={resumeData || sampleData}
+          templateId={selectedTemplate}
+          size="lg"
+          className="border-2 border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
           onExportComplete={handleExportComplete}
           onExportError={handleExportError}
         />

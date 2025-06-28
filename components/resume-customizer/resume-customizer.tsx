@@ -12,7 +12,9 @@ import {
   Settings,
   Sparkles,
   Download,
-  Layers
+  Layers,
+  Globe,
+  Code
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -22,6 +24,7 @@ import { FontSelector } from './font-selector';
 import { ColorSchemeSelector } from './color-scheme-selector';
 import { DynamicSectionBuilder } from './dynamic-section-builder';
 import { ResumePreview } from './customizable-resume-preview';
+import { HTMLExporter } from '@/components/ui/html-exporter';
 import { LivePreview } from '@/components/ui/live-preview';
 import { ResumeFormData } from '@/lib/validations';
 import { toast } from 'sonner';
@@ -434,8 +437,16 @@ export function ResumeCustomizer({ resumeData, onSave }: ResumeCustomizerProps) 
                     }}
                   >
                     <Download className="w-4 h-4 mr-2" />
-                    Download Resume
+                    Download PDF
                   </Button>
+                  
+                  <HTMLExporter
+                    resumeData={resumeData}
+                    templateId={settings.layout.template}
+                    customizationSettings={settings}
+                    className="w-full border-2 border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                    size="lg"
+                  />
                 </CardContent>
               </Card>
 

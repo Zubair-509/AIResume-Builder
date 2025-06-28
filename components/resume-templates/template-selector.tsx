@@ -13,7 +13,8 @@ import { CreativeTemplate } from './creative-template';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Download, Eye, FileText, CheckCircle } from 'lucide-react';
+import { Download, Eye, FileText, CheckCircle, Globe, Code } from 'lucide-react';
+import { HTMLExporter } from '@/components/ui/html-exporter';
 import { toast } from 'sonner';
 
 interface TemplateSelectorProps {
@@ -207,15 +208,22 @@ export function TemplateSelector({ resumeData, onDownload, onSelect }: TemplateS
         </TabsContent>
       </Tabs>
 
-      <div className="flex justify-center mt-8">
+      <div className="flex flex-wrap justify-center gap-4 mt-8">
         <Button 
           onClick={handleDownload}
           className="bg-blue-600 hover:bg-blue-700 text-white"
           size="lg"
         >
           <Download className="w-5 h-5 mr-2" />
-          Download Resume
+          Download PDF
         </Button>
+        
+        <HTMLExporter
+          resumeData={resumeData}
+          templateId={selectedTemplate}
+          size="lg"
+          className="border-2 border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+        />
       </div>
 
       {/* Preview Modal */}
@@ -237,17 +245,35 @@ export function TemplateSelector({ resumeData, onDownload, onSelect }: TemplateS
               </div>
             </div>
             
-            <div className="p-4 border-t border-gray-200 flex justify-end space-x-4">
-              <Button variant="outline" onClick={closePreview}>
-                Close
-              </Button>
+            <div className="p-4 border-t border-gray-200 flex flex-wrap justify-between gap-4">
+              <div className="flex flex-wrap gap-2">
+                <Button 
+                  onClick={() => {
+                    handleDownload();
+                    closePreview();
+                  }}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Download PDF
+                </Button>
+                
+                <HTMLExporter
+                  resumeData={resumeData}
+                  templateId={previewTemplate}
+                  variant="outline"
+                  className="border-blue-200 hover:border-blue-300"
+                />
+              </div>
+              
               <Button 
                 onClick={() => {
                   handleTemplateSelect(previewTemplate);
                   closePreview();
                 }}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className="bg-green-600 hover:bg-green-700 text-white"
               >
+                <CheckCircle className="w-4 h-4 mr-2" />
                 Select Template
               </Button>
             </div>

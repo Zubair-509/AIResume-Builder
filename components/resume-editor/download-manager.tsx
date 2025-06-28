@@ -13,7 +13,8 @@ import {
   Eye,
   Settings,
   Calendar,
-  User
+  User,
+  Code
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -31,6 +32,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { HTMLExporter } from '@/components/ui/html-exporter';
 import { ResumeFormData } from '@/lib/validations';
 import { toast } from 'sonner';
 
@@ -543,6 +545,17 @@ export function DownloadManager({ resumeData, customizationSettings, onSave }: D
         </DropdownMenu>
       </div>
 
+      {/* HTML Export Button */}
+      <div className="mt-4">
+        <HTMLExporter
+          resumeData={resumeData}
+          templateId={customizationSettings.layout.template}
+          customizationSettings={customizationSettings}
+          className="w-full border-2 border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+          size="lg"
+        />
+      </div>
+
       {/* Download Progress Modal */}
       <AnimatePresence>
         {downloadProgress.isDownloading && (
@@ -726,7 +739,7 @@ export function DownloadManager({ resumeData, customizationSettings, onSave }: D
               </div>
             </div>
             
-            <div className="flex justify-center space-x-4 mt-6">
+            <div className="flex flex-wrap justify-center gap-4 mt-6">
               <Button
                 onClick={() => {
                   setShowPreview(false);
@@ -749,6 +762,14 @@ export function DownloadManager({ resumeData, customizationSettings, onSave }: D
                 <Globe className="w-4 h-4 mr-2" />
                 Download HTML
               </Button>
+              
+              <HTMLExporter
+                resumeData={resumeData}
+                templateId={customizationSettings.layout.template}
+                customizationSettings={customizationSettings}
+                variant="outline"
+                className="border-2 border-purple-500 text-purple-600 hover:bg-purple-50"
+              />
             </div>
           </div>
         </DialogContent>

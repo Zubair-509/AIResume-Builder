@@ -5,10 +5,12 @@ import { ResumeFormData } from '@/lib/validations';
 import { TemplateRenderer } from './template-renderer';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Eye, Edit } from 'lucide-react';
+import { CheckCircle, Eye, Edit, Globe, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LivePreview } from '@/components/ui/live-preview';
 import { LoadingOverlay } from '@/components/ui/loading-overlay';
+import { PDFExporter } from './pdf-exporter';
+import { HTMLExporter } from '@/components/ui/html-exporter';
 import Link from 'next/link';
 import { toast } from 'sonner';
 
@@ -151,13 +153,27 @@ export function TemplatePreview({
               </LivePreview>
             </div>
             
-            <div className="p-4 border-t border-gray-200 flex justify-between">
-              <Link href={`/edit-resume?template=${templateId}`} onClick={saveResumeData}>
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                  <Edit className="w-4 h-4 mr-2" />
-                  Edit Resume
-                </Button>
-              </Link>
+            <div className="p-4 border-t border-gray-200 flex flex-wrap justify-between gap-2">
+              <div className="flex flex-wrap gap-2">
+                <Link href={`/edit-resume?template=${templateId}`} onClick={saveResumeData}>
+                  <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit Resume
+                  </Button>
+                </Link>
+                
+                <PDFExporter
+                  resumeData={data}
+                  templateId={templateId}
+                />
+                
+                <HTMLExporter
+                  resumeData={data}
+                  templateId={templateId}
+                  variant="outline"
+                  className="border-blue-200 hover:border-blue-300"
+                />
+              </div>
               
               <Button 
                 onClick={() => {
