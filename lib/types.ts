@@ -1,5 +1,5 @@
 export interface WorkExperience {
-  id: string;
+  dataId: string;
   company: string;
   position: string;
   startDate: string;
@@ -9,7 +9,7 @@ export interface WorkExperience {
 }
 
 export interface Education {
-  id: string;
+  dataId: string;
   institution: string;
   degree: string;
   fieldOfStudy: string;

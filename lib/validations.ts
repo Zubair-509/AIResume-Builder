@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 const workExperienceSchema = z.object({
-  id: z.string(),
+  dataId: z.string(),
   company: z.string().min(1, 'Company name is required'),
   position: z.string().min(1, 'Position is required'),
   startDate: z.string().min(1, 'Start date is required'),
@@ -11,7 +11,7 @@ const workExperienceSchema = z.object({
 });
 
 const educationSchema = z.object({
-  id: z.string(),
+  dataId: z.string(),
   institution: z.string().min(1, 'Institution name is required'),
   degree: z.string().min(1, 'Degree is required'),
   fieldOfStudy: z.string().min(1, 'Field of study is required'),
@@ -19,7 +19,7 @@ const educationSchema = z.object({
 });
 
 const certificationSchema = z.object({
-  id: z.string(),
+  dataId: z.string(),
   name: z.string(),
   issuer: z.string(),
   date: z.string(),
@@ -27,7 +27,7 @@ const certificationSchema = z.object({
 });
 
 const projectSchema = z.object({
-  id: z.string(),
+  dataId: z.string(),
   name: z.string(),
   description: z.string(),
   technologies: z.array(z.string()),

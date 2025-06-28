@@ -46,7 +46,7 @@ export function ResumeForm() {
       professionalSummary: '',
       skills: '',
       workExperience: [{
-        id: '1',
+        dataId: '1',
         company: '',
         position: '',
         startDate: '',
@@ -55,7 +55,7 @@ export function ResumeForm() {
         responsibilities: '',
       }],
       education: [{
-        id: '1',
+        dataId: '1',
         institution: '',
         degree: '',
         fieldOfStudy: '',

@@ -30,7 +30,7 @@ export function WorkExperienceForm({ control, errors }: WorkExperienceFormProps)
 
   const addWorkExperience = () => {
     append({
-      id: Date.now().toString(),
+      dataId: Date.now().toString(),
       company: '',
       position: '',
       startDate: '',
