@@ -365,20 +365,16 @@ ${resumeSections.map(section => `${section.id}. ${section.name}`).join('\n')}`,
       if (userMessage.toLowerCase().includes('no') || userMessage.toLowerCase().includes('nothing') || userMessage.toLowerCase().includes('done')) {
         setIsCollectingAdditional(false);
         
-        // Show template information
+        // Show template information and immediately proceed to template selection
         setShowTemplateInfo(true);
-        addMessage('bot', "Perfect! I have all the information I need. Now, let me tell you about our resume templates before I generate your professional resume templates for you to choose from.");
         
-        addMessage('bot', `We offer several professional templates to showcase your experience:
-
-1. Modern Minimalist - Clean design perfect for tech and creative roles
-2. Traditional Corporate - Professional layout for corporate positions
-3. Executive Premium - Sophisticated design for leadership roles
-4. Technical Specialist - Optimized for technical positions
-5. Entry Level Fresh - Perfect for new graduates
-
-All templates are ATS-optimized to ensure your resume passes through applicant tracking systems. Would you like to see all templates or should I recommend the best one for your background?`, 
-        ['Show all templates', 'Recommend the best template', 'Continue to preview']);
+        // Immediately proceed to template selection without asking additional questions
+        setTimeout(() => {
+          onComplete(collectedData);
+          toast.success('Resume data collected successfully!', {
+            description: 'Now let\'s create your professional resume templates.'
+          });
+        }, 1500);
         
         setIsLoading(false);
         return;
