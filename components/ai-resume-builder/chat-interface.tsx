@@ -319,7 +319,7 @@ Would you like to edit another section? (Yes/No)`);
 
   const callGeminiAPI = async (userMessage: string) => {
     try {
-      const apiKey = 'AIzaSyCPbHe6MR9ThCTkdNJplT-ctkTyHmlO4-U';
+      const apiKey = 'AIzaSyBnrg6KZz3ydenm_6baXn1Pvqgeput4e-M';
       const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
       
       const prompt = `You are an AI Resume Assistant helping users build their resumes. Ask the user step-by-step questions to collect their resume details.
