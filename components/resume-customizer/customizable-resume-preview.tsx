@@ -196,7 +196,7 @@ export function ResumePreview({ data, settings }: ResumePreviewProps) {
             <h2 style={headingStyle}>{section.title}</h2>
             <div className={getSpacingClass()}>
               {data.workExperience.map((exp, index) => (
-                <div key={exp.dataId || index} className="mb-4">
+                <div key={exp.id || index} className="mb-4">
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <h3 
@@ -258,7 +258,7 @@ export function ResumePreview({ data, settings }: ResumePreviewProps) {
             <h2 style={headingStyle}>{section.title}</h2>
             <div className={getSpacingClass()}>
               {data.education.map((edu, index) => (
-                <div key={edu.dataId || index} className="mb-3">
+                <div key={edu.id || index} className="mb-3">
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 
@@ -303,7 +303,7 @@ export function ResumePreview({ data, settings }: ResumePreviewProps) {
             <h2 style={headingStyle}>{section.title}</h2>
             <div className={getSpacingClass()}>
               {section.customContent.items.map((item: any, index: number) => (
-                <div key={item.dataId || index} className="mb-3">
+                <div key={item.id || index} className="mb-3">
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 

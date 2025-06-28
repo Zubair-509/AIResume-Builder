@@ -142,7 +142,7 @@ export function ResumePreview({ data, template }: ResumePreviewProps) {
           <h2 className={styles.sectionTitle}>Work Experience</h2>
           <div className={styles.content}>
             {data.workExperience.map((exp, index) => (
-              <div key={exp.dataId || index} className="mb-4 last:mb-0">
+              <div key={exp.id || index} className="mb-4 last:mb-0">
                 <div className="flex justify-between items-start mb-2">
                   <div>
                     <h3 className="font-semibold text-gray-900">{exp.position || 'Position'}</h3>
@@ -175,7 +175,7 @@ export function ResumePreview({ data, template }: ResumePreviewProps) {
           <h2 className={styles.sectionTitle}>Education</h2>
           <div className={styles.content}>
             {data.education.map((edu, index) => (
-              <div key={edu.dataId || index} className="mb-3 last:mb-0">
+              <div key={edu.id || index} className="mb-3 last:mb-0">
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="font-semibold text-gray-900">

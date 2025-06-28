@@ -22,7 +22,7 @@ export function EducationForm({ control, errors }: EducationFormProps) {
 
   const addEducation = () => {
     append({
-      dataId: Date.now().toString(),
+      id: Date.now().toString(),
       institution: '',
       degree: '',
       fieldOfStudy: '',

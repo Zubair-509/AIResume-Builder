@@ -204,7 +204,7 @@ export function ResumeEditor({ resumeData, onSave, onClose, selectedTemplate }: 
   const addWorkExperience = () => {
     const workExp = currentData.workExperience || [];
     const newExp = {
-      dataId: Date.now().toString(),
+      id: Date.now().toString(),
       company: '',
       position: '',
       startDate: '',
@@ -241,7 +241,7 @@ export function ResumeEditor({ resumeData, onSave, onClose, selectedTemplate }: 
   const addEducation = () => {
     const education = currentData.education || [];
     const newEdu = {
-      dataId: Date.now().toString(),
+      id: Date.now().toString(),
       institution: '',
       degree: '',
       fieldOfStudy: '',
@@ -417,7 +417,7 @@ export function ResumeEditor({ resumeData, onSave, onClose, selectedTemplate }: 
         return (
           <div className="space-y-6">
             {(currentData.workExperience || []).map((exp, index) => (
-              <Card key={exp.dataId || index} className="border border-gray-200 dark:border-gray-700">
+              <Card key={exp.id || index} className="border border-gray-200 dark:border-gray-700">
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-base">Experience {index + 1}</CardTitle>
@@ -505,7 +505,7 @@ export function ResumeEditor({ resumeData, onSave, onClose, selectedTemplate }: 
         return (
           <div className="space-y-6">
             {(currentData.education || []).map((edu, index) => (
-              <Card key={edu.dataId || index} className="border border-gray-200 dark:border-gray-700">
+              <Card key={edu.id || index} className="border border-gray-200 dark:border-gray-700">
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-base">Education {index + 1}</CardTitle>
@@ -584,7 +584,7 @@ export function ResumeEditor({ resumeData, onSave, onClose, selectedTemplate }: 
               <div className="space-y-4">
                 <h5 className="font-medium text-gray-800 dark:text-gray-200">Certifications</h5>
                 {(currentData.certifications || []).map((cert, index) => (
-                  <Card key={cert.dataId || index} className="border border-gray-200 dark:border-gray-700">
+                  <Card key={cert.id || index} className="border border-gray-200 dark:border-gray-700">
                     <CardContent className="p-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
