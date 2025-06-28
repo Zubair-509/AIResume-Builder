@@ -20,8 +20,8 @@ const nextConfig = {
     serverComponentsExternalPackages: [],
     // Disable serverActions to fix syntax error
     serverActions: false,
-    // Optimize CSS loading
-    optimizeCss: true,
+    // Temporarily disable CSS optimization to prevent critters-related errors
+    // optimizeCss: true,
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
