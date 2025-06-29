@@ -35,6 +35,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { HTMLExporter } from '@/components/ui/html-exporter';
 import { ResumeFormData } from '@/lib/validations';
 import { toast } from 'sonner';
+import { exportResumeToPDF } from '@/lib/pdf-utils';
 
 interface CustomizationSettings {
   font: {
@@ -118,98 +119,28 @@ export function DownloadManager({ resumeData, customizationSettings, onSave }: D
     });
 
     try {
-      updateProgress(10, 'Loading PDF library...');
+      // Save resume data to session storage for export functionality
+      sessionStorage.setItem('resume-data', JSON.stringify(resumeData));
       
-      // Dynamically import html2pdf to avoid SSR issues
-      const html2pdf = (await import('html2pdf.js')).default;
-      
-      updateProgress(25, 'Preparing resume content...');
-      
-      // Find the resume preview element
-      const previewElement = document.querySelector('[data-resume-preview]') as HTMLElement;
-      
-      if (!previewElement) {
-        throw new Error('Resume preview element not found');
-      }
-
-      updateProgress(40, 'Optimizing layout...');
-
-      // Clone the element for PDF generation
-      const clonedElement = previewElement.cloneNode(true) as HTMLElement;
-      
-      // Apply PDF-specific styles
-      clonedElement.style.position = 'absolute';
-      clonedElement.style.left = '-9999px';
-      clonedElement.style.top = '0';
-      clonedElement.style.width = downloadSettings.pageSize === 'a4' ? '210mm' : '8.5in';
-      clonedElement.style.height = 'auto'; // Let height adjust automatically
-      clonedElement.style.minHeight = downloadSettings.pageSize === 'a4' ? '297mm' : '11in';
-      clonedElement.style.backgroundColor = downloadSettings.includeColors ? customizationSettings.colors.background : '#ffffff';
-      clonedElement.style.boxShadow = 'none';
-      clonedElement.style.transform = 'scale(1)';
-      clonedElement.style.transformOrigin = 'top left';
-      clonedElement.style.padding = '20px';
-      clonedElement.style.fontFamily = `"${customizationSettings.font.family}", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
-      
-      // Append to body for processing
-      document.body.appendChild(clonedElement);
-
-      updateProgress(60, 'Configuring PDF options...');
-
-      // Configure html2pdf options
-      const options = {
-        margin: [10, 10, 10, 10],
+      // Use the standardized export function
+      await exportResumeToPDF(resumeData, customizationSettings.layout.template, {
         filename: customFilename || generateFilename('pdf'),
-        image: { 
-          type: 'jpeg', 
-          quality: downloadSettings.quality === 'high' ? 1.0 : downloadSettings.quality === 'medium' ? 0.8 : 0.6
-        },
-        html2canvas: { 
-          scale: downloadSettings.quality === 'high' ? 2 : downloadSettings.quality === 'medium' ? 1.5 : 1,
-          useCORS: true,
-          letterRendering: true,
-          allowTaint: true,
-          backgroundColor: downloadSettings.includeColors ? customizationSettings.colors.background : '#ffffff',
-          width: downloadSettings.pageSize === 'a4' ? 794 : 816,
-          height: downloadSettings.pageSize === 'a4' ? 1123 : 1056,
-          logging: true
-        },
-        jsPDF: { 
-          unit: 'mm', 
-          format: downloadSettings.pageSize,
-          orientation: 'portrait',
-          compress: true
-        },
-        pagebreak: { 
-          mode: ['avoid-all', 'css', 'legacy'] 
+        pageSize: downloadSettings.pageSize as 'a4' | 'letter',
+        quality: downloadSettings.quality as 'high' | 'medium' | 'low',
+        includeBackground: downloadSettings.includeColors,
+        onProgress: (progress, stage) => {
+          updateProgress(progress, stage);
         }
-      };
-
-      updateProgress(80, 'Generating PDF...');
-
-      // Generate and download PDF
-      await html2pdf().set(options).from(clonedElement).save();
-      
-      updateProgress(100, 'Download complete!');
-      
-      // Clean up
-      document.body.removeChild(clonedElement);
-      
-      toast.success('PDF downloaded successfully!', {
-        description: `Your resume has been saved as ${options.filename}`,
-        duration: 5000
       });
 
       // Save download activity
       if (onSave) {
         await onSave(resumeData);
       }
-
     } catch (error) {
       console.error('PDF generation error:', error);
       toast.error('Failed to download PDF', {
         description: 'Please try again or contact support if the issue persists.',
-        duration: 5000
       });
     } finally {
       setTimeout(() => {

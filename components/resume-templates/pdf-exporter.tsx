@@ -4,13 +4,16 @@ import React, { useState } from 'react';
 import { ResumeFormData } from '@/lib/validations';
 import { Button } from '@/components/ui/button';
 import { Download, Loader2, FileText } from 'lucide-react';
-import { toast } from 'sonner';
 import { LoadingOverlay } from '@/components/ui/loading-overlay';
+import { exportResumeToPDF } from '@/lib/pdf-utils';
 
 interface PDFExporterProps {
   resumeData: ResumeFormData;
   templateId: string;
   filename?: string;
+  variant?: 'default' | 'outline' | 'secondary';
+  size?: 'default' | 'sm' | 'lg' | 'icon';
+  className?: string;
   onExportStart?: () => void;
   onExportComplete?: () => void;
   onExportError?: (error: Error) => void;
@@ -20,6 +23,9 @@ export function PDFExporter({
   resumeData, 
   templateId, 
   filename,
+  variant = 'default',
+  size = 'default',
+  className = '',
   onExportStart,
   onExportComplete,
   onExportError
@@ -40,66 +46,21 @@ export function PDFExporter({
       // Save resume data to session storage for export functionality
       sessionStorage.setItem('resume-data', JSON.stringify(resumeData));
       
-      // Dynamically import html2pdf to avoid SSR issues
-      const html2pdf = (await import('html2pdf.js')).default;
-      
-      // Find the resume template element
-      const templateElement = document.querySelector('[data-resume-template]') as HTMLElement;
-      
-      if (!templateElement) {
-        throw new Error('Resume template element not found');
-      }
-
-      // Clone the element for PDF generation
-      const clonedElement = templateElement.cloneNode(true) as HTMLElement;
-      
-      // Apply PDF-specific styles
-      clonedElement.style.position = 'absolute';
-      clonedElement.style.left = '-9999px';
-      clonedElement.style.top = '0';
-      clonedElement.style.width = '8.5in';
-      clonedElement.style.height = 'auto';
-      clonedElement.style.minHeight = '11in';
-      clonedElement.style.backgroundColor = 'white';
-      clonedElement.style.boxShadow = 'none';
-      clonedElement.style.transform = 'scale(1)';
-      clonedElement.style.transformOrigin = 'top left';
-      
-      // Remove any edit buttons
-      const editButtons = clonedElement.querySelectorAll('.print\\:hidden');
-      editButtons.forEach(button => button.remove());
-      
-      // Append to body for processing
-      document.body.appendChild(clonedElement);
-
-      // Configure html2pdf options
-      const options = {
-        margin: 0,
+      // Use the standardized export function
+      await exportResumeToPDF(resumeData, templateId, {
         filename: generateFilename(),
-        image: { type: 'jpeg', quality: 1 },
-        html2canvas: { 
-          scale: 2,
-          useCORS: true,
-          letterRendering: true,
-          allowTaint: false,
-          backgroundColor: '#ffffff'
+        pageSize: 'a4',
+        quality: 'high',
+        includeBackground: true,
+        onComplete: () => {
+          if (onExportComplete) onExportComplete();
         },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-      };
-
-      // Generate and download PDF
-      await html2pdf().set(options).from(clonedElement).save();
-      
-      // Clean up
-      document.body.removeChild(clonedElement);
-      
-      toast.success('PDF downloaded successfully!');
-      if (onExportComplete) onExportComplete();
-    } catch (error) {
-      console.error('PDF generation error:', error);
-      toast.error('Failed to generate PDF', {
-        description: 'Please try again or contact support if the issue persists.'
+        onError: (error) => {
+          if (onExportError) onExportError(error);
+        }
       });
+    } catch (error) {
+      console.error('PDF export error:', error);
       if (onExportError && error instanceof Error) onExportError(error);
     } finally {
       setIsExporting(false);
@@ -111,7 +72,9 @@ export function PDFExporter({
       <Button
         onClick={handleExport}
         disabled={isExporting}
-        className="bg-blue-600 hover:bg-blue-700 text-white"
+        variant={variant}
+        size={size}
+        className={className}
       >
         {isExporting ? (
           <>
@@ -129,7 +92,7 @@ export function PDFExporter({
       <LoadingOverlay 
         isLoading={isExporting} 
         message="Generating your PDF..." 
-        fullScreen={true} 
+        fullScreen={false} 
       />
     </>
   );
