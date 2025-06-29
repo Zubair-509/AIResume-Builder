@@ -385,7 +385,7 @@ export default function ContactPage() {
                     </Button>
                     
                     <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-                      By submitting this form, you agree to our <a href="/privacy-policy" className="text-blue-600 hover:underline">Privacy Policy</a> and <a href="/terms-of-service" className=\"text-blue-600 hover:underline">Terms of Service</a>.
+                      By submitting this form, you agree to our <a href="/privacy-policy" className="text-blue-600 hover:underline">Privacy Policy</a> and <a href="/terms-of-service" className="text-blue-600 hover:underline">Terms of Service</a>.
                     </p>
                   </form>
                 </CardContent>
