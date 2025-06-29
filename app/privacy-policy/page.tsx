@@ -368,6 +368,15 @@ export default function PrivacyPolicyPage() {
                 <p className="text-gray-700 dark:text-gray-300 mb-4">
                   For EU/EEA residents, we have appointed a data protection officer who can be contacted at <a href="mailto:dpo@snapcv.com" className="text-blue-600 hover:underline">dpo@snapcv.com</a>.
                 </p>
+                
+                <div className="mt-8">
+                  <Link href="/contact">
+                    <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                      <Mail className="w-4 h-4 mr-2" />
+                      Contact Us
+                    </Button>
+                  </Link>
+                </div>
               </div>
             </div>
           </motion.div>

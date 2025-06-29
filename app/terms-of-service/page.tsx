@@ -445,6 +445,15 @@ export default function TermsOfServicePage() {
                   <li><strong>Mail:</strong> SnapCV Legal Department, 123 Innovation Way, San Francisco, CA 94107, United States</li>
                   <li><strong>Phone:</strong> +1 (555) 123-4567</li>
                 </ul>
+                
+                <div className="mt-8">
+                  <Link href="/contact">
+                    <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                      <Mail className="w-4 h-4 mr-2" />
+                      Contact Us
+                    </Button>
+                  </Link>
+                </div>
               </div>
             </div>
           </motion.div>
