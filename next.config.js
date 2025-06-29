@@ -5,7 +5,7 @@ const nextConfig = {
   },
   images: { unoptimized: true },
   experimental: {
-    optimizePackageImports: ['framer-motion', 'lucide-react'],
+    optimizePackageImports: ['framer-motion'],
     // Enable faster builds and pre-compilation
     // Removed turbo configuration to fix TypeError: bindings.turbo.createProject is not a function
     // turbo: {
