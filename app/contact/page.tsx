@@ -11,12 +11,11 @@ import {
   Send, 
   Loader2, 
   CheckCircle, 
-  Clock,
+  AlertTriangle,
   MessageSquare,
   User,
   AtSign,
-  FileText,
-  AlertTriangle
+  FileText
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -88,9 +87,6 @@ export default function ContactPage() {
     setIsSubmitting(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
       // In a real implementation, you would send the form data to your backend
       // const response = await fetch('/api/contact', {
       //   method: 'POST',
@@ -99,6 +95,9 @@ export default function ContactPage() {
       // });
       
       // if (!response.ok) throw new Error('Failed to send message');
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
       setIsSuccess(true);
       toast.success('Message sent successfully!', {
@@ -156,7 +155,7 @@ export default function ContactPage() {
       {/* Contact Information */}
       <section className="py-16 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
             {/* Contact Cards */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -234,27 +233,6 @@ export default function ContactPage() {
                   </div>
                 </CardContent>
               </Card>
-              
-              <Card className="border-0 shadow-lg bg-white dark:bg-gray-800">
-                <CardContent className="p-6">
-                  <div className="flex items-start space-x-4">
-                    <div className="p-3 bg-orange-100 dark:bg-orange-900/20 rounded-full">
-                      <Clock className="w-6 h-6 text-orange-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                        Response Time
-                      </h3>
-                      <p className="text-gray-600 dark:text-gray-400 mb-2">
-                        We aim to respond to all inquiries within:
-                      </p>
-                      <p className="text-orange-600 dark:text-orange-400 font-medium">
-                        24-48 business hours
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
             </motion.div>
 
             {/* Contact Form */}
@@ -266,7 +244,7 @@ export default function ContactPage() {
             >
               <Card className="border-0 shadow-2xl bg-white dark:bg-gray-800 h-full">
                 <CardHeader>
-                  <CardTitle className="flex items-center text-2xl">
+                  <CardTitle className="flex items-center">
                     <MessageSquare className="w-6 h-6 mr-3 text-blue-600" />
                     Send Us a Message
                   </CardTitle>
@@ -385,7 +363,7 @@ export default function ContactPage() {
                     </Button>
                     
                     <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-                      By submitting this form, you agree to our <a href="/privacy-policy" className="text-blue-600 hover:underline">Privacy Policy</a> and <a href="/terms-of-service" className=\"text-blue-600 hover:underline">Terms of Service</a>.
+                      By submitting this form, you agree to our <a href="/privacy-policy" className="text-blue-600 hover:underline">Privacy Policy</a> and <a href="/terms-of-service" className="text-blue-600 hover:underline">Terms of Service</a>.
                     </p>
                   </form>
                 </CardContent>
