@@ -12,12 +12,14 @@ import {
   CheckCircle, 
   Building,
   Globe,
-  Briefcase
+  Briefcase,
+  Linkedin
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 export default function AboutPage() {
@@ -50,18 +52,21 @@ export default function AboutPage() {
       role: 'CEO & Co-Founder',
       bio: 'Former tech recruiter with 10+ years of experience helping professionals land their dream jobs.',
       avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2',
+      linkedin: 'https://linkedin.com/in/muhammadzubair'
     },
     {
       name: 'Sarhan Ahmed',
       role: 'CTO & Co-Founder',
       bio: 'AI specialist with a background in natural language processing and machine learning.',
       avatar: 'https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2',
+      linkedin: 'https://linkedin.com/in/sarhanahmed'
     },
     {
       name: 'Abdul Hannan',
       role: 'Head of Design',
       bio: 'Award-winning UX designer focused on creating beautiful, functional user experiences.',
       avatar: 'https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2',
+      linkedin: 'https://linkedin.com/in/abdulhannan'
     }
   ];
 
@@ -259,9 +264,26 @@ export default function AboutPage() {
                     <p className="text-blue-600 dark:text-blue-400 font-medium mb-4">
                       {member.role}
                     </p>
-                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
                       {member.bio}
                     </p>
+                    
+                    {/* LinkedIn Button */}
+                    <a 
+                      href={member.linkedin} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="mt-auto"
+                    >
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex items-center space-x-2 border-blue-300 text-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-900/20"
+                      >
+                        <Linkedin className="w-4 h-4" />
+                        <span>Connect on LinkedIn</span>
+                      </Button>
+                    </a>
                   </CardContent>
                 </Card>
               </motion.div>
