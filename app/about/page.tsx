@@ -46,28 +46,22 @@ export default function AboutPage() {
 
   const teamMembers = [
     {
-      name: 'Sarah Chen',
+      name: 'Muhammad Zubair',
       role: 'CEO & Co-Founder',
       bio: 'Former tech recruiter with 10+ years of experience helping professionals land their dream jobs.',
-      avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2',
+      avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2',
     },
     {
-      name: 'Michael Rodriguez',
+      name: 'Sarhan Ahmed',
       role: 'CTO & Co-Founder',
       bio: 'AI specialist with a background in natural language processing and machine learning.',
-      avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2',
+      avatar: 'https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2',
     },
     {
-      name: 'Emily Johnson',
+      name: 'Abdul Hannan',
       role: 'Head of Design',
       bio: 'Award-winning UX designer focused on creating beautiful, functional user experiences.',
-      avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2',
-    },
-    {
-      name: 'David Kim',
-      role: 'Lead Developer',
-      bio: 'Full-stack engineer specializing in scalable web applications and performance optimization.',
-      avatar: 'https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2',
+      avatar: 'https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2',
     }
   ];
 
@@ -262,7 +256,7 @@ export default function AboutPage() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
           >
             {teamMembers.map((member, index) => (
               <motion.div
