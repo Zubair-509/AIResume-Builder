@@ -15,12 +15,6 @@ export function Footer() {
       { name: 'Examples', href: '/resume-example' },
       { name: 'Pricing', href: '/pricing' }
     ],
-    resources: [
-      { name: 'Career Tips', href: '/blog' },
-      { name: 'Resume Guide', href: '/guide' },
-      { name: 'Interview Prep', href: '/interview' },
-      { name: 'Job Search', href: '/jobs' }
-    ],
     company: [
       { name: 'About Us', href: '/about' },
       { name: 'Contact', href: '/contact' },
@@ -88,7 +82,7 @@ export function Footer() {
           </motion.div>
 
           {/* Links Sections */}
-          <div className="lg:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="lg:col-span-3 grid grid-cols-2 md:grid-cols-3 gap-8">
             {Object.entries(footerLinks).map(([category, links], index) => (
               <motion.div
                 key={category}
