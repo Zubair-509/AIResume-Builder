@@ -21,9 +21,8 @@ export function Footer() {
       { name: 'Terms of Service', href: '/terms-of-service' }
     ],
     support: [
-      { name: 'Help Center', href: '/help' },
       { name: 'FAQ', href: '/faq' },
-      { name: 'Status', href: '/status' }
+      { name: 'Contact Support', href: '/support' }
     ]
   };
 
