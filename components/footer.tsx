@@ -17,14 +17,12 @@ export function Footer() {
     ],
     company: [
       { name: 'About Us', href: '/about' },
-      { name: 'Contact', href: '/contact' },
       { name: 'Privacy Policy', href: '/privacy-policy' },
       { name: 'Terms of Service', href: '/terms-of-service' }
     ],
     support: [
       { name: 'Help Center', href: '/help' },
       { name: 'FAQ', href: '/faq' },
-      { name: 'Contact Support', href: '/support' },
       { name: 'Status', href: '/status' }
     ]
   };
