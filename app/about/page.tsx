@@ -67,29 +67,9 @@ export default function AboutPage() {
 
   const milestones = [
     {
-      year: '2022',
+      year: '2025',
       title: 'Company Founded',
       description: 'SnapCV was founded with a mission to revolutionize the resume creation process using AI technology.'
-    },
-    {
-      year: '2023',
-      title: 'First 10,000 Users',
-      description: 'Reached our first major milestone of 10,000 active users and launched our premium subscription model.'
-    },
-    {
-      year: '2023',
-      title: 'AI Enhancement Engine',
-      description: 'Released our proprietary AI enhancement engine, capable of transforming basic bullet points into compelling achievements.'
-    },
-    {
-      year: '2024',
-      title: 'Series A Funding',
-      description: 'Secured $5M in Series A funding to expand our team and develop advanced resume optimization features.'
-    },
-    {
-      year: '2024',
-      title: '50,000+ Users',
-      description: 'Surpassed 50,000 users worldwide with a 95% satisfaction rate and industry-leading ATS optimization.'
     }
   ];
 
