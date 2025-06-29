@@ -130,7 +130,7 @@ export default function FAQPage() {
     {
       id: '14',
       question: 'How do I contact customer support?',
-      answer: 'You can contact our customer support team by visiting our Contact Support page. We aim to respond to all inquiries within 24-48 hours during business days.',
+      answer: 'You can contact our customer support team by emailing support@snapcv.com. We aim to respond to all inquiries within 24-48 hours during business days.',
       category: 'general'
     },
     {
@@ -383,34 +383,6 @@ export default function FAQPage() {
                 </Button>
               </div>
             )}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Still Need Help */}
-      <section className="py-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-purple-900/20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-            className="text-center"
-          >
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-              Still Have Questions?
-            </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
-              If you couldn't find the answer you were looking for, our support team is here to help.
-            </p>
-            <Link href="/support">
-              <Button 
-                size="lg" 
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-lg"
-              >
-                <Zap className="w-5 h-5 mr-2" />
-                Contact Support
-              </Button>
-            </Link>
           </motion.div>
         </div>
       </section>
