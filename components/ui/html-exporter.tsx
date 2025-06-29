@@ -1,31 +1,31 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Globe, Download, Loader2, CheckCircle, AlertCircle, Copy, Code } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Globe, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ResumeFormData } from '@/lib/validations';
+import { findResumeElement } from '@/lib/pdf-utils';
 
 interface HTMLExporterProps {
-  templateId: string;
   resumeData: ResumeFormData;
+  templateId: string;
   customizationSettings?: any;
-  className?: string;
-  variant?: 'default' | 'outline' | 'secondary' | 'ghost' | 'link' | 'destructive';
+  variant?: 'default' | 'outline' | 'secondary';
   size?: 'default' | 'sm' | 'lg' | 'icon';
+  className?: string;
   onExportStart?: () => void;
   onExportComplete?: () => void;
   onExportError?: (error: Error) => void;
 }
 
 export function HTMLExporter({
-  templateId,
   resumeData,
+  templateId,
   customizationSettings,
-  className = '',
   variant = 'outline',
   size = 'default',
+  className = '',
   onExportStart,
   onExportComplete,
   onExportError
@@ -38,272 +38,203 @@ export function HTMLExporter({
     return `${name}_${templateId}_${date}.html`;
   };
 
-  const formatHTML = (html: string): string => {
-    // Simple HTML formatting with proper indentation
-    let formatted = '';
-    let indent = 0;
-    
-    // Split by tags
-    const tokens = html.split(/(<\/?[^>]+>)/g);
-    
-    for (let token of tokens) {
-      if (!token.trim()) continue;
-      
-      // Check if it's a closing tag
-      if (token.match(/<\//)) {
-        indent--;
-        formatted += '  '.repeat(Math.max(0, indent)) + token + '\n';
-      }
-      // Check if it's an opening tag
-      else if (token.match(/<[^\/]/)) {
-        formatted += '  '.repeat(indent) + token + '\n';
-        // Don't increase indent for self-closing tags
-        if (!token.match(/\/>/)) {
-          indent++;
-        }
-      }
-      // Text content
-      else {
-        formatted += '  '.repeat(indent) + token + '\n';
-      }
-    }
-    
-    return formatted;
-  };
-
-  const addHTMLHeader = (html: string): string => {
-    const header = `<!--
-  Template: ${templateId}
-  Generated on: ${new Date().toLocaleString()}
-  
-  USAGE INSTRUCTIONS:
-  1. This HTML file contains a complete, standalone resume
-  2. All styles are included inline for maximum compatibility
-  3. You can modify the HTML directly to update content
-  4. For best results, use a modern browser to view and print
-  5. To print: Open in browser, press Ctrl+P (or Cmd+P on Mac)
-  
-  Created with SnapCV - https://snapcv.com
--->`;
-
-    return header + '\n\n' + html;
-  };
-
-  const generateCompleteHTML = (templateHTML: string): string => {
-    // Create a complete, standalone HTML document
-    return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${resumeData.fullName || 'Resume'} - ${templateId} Template</title>
-  <style>
-    /* Reset CSS */
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    
-    body {
-      font-family: ${customizationSettings?.font?.family || 'Arial'}, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      line-height: 1.5;
-      color: ${customizationSettings?.colors?.text || '#1f2937'};
-      background-color: #f9fafb;
-      padding: 2rem;
-    }
-    
-    .resume-container {
-      max-width: 8.5in;
-      margin: 0 auto;
-      background-color: ${customizationSettings?.colors?.background || '#ffffff'};
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-      padding: 2rem;
-      position: relative;
-    }
-    
-    h1, h2, h3, h4, h5, h6 {
-      color: ${customizationSettings?.colors?.primary || '#2563eb'};
-      margin-bottom: 0.5rem;
-    }
-    
-    h1 {
-      font-size: ${customizationSettings?.font?.sizes?.heading || '24'}px;
-    }
-    
-    h2 {
-      font-size: ${customizationSettings?.font?.sizes?.subheading || '18'}px;
-      border-bottom: 1px solid ${customizationSettings?.colors?.primary || '#2563eb'}20;
-      padding-bottom: 0.25rem;
-      margin-bottom: 1rem;
-    }
-    
-    p {
-      margin-bottom: 0.75rem;
-    }
-    
-    .section {
-      margin-bottom: 1.5rem;
-    }
-    
-    .skill-tag {
-      display: inline-block;
-      background-color: ${customizationSettings?.colors?.accent || '#7c3aed'}20;
-      color: ${customizationSettings?.colors?.accent || '#7c3aed'};
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.875rem;
-      margin-right: 0.5rem;
-      margin-bottom: 0.5rem;
-    }
-    
-    .experience-item, .education-item {
-      margin-bottom: 1rem;
-    }
-    
-    .experience-header, .education-header {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 0.5rem;
-    }
-    
-    .company, .institution {
-      color: ${customizationSettings?.colors?.accent || '#7c3aed'};
-      font-weight: 500;
-    }
-    
-    .date {
-      color: ${customizationSettings?.colors?.secondary || '#64748b'};
-      font-size: 0.875rem;
-    }
-    
-    .responsibilities {
-      padding-left: 1.25rem;
-    }
-    
-    .responsibilities p {
-      position: relative;
-      padding-left: 1rem;
-    }
-    
-    .responsibilities p::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0.6rem;
-      width: 0.375rem;
-      height: 0.375rem;
-      border-radius: 50%;
-      background-color: ${customizationSettings?.colors?.primary || '#2563eb'};
-    }
-    
-    @media print {
-      body {
-        background: white;
-        padding: 0;
-      }
-      
-      .resume-container {
-        box-shadow: none;
-        padding: 0.5in;
-      }
-      
-      @page {
-        size: letter;
-        margin: 0;
-      }
-    }
-    
-    @media screen and (max-width: 600px) {
-      body {
-        padding: 1rem;
-      }
-      
-      .resume-container {
-        padding: 1rem;
-      }
-      
-      .experience-header, .education-header {
-        flex-direction: column;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="resume-container">
-    ${templateHTML}
-  </div>
-  <script>
-    // Simple print functionality
-    function printResume() {
-      window.print();
-    }
-    
-    // Add any additional JavaScript functionality here
-    console.log('Resume loaded successfully');
-  </script>
-</body>
-</html>`;
-  };
-
-  const handleExportHTML = async () => {
+  const handleExport = async () => {
     setIsExporting(true);
     if (onExportStart) onExportStart();
     
     try {
-      // Find the resume template element
-      const templateElement = document.querySelector('[data-resume-template]') || 
-                             document.querySelector('[data-resume-preview]');
+      // Save resume data to session storage
+      sessionStorage.setItem('resume-data', JSON.stringify(resumeData));
       
-      if (!templateElement) {
-        throw new Error('Resume template element not found');
+      // Find the resume element
+      const resumeElement = findResumeElement();
+      
+      if (!resumeElement) {
+        throw new Error('Resume element not found');
       }
 
-      // Get the HTML content
-      let htmlContent = templateElement.outerHTML;
-      
-      // Remove any edit buttons or UI controls
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = htmlContent;
-      
-      const editButtons = tempDiv.querySelectorAll('.print\\:hidden, [data-print-hide]');
-      editButtons.forEach(button => button.remove());
-      
-      // Get the cleaned HTML
-      htmlContent = tempDiv.innerHTML;
-      
-      // Format and add header
-      const formattedHTML = formatHTML(htmlContent);
-      const htmlWithHeader = addHTMLHeader(formattedHTML);
-      
-      // Generate complete HTML document
-      const completeHTML = generateCompleteHTML(htmlWithHeader);
-      
+      // Create complete HTML document with proper styling
+      const htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${resumeData.fullName} - ${resumeData.jobTitle} Resume</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: ${customizationSettings?.font?.family || 'Arial'}, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            line-height: 1.6;
+            color: ${customizationSettings?.colors?.text || '#1f2937'};
+            background-color: ${customizationSettings?.colors?.background || '#ffffff'};
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Print optimization */
+        @media print {
+            body {
+                width: 210mm;
+                height: 297mm;
+                margin: 0;
+                padding: 0;
+                background: white;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .no-print {
+                display: none !important;
+            }
+            
+            .page-break {
+                page-break-before: always;
+            }
+            
+            .avoid-break {
+                page-break-inside: avoid;
+            }
+        }
+        
+        /* Resume container */
+        .resume-container {
+            background: ${customizationSettings?.colors?.background || '#ffffff'};
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        /* Typography */
+        h1 {
+            font-size: ${customizationSettings?.font?.sizes?.heading || '24'}px;
+            color: ${customizationSettings?.colors?.primary || '#2563eb'};
+            margin-bottom: 8px;
+        }
+        
+        h2 {
+            font-size: ${customizationSettings?.font?.sizes?.subheading || '18'}px;
+            color: ${customizationSettings?.colors?.primary || '#2563eb'};
+            margin-bottom: 12px;
+            padding-bottom: 4px;
+            border-bottom: 2px solid ${customizationSettings?.colors?.primary || '#2563eb'}20;
+        }
+        
+        h3 {
+            font-size: ${customizationSettings?.font?.sizes?.body || '14'}px;
+            font-weight: bold;
+            color: ${customizationSettings?.colors?.text || '#1f2937'};
+            margin-bottom: 4px;
+        }
+        
+        p, li {
+            font-size: ${customizationSettings?.font?.sizes?.body || '14'}px;
+            margin-bottom: 8px;
+        }
+        
+        /* Utility classes */
+        .section {
+            margin-bottom: 24px;
+        }
+        
+        .skill-tag {
+            display: inline-block;
+            background-color: ${customizationSettings?.colors?.accent || '#7c3aed'}20;
+            color: ${customizationSettings?.colors?.accent || '#7c3aed'};
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: ${customizationSettings?.font?.sizes?.small || '12'}px;
+            margin: 2px 4px 2px 0;
+        }
+        
+        /* Print button */
+        .print-button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: ${customizationSettings?.colors?.primary || '#2563eb'};
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .print-button:hover {
+            background-color: ${customizationSettings?.colors?.primary || '#2563eb'}dd;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            h1 {
+                font-size: ${Math.max(20, (customizationSettings?.font?.sizes?.heading || 24) - 4)}px;
+            }
+            h2 {
+                font-size: ${Math.max(16, (customizationSettings?.font?.sizes?.subheading || 18) - 2)}px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Resume Content -->
+    <div class="resume-container">
+        ${resumeElement.innerHTML}
+    </div>
+    
+    <!-- Print Button (visible only in browser) -->
+    <button class="print-button no-print" onclick="window.print()">
+        Print Resume
+    </button>
+    
+    <script>
+        // Simple script to enable printing
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Resume HTML loaded successfully');
+            
+            // Remove any edit buttons or UI controls
+            const editButtons = document.querySelectorAll('.print\\:hidden');
+            editButtons.forEach(button => button.remove());
+        });
+    </script>
+</body>
+</html>`;
+
       // Create blob and download
-      const blob = new Blob([completeHTML], { type: 'text/html;charset=utf-8' });
+      const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.download = generateFilename();
-      
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
       
       toast.success('HTML exported successfully!', {
-        description: `Your resume has been saved as ${link.download}`,
-        duration: 5000
+        description: 'Your resume has been downloaded as an HTML file.'
       });
-
+      
       if (onExportComplete) onExportComplete();
     } catch (error) {
       console.error('HTML export error:', error);
       toast.error('Failed to export HTML', {
-        description: 'Please try again or contact support if the issue persists.',
-        duration: 5000
+        description: 'Please try again or contact support if the issue persists.'
       });
-      if (onExportError && error instanceof Error) onExportError(error);
+      
+      if (error instanceof Error && onExportError) {
+        onExportError(error);
+      }
     } finally {
       setIsExporting(false);
     }
@@ -311,17 +242,16 @@ export function HTMLExporter({
 
   return (
     <Button
-      onClick={handleExportHTML}
+      onClick={handleExport}
       disabled={isExporting}
       variant={variant}
       size={size}
       className={className}
-      aria-label="Export resume as HTML"
     >
       {isExporting ? (
         <>
           <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-          Exporting...
+          Exporting HTML...
         </>
       ) : (
         <>
@@ -332,5 +262,3 @@ export function HTMLExporter({
     </Button>
   );
 }
-
-export default HTMLExporter;
