@@ -5,9 +5,14 @@ import { FileText, Mail, Phone, MapPin, Github, Twitter, Linkedin, ArrowRight } 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import { useState } from 'react';
+import { toast } from 'sonner';
 import Link from 'next/link';
 
 export function Footer() {
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const footerLinks = {
     product: [
       { name: 'Resume Builder', href: '/resume-builder' },
@@ -21,8 +26,7 @@ export function Footer() {
       { name: 'Terms of Service', href: '/terms-of-service' }
     ],
     support: [
-      { name: 'FAQ', href: '/faq' },
-      { name: 'Contact Support', href: '/support' }
+      { name: 'FAQ', href: '/faq' }
     ]
   };
 
@@ -31,6 +35,46 @@ export function Footer() {
     { name: 'LinkedIn', icon: Linkedin, href: '#' },
     { name: 'GitHub', icon: Github, href: '#' }
   ];
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email.trim()) {
+      toast.error('Please enter your email address');
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      const response = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        toast.success('Successfully subscribed!', {
+          description: 'Thank you for subscribing to our newsletter.'
+        });
+        setEmail('');
+      } else {
+        toast.error('Subscription failed', {
+          description: data.message || 'Please try again later.'
+        });
+      }
+    } catch (error) {
+      toast.error('Subscription failed', {
+        description: 'An error occurred. Please try again later.'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <footer className="bg-gray-900 text-white">
@@ -124,17 +168,34 @@ export function Footer() {
               </p>
             </div>
             <div className="mt-6 lg:mt-0 lg:ml-8">
-              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
+              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
                 <Input
                   type="email"
                   placeholder="Enter your email"
                   className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-blue-500"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isSubmitting}
+                  required
                 />
-                <Button className="bg-blue-600 hover:bg-blue-700 px-6">
-                  Subscribe
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                <Button 
+                  type="submit" 
+                  className="bg-blue-600 hover:bg-blue-700 px-6"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <div className="flex items-center">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                      <span>Subscribing...</span>
+                    </div>
+                  ) : (
+                    <>
+                      Subscribe
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </>
+                  )}
                 </Button>
-              </div>
+              </form>
             </div>
           </div>
         </motion.div>

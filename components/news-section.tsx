@@ -5,9 +5,15 @@ import { Calendar, ArrowRight, TrendingUp, Award, Users } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useState } from 'react';
+import { toast } from 'sonner';
 import Link from 'next/link';
 
 export function NewsSection() {
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const news = [
     {
       id: 1,
@@ -61,6 +67,46 @@ export function NewsSection() {
       color: 'text-blue-600'
     }
   ];
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email.trim()) {
+      toast.error('Please enter your email address');
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      const response = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        toast.success('Successfully subscribed!', {
+          description: 'Thank you for subscribing to our newsletter.'
+        });
+        setEmail('');
+      } else {
+        toast.error('Subscription failed', {
+          description: data.message || 'Please try again later.'
+        });
+      }
+    } catch (error) {
+      toast.error('Subscription failed', {
+        description: 'An error occurred. Please try again later.'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -220,12 +266,34 @@ export function NewsSection() {
                 <p className="text-blue-100 mb-4 text-sm">
                   Get the latest updates, tips, and career insights delivered to your inbox.
                 </p>
-                <Button 
-                  className="w-full bg-white text-blue-600 hover:bg-gray-100"
-                  size="sm"
-                >
-                  Subscribe to Newsletter
-                </Button>
+                <form onSubmit={handleSubscribe}>
+                  <div className="space-y-3">
+                    <Input
+                      type="email"
+                      placeholder="Your email address"
+                      className="bg-white/10 border-white/20 text-white placeholder-white/60 focus:border-white"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      disabled={isSubmitting}
+                      required
+                    />
+                    <Button 
+                      type="submit"
+                      className="w-full bg-white text-blue-600 hover:bg-gray-100"
+                      size="sm"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <div className="flex items-center">
+                          <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2"></div>
+                          <span>Subscribing...</span>
+                        </div>
+                      ) : (
+                        <>Subscribe to Newsletter</>
+                      )}
+                    </Button>
+                  </div>
+                </form>
               </CardContent>
             </Card>
           </motion.div>

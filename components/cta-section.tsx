@@ -4,15 +4,61 @@ import { motion } from 'framer-motion';
 import { ArrowRight, CheckCircle, Zap, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { useState } from 'react';
+import { toast } from 'sonner';
 import Link from 'next/link';
 
 export function CTASection() {
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const benefits = [
     'AI-powered content generation',
     'ATS-optimized templates',
     'Multiple export formats',
     'Privacy & security guaranteed'
   ];
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email.trim()) {
+      toast.error('Please enter your email address');
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      const response = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        toast.success('Successfully subscribed!', {
+          description: 'Thank you for subscribing to our newsletter.'
+        });
+        setEmail('');
+      } else {
+        toast.error('Subscription failed', {
+          description: data.message || 'Please try again later.'
+        });
+      }
+    } catch (error) {
+      toast.error('Subscription failed', {
+        description: 'An error occurred. Please try again later.'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <section className="py-20 bg-white dark:bg-gray-800" id="get-started">
@@ -83,6 +129,41 @@ export function CTASection() {
                   View Examples
                 </Button>
               </Link>
+            </motion.div>
+
+            {/* Newsletter Signup */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="mt-8"
+            >
+              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 max-w-md">
+                <Input
+                  type="email"
+                  placeholder="Enter your email for updates"
+                  className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isSubmitting}
+                />
+                <Button 
+                  type="submit"
+                  variant="outline" 
+                  className="border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <div className="flex items-center">
+                      <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2"></div>
+                      <span>Subscribing...</span>
+                    </div>
+                  ) : (
+                    <>Subscribe</>
+                  )}
+                </Button>
+              </form>
             </motion.div>
 
             {/* Trust Indicators */}
