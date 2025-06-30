@@ -322,7 +322,10 @@ export function DownloadManager({ resumeData, customizationSettings, onSave }: D
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = customFilename || generateFilename('html');
+      
+      // Sanitize filename
+      const filename = customFilename || generateFilename('html');
+      link.download = filename.replace(/[/\\?%*:|"<>]/g, '-').replace(/\.{2,}/g, '.');
       
       updateProgress(90, 'Initiating download...');
       

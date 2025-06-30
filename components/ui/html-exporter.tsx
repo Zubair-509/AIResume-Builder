@@ -1,18 +1,19 @@
 'use client';
 
 import React, { useState } from 'react';
+import { ResumeFormData } from '@/lib/validations';
 import { Button } from '@/components/ui/button';
 import { Globe, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { findResumeElement } from '@/lib/pdf-utils';
 
 interface HTMLExporterProps {
-  resumeData: any;
+  resumeData: ResumeFormData;
   templateId: string;
   customizationSettings?: any;
   variant?: 'default' | 'outline' | 'secondary';
   size?: 'default' | 'sm' | 'lg' | 'icon';
   className?: string;
+  onExportStart?: () => void;
   onExportComplete?: () => void;
   onExportError?: (error: Error) => void;
 }
@@ -24,6 +25,7 @@ export function HTMLExporter({
   variant = 'outline',
   size = 'default',
   className = '',
+  onExportStart,
   onExportComplete,
   onExportError
 }: HTMLExporterProps) {
@@ -43,18 +45,20 @@ export function HTMLExporter({
 
   const handleExport = async () => {
     setIsExporting(true);
+    if (onExportStart) onExportStart();
     
     try {
       // Find the resume element
-      const resumeElement = findResumeElement();
+      const previewElement = document.querySelector('[data-resume-preview]') || 
+                             document.querySelector('[data-template-id]') || 
+                             document.querySelector('[data-resume-template]');
       
-      if (!resumeElement) {
-        throw new Error('Resume element not found');
+      if (!previewElement) {
+        throw new Error('Resume preview element not found');
       }
-      
+
       // Create complete HTML document
-      const fontFamily = customizationSettings?.font?.family || 'Inter';
-      const primaryColor = customizationSettings?.colors?.primary || '#2563eb';
+      const fontFamily = customizationSettings?.font?.family || 'Arial, sans-serif';
       const textColor = customizationSettings?.colors?.text || '#1f2937';
       const backgroundColor = customizationSettings?.colors?.background || '#ffffff';
       
@@ -64,12 +68,8 @@ export function HTMLExporter({
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${resumeData.fullName || 'Resume'} - ${templateId.charAt(0).toUpperCase() + templateId.slice(1)} Template</title>
-    <meta name="description" content="Professional resume for ${resumeData.fullName || 'candidate'}">
-    <meta name="author" content="${resumeData.fullName || 'Resume Author'}">
-    <meta name="generator" content="SnapCV">
+    <title>${resumeData.fullName} - Resume</title>
     <style>
-        /* Reset and base styles */
         * {
             margin: 0;
             padding: 0;
@@ -91,31 +91,6 @@ export function HTMLExporter({
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
             border-radius: 8px;
             overflow: hidden;
-            position: relative;
-        }
-        
-        h1 {
-            color: ${primaryColor};
-            margin-bottom: 8px;
-        }
-        
-        h2 {
-            color: ${primaryColor};
-            margin-bottom: 12px;
-            padding-bottom: 4px;
-            border-bottom: 2px solid ${primaryColor}20;
-        }
-        
-        h3 {
-            margin-bottom: 4px;
-        }
-        
-        p, li {
-            margin-bottom: 8px;
-        }
-        
-        .section {
-            margin-bottom: 24px;
         }
         
         @media print {
@@ -137,10 +112,13 @@ export function HTMLExporter({
 </head>
 <body>
     <div class="resume-container">
-        ${resumeElement.outerHTML}
+        ${previewElement.innerHTML}
     </div>
     
     <script>
+        // Add any interactive functionality here
+        console.log('Resume loaded successfully');
+        
         // Print functionality
         function printResume() {
             window.print();
@@ -160,6 +138,7 @@ export function HTMLExporter({
       const link = document.createElement('a');
       link.href = url;
       link.download = sanitizeFilename(generateFilename());
+      
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -170,22 +149,15 @@ export function HTMLExporter({
         duration: 5000
       });
 
-      if (onExportComplete) {
-        onExportComplete();
-      }
+      if (onExportComplete) onExportComplete();
     } catch (error) {
       console.error('HTML generation error:', error);
-      
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      
       toast.error('Failed to download HTML', {
-        description: 'Please try again or contact support if the issue persists.',
+        description: error instanceof Error ? error.message : 'Please try again or contact support if the issue persists.',
         duration: 5000
       });
       
-      if (onExportError && error instanceof Error) {
-        onExportError(error);
-      }
+      if (onExportError && error instanceof Error) onExportError(error);
     } finally {
       setIsExporting(false);
     }

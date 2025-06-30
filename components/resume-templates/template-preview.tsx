@@ -5,7 +5,7 @@ import { ResumeFormData } from '@/lib/validations';
 import { TemplateRenderer } from './template-renderer';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Eye, Edit, Globe, Download } from 'lucide-react';
+import { CheckCircle, Eye, Edit, Globe, Download, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LivePreview } from '@/components/ui/live-preview';
 import { LoadingOverlay } from '@/components/ui/loading-overlay';
@@ -13,6 +13,7 @@ import { PDFExporter } from './pdf-exporter';
 import { HTMLExporter } from '@/components/ui/html-exporter';
 import Link from 'next/link';
 import { toast } from 'sonner';
+import { exportResumeToPDF } from '@/lib/pdf-utils';
 
 interface TemplatePreviewProps {
   templateId: string;
@@ -31,6 +32,7 @@ export function TemplatePreview({
 }: TemplatePreviewProps) {
   const [showPreview, setShowPreview] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   
   const templates = {
     'modern': { name: 'Modern', description: 'Clean, contemporary design with blue accents' },
@@ -65,6 +67,25 @@ export function TemplatePreview({
         description: 'Your resume has been prepared for download'
       });
     }, 1000);
+  };
+
+  const handleExportPDF = async () => {
+    setIsExporting(true);
+    try {
+      // Save resume data to session storage for export functionality
+      sessionStorage.setItem('resume-data', JSON.stringify(data));
+      
+      await exportResumeToPDF(data, templateId, {
+        quality: 'high',
+        pageSize: 'a4',
+        includeBackground: true
+      });
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error('Failed to export resume');
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   // Save resume data to session storage for edit functionality
@@ -162,10 +183,23 @@ export function TemplatePreview({
                   </Button>
                 </Link>
                 
-                <PDFExporter
-                  resumeData={data}
-                  templateId={templateId}
-                />
+                <Button
+                  onClick={handleExportPDF}
+                  disabled={isExporting}
+                  className="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white"
+                >
+                  {isExporting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Generating PDF...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-4 h-4 mr-2" />
+                      Download PDF
+                    </>
+                  )}
+                </Button>
                 
                 <HTMLExporter
                   resumeData={data}

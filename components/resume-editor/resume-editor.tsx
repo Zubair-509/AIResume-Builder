@@ -35,6 +35,7 @@ import { HTMLExporter } from '@/components/ui/html-exporter';
 import { AutoSaveManager } from './auto-save-manager';
 import { LivePreview } from '@/components/ui/live-preview';
 import { toast } from 'sonner';
+import { exportResumeToPDF } from '@/lib/pdf-utils';
 
 interface CustomizationSettings {
   font: {
@@ -89,6 +90,7 @@ export function ResumeEditor({
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [history, setHistory] = useState<ResumeFormData[]>([initialData]);
   const [historyIndex, setHistoryIndex] = useState(0);
+  const [isExporting, setIsExporting] = useState(false);
 
   const form = useForm<ResumeFormData>({
     resolver: zodResolver(resumeFormSchema),
@@ -105,7 +107,7 @@ export function ResumeEditor({
     
     setIsSaving(true);
     try {
-      // Simulate auto-save to localStorage or API
+      // Save to localStorage
       localStorage.setItem('resume-draft', JSON.stringify(data));
       setLastSaved(new Date());
       setHasUnsavedChanges(false);
@@ -200,6 +202,28 @@ export function ResumeEditor({
       }
     };
     onUpdateCustomization(updatedSettings);
+  };
+
+  const handleExportPDF = async () => {
+    setIsExporting(true);
+    try {
+      await exportResumeToPDF(formData, customizationSettings.layout.template, {
+        quality: 'high',
+        pageSize: 'a4',
+        includeBackground: true,
+        onComplete: () => {
+          if (onExport) {
+            const filename = `${formData.fullName?.replace(/\s+/g, '_') || 'Resume'}_${customizationSettings.layout.template}_${new Date().toISOString().split('T')[0]}.pdf`;
+            onExport(formData, filename);
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error('Failed to export resume');
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   return (
@@ -452,12 +476,23 @@ export function ResumeEditor({
                     )}
                   </Button>
                   
-                  <HTMLExporter
-                    resumeData={formData}
-                    templateId={customizationSettings.layout.template}
-                    customizationSettings={customizationSettings}
-                    className="h-12 border-2 border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
-                  />
+                  <Button
+                    onClick={handleExportPDF}
+                    disabled={isExporting}
+                    className="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white h-12"
+                  >
+                    {isExporting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Exporting...
+                      </>
+                    ) : (
+                      <>
+                        <Download className="w-4 h-4 mr-2" />
+                        Download PDF
+                      </>
+                    )}
+                  </Button>
                 </div>
                 
                 <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg text-sm text-gray-600 dark:text-gray-400">
