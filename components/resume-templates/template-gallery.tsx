@@ -14,7 +14,6 @@ import { Download, Eye, FileText, CheckCircle, Info, Code } from 'lucide-react';
 import { LivePreview } from '@/components/ui/live-preview';
 import Link from 'next/link';
 import { toast } from 'sonner';
-import { exportResumeToPDF } from '@/lib/pdf-utils';
 
 interface TemplateGalleryProps {
   resumeData?: ResumeFormData;
@@ -25,7 +24,6 @@ export function TemplateGallery({ resumeData, onTemplateSelect }: TemplateGaller
   const [selectedTemplate, setSelectedTemplate] = useState('modern');
   const [previewTemplate, setPreviewTemplate] = useState<string | null>(null);
   const [showAtsInfo, setShowAtsInfo] = useState(false);
-  const [isExporting, setIsExporting] = useState(false);
 
   // Sample resume data if none is provided
   const sampleData: ResumeFormData = resumeData || {
@@ -100,25 +98,6 @@ export function TemplateGallery({ resumeData, onTemplateSelect }: TemplateGaller
     toast.error('Failed to download resume', {
       description: error.message
     });
-  };
-
-  const handleExportPDF = async () => {
-    setIsExporting(true);
-    try {
-      // Save resume data to session storage for export functionality
-      sessionStorage.setItem('resume-data', JSON.stringify(resumeData || sampleData));
-      
-      await exportResumeToPDF(resumeData || sampleData, selectedTemplate, {
-        quality: 'high',
-        pageSize: 'a4',
-        includeBackground: true
-      });
-    } catch (error) {
-      console.error('Export error:', error);
-      toast.error('Failed to export resume');
-    } finally {
-      setIsExporting(false);
-    }
   };
 
   // Save resume data to session storage for edit functionality
@@ -279,24 +258,12 @@ export function TemplateGallery({ resumeData, onTemplateSelect }: TemplateGaller
           </Button>
         </Link>
         
-        <Button
-          onClick={handleExportPDF}
-          disabled={isExporting}
-          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-          size="lg"
-        >
-          {isExporting ? (
-            <>
-              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-              Generating PDF...
-            </>
-          ) : (
-            <>
-              <Download className="w-5 h-5 mr-2" />
-              Download PDF
-            </>
-          )}
-        </Button>
+        <PDFExporter
+          resumeData={resumeData || sampleData}
+          templateId={selectedTemplate}
+          onExportComplete={handleExportComplete}
+          onExportError={handleExportError}
+        />
         
         <HTMLExporter
           resumeData={resumeData || sampleData}

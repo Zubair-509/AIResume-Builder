@@ -48,31 +48,6 @@ export function TemplateSelector({
       label: 'Compact',
       description: 'Condensed layout with efficient spacing',
     },
-    {
-      value: 'professional',
-      label: 'Professional',
-      description: 'Clean, corporate design for traditional industries',
-    },
-    {
-      value: 'executive',
-      label: 'Executive',
-      description: 'Sophisticated layout for senior positions',
-    },
-    {
-      value: 'technical',
-      label: 'Technical',
-      description: 'Optimized for technical and engineering roles',
-    },
-    {
-      value: 'creative',
-      label: 'Creative',
-      description: 'Stylish design for creative industries',
-    },
-    {
-      value: 'entry-level',
-      label: 'Entry Level',
-      description: 'Perfect for new graduates and career starters',
-    }
   ];
 
   const generateFileName = () => {
@@ -84,6 +59,7 @@ export function TemplateSelector({
 
   const handleDownloadPDF = async () => {
     setIsDownloading(true);
+    
     try {
       // Save resume data to session storage for export functionality
       sessionStorage.setItem('resume-data', JSON.stringify(resumeData));
@@ -98,7 +74,7 @@ export function TemplateSelector({
     } catch (error) {
       console.error('PDF export error:', error);
       toast.error('Failed to download PDF', {
-        description: 'Please try again or contact support if the issue persists.',
+        description: 'Please try again or contact support if the issue persists.'
       });
     } finally {
       setIsDownloading(false);
@@ -175,7 +151,7 @@ export function TemplateSelector({
         >
           <SelectTrigger 
             id="template-select"
-            className="w-full bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 transition-colors duration-200"
+            className="w-full bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 transition-colors duration-200 text-center"
             aria-label="Select resume template"
           >
             <SelectValue placeholder="Select a template" className="text-center" />
