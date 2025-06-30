@@ -38,7 +38,6 @@ export function ClassicTemplate({ data, showEditButton = false, className = '' }
       }}
       data-template-id="classic"
       data-resume-template
-      data-pdf-capture-element
     >
       {/* Edit Button */}
       {showEditButton && (

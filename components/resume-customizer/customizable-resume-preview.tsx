@@ -376,8 +376,7 @@ export function ResumePreview({ data, settings }: ResumePreviewProps) {
         minHeight: '842px', // A4 aspect ratio
         padding: '40px'
       }}
-      data-pdf-capture-element
-      data-template-id={settings.layout.template}
+      data-resume-preview
     >
       <div className={getSpacingClass()}>
         {visibleSections.map(section => renderSection(section))}

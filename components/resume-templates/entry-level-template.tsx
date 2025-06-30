@@ -38,7 +38,6 @@ export function EntryLevelTemplate({ data, showEditButton = false, className = '
       }}
       data-template-id="entry-level"
       data-resume-template
-      data-pdf-capture-element
     >
       {/* Edit Button */}
       {showEditButton && (

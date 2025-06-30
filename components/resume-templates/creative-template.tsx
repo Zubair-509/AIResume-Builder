@@ -37,7 +37,6 @@ export function CreativeTemplate({ data, showEditButton = false, className = '' 
       }}
       data-template-id="creative"
       data-resume-template
-      data-pdf-capture-element
     >
       {/* Edit Button */}
       {showEditButton && (
