@@ -12,6 +12,7 @@ import Link from 'next/link';
 export function CTASection() {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<string | null>(null);
 
   const benefits = [
     'AI-powered content generation',
@@ -20,11 +21,27 @@ export function CTASection() {
     'Privacy & security guaranteed'
   ];
 
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Reset errors
+    setErrors(null);
+    
+    // Validate email
     if (!email.trim()) {
+      setErrors('Please enter your email address');
       toast.error('Please enter your email address');
+      return;
+    }
+    
+    if (!validateEmail(email)) {
+      setErrors('Please enter a valid email address');
+      toast.error('Please enter a valid email address');
       return;
     }
     
@@ -50,11 +67,14 @@ export function CTASection() {
         toast.error('Subscription failed', {
           description: data.message || 'Please try again later.'
         });
+        setErrors(data.message || 'Subscription failed. Please try again.');
       }
     } catch (error) {
+      console.error('Subscription error:', error);
       toast.error('Subscription failed', {
         description: 'An error occurred. Please try again later.'
       });
+      setErrors('An error occurred. Please try again later.');
     } finally {
       setIsSubmitting(false);
     }
@@ -140,14 +160,25 @@ export function CTASection() {
               className="mt-8"
             >
               <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 max-w-md">
-                <Input
-                  type="email"
-                  placeholder="Enter your email for updates"
-                  className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={isSubmitting}
-                />
+                <div className="flex-1">
+                  <Input
+                    type="email"
+                    placeholder="Enter your email for updates"
+                    className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (errors) setErrors(null);
+                    }}
+                    disabled={isSubmitting}
+                    aria-label="Email for newsletter"
+                    aria-invalid={errors ? "true" : "false"}
+                    aria-describedby={errors ? "email-error" : undefined}
+                  />
+                  {errors && (
+                    <p id="email-error" className="text-sm text-red-500 mt-1">{errors}</p>
+                  )}
+                </div>
                 <Button 
                   type="submit"
                   variant="outline" 

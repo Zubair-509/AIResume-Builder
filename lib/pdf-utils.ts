@@ -35,7 +35,13 @@ export async function generatePDF(
     options.onProgress?.(10, 'Initializing PDF generation...');
     
     // Dynamically import html2pdf to avoid SSR issues
-    const html2pdf = (await import('html2pdf.js')).default;
+    let html2pdf;
+    try {
+      html2pdf = (await import('html2pdf.js')).default;
+    } catch (importError) {
+      console.error('Failed to load html2pdf.js:', importError);
+      throw new Error('Failed to load PDF generation library. Please check your internet connection and try again.');
+    }
     
     options.onProgress?.(25, 'Preparing content...');
     
@@ -112,16 +118,33 @@ export async function generatePDF(
 
     options.onProgress?.(75, 'Generating PDF...');
     
-    // Generate and download PDF
-    await html2pdf()
-      .from(clonedElement)
-      .set(pdfOptions)
-      .save();
+    // Set a timeout to handle potential hanging
+    const timeoutPromise = new Promise<void>((_, reject) => {
+      const timeoutId = setTimeout(() => {
+        clearTimeout(timeoutId);
+        reject(new Error('PDF generation timed out after 30 seconds'));
+      }, 30000); // 30 second timeout
+    });
+    
+    // Generate and download PDF with timeout
+    try {
+      await Promise.race([
+        html2pdf()
+          .from(clonedElement)
+          .set(pdfOptions)
+          .save(),
+        timeoutPromise
+      ]);
+    } catch (pdfError) {
+      throw pdfError;
+    }
     
     options.onProgress?.(100, 'PDF generated successfully!');
     
     // Clean up
-    document.body.removeChild(clonedElement);
+    if (document.body.contains(clonedElement)) {
+      document.body.removeChild(clonedElement);
+    }
     
     options.onComplete?.();
     return;
@@ -193,6 +216,11 @@ export async function exportResumeToPDF(
       const date = new Date().toISOString().split('T')[0];
       options.filename = `${name}_${templateId}_${date}.pdf`;
     }
+    
+    // Sanitize filename to prevent path traversal attacks
+    options.filename = options.filename
+      .replace(/[/\\?%*:|"<>]/g, '-') // Remove invalid filename characters
+      .replace(/\.{2,}/g, '.'); // Prevent directory traversal
     
     // Show initial toast
     const toastId = toast.loading('Preparing your PDF...', {

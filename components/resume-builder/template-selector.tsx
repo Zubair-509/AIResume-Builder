@@ -11,10 +11,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ResumeFormData } from '@/lib/validations';
 import { HTMLExporter } from '@/components/ui/html-exporter';
 import { toast } from 'sonner';
-import { exportResumeToPDF, findResumeElement } from '@/lib/pdf-utils';
+import { exportResumeToPDF } from '@/lib/pdf-utils';
 
 interface TemplateSelectorProps {
   selectedTemplate: 'modern' | 'classic' | 'compact';
@@ -84,8 +85,16 @@ export function TemplateSelector({
     setIsCopying(true);
     try {
       // Get the resume preview HTML
-      const previewElement = findResumeElement();
+      const previewElement = document.querySelector('[data-resume-preview]');
+      if (!previewElement) {
+        throw new Error('Resume preview element not found');
+      }
+      
       const htmlContent = previewElement?.outerHTML || '';
+      
+      if (!htmlContent) {
+        throw new Error('No HTML content found to copy');
+      }
       
       await navigator.clipboard.writeText(htmlContent);
       
@@ -93,6 +102,7 @@ export function TemplateSelector({
         description: 'You can now paste the HTML code anywhere.',
       });
     } catch (error) {
+      console.error('Copy HTML error:', error);
       toast.error('Failed to copy HTML', {
         description: 'Please try again or check your browser permissions.',
       });
@@ -111,6 +121,7 @@ export function TemplateSelector({
         description: 'Your resume has been added to your Notion workspace.',
       });
     } catch (error) {
+      console.error('Notion export error:', error);
       toast.error('Failed to export to Notion', {
         description: 'Please check your Notion integration settings.',
       });

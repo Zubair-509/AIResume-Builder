@@ -12,6 +12,7 @@ import Link from 'next/link';
 export function Footer() {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<string | null>(null);
 
   const footerLinks = {
     product: [
@@ -36,11 +37,27 @@ export function Footer() {
     { name: 'GitHub', icon: Github, href: '#' }
   ];
 
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Reset errors
+    setErrors(null);
+    
+    // Validate email
     if (!email.trim()) {
+      setErrors('Please enter your email address');
       toast.error('Please enter your email address');
+      return;
+    }
+    
+    if (!validateEmail(email)) {
+      setErrors('Please enter a valid email address');
+      toast.error('Please enter a valid email address');
       return;
     }
     
@@ -55,9 +72,13 @@ export function Footer() {
         body: JSON.stringify({ email }),
       });
       
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      
       const data = await response.json();
       
-      if (response.ok) {
+      if (data.success) {
         toast.success('Successfully subscribed!', {
           description: 'Thank you for subscribing to our newsletter.'
         });
@@ -66,11 +87,14 @@ export function Footer() {
         toast.error('Subscription failed', {
           description: data.message || 'Please try again later.'
         });
+        setErrors(data.message || 'Subscription failed. Please try again.');
       }
     } catch (error) {
+      console.error('Subscription error:', error);
       toast.error('Subscription failed', {
         description: 'An error occurred. Please try again later.'
       });
+      setErrors('An error occurred. Please try again later.');
     } finally {
       setIsSubmitting(false);
     }
@@ -169,19 +193,31 @@ export function Footer() {
             </div>
             <div className="mt-6 lg:mt-0 lg:ml-8">
               <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-blue-500"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={isSubmitting}
-                  required
-                />
+                <div className="flex-1">
+                  <Input
+                    type="email"
+                    placeholder="Enter your email"
+                    className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-blue-500"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (errors) setErrors(null);
+                    }}
+                    disabled={isSubmitting}
+                    required
+                    aria-label="Email for newsletter"
+                    aria-invalid={errors ? "true" : "false"}
+                    aria-describedby={errors ? "footer-email-error" : undefined}
+                  />
+                  {errors && (
+                    <p id="footer-email-error" className="text-sm text-red-400 mt-1 text-left">{errors}</p>
+                  )}
+                </div>
                 <Button 
                   type="submit" 
                   className="bg-blue-600 hover:bg-blue-700 px-6"
                   disabled={isSubmitting}
+                  aria-label="Subscribe to newsletter"
                 >
                   {isSubmitting ? (
                     <div className="flex items-center">
@@ -206,7 +242,7 @@ export function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
             <div className="text-sm text-gray-400">
-              © 2024 SnapCV. All rights reserved.
+              © {new Date().getFullYear()} SnapCV. All rights reserved.
             </div>
             
             {/* Social Links */}
@@ -217,6 +253,7 @@ export function Footer() {
                   href={social.href}
                   className="text-gray-400 hover:text-white transition-colors"
                   aria-label={social.name}
+                  rel="noopener noreferrer"
                 >
                   <social.icon className="w-5 h-5" />
                 </a>

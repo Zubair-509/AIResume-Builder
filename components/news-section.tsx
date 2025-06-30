@@ -13,6 +13,7 @@ import Link from 'next/link';
 export function NewsSection() {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<string | null>(null);
 
   const news = [
     {
@@ -68,11 +69,27 @@ export function NewsSection() {
     }
   ];
 
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Reset errors
+    setErrors(null);
+    
+    // Validate email
     if (!email.trim()) {
+      setErrors('Please enter your email address');
       toast.error('Please enter your email address');
+      return;
+    }
+    
+    if (!validateEmail(email)) {
+      setErrors('Please enter a valid email address');
+      toast.error('Please enter a valid email address');
       return;
     }
     
@@ -87,9 +104,13 @@ export function NewsSection() {
         body: JSON.stringify({ email }),
       });
       
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      
       const data = await response.json();
       
-      if (response.ok) {
+      if (data.success) {
         toast.success('Successfully subscribed!', {
           description: 'Thank you for subscribing to our newsletter.'
         });
@@ -98,37 +119,17 @@ export function NewsSection() {
         toast.error('Subscription failed', {
           description: data.message || 'Please try again later.'
         });
+        setErrors(data.message || 'Subscription failed. Please try again.');
       }
     } catch (error) {
+      console.error('Subscription error:', error);
       toast.error('Subscription failed', {
         description: 'An error occurred. Please try again later.'
       });
+      setErrors('An error occurred. Please try again later.');
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: 'easeOut',
-      },
-    },
   };
 
   const formatDate = (dateString: string) => {
@@ -166,7 +167,16 @@ export function NewsSection() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
           {/* Main News Articles */}
           <motion.div
-            variants={containerVariants}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.1,
+                  delayChildren: 0.2,
+                },
+              },
+            }}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
@@ -175,7 +185,17 @@ export function NewsSection() {
             {news.map((article, index) => (
               <motion.div
                 key={article.id}
-                variants={itemVariants}
+                variants={{
+                  hidden: { opacity: 0, y: 30 },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    transition: {
+                      duration: 0.6,
+                      ease: 'easeOut',
+                    },
+                  },
+                }}
                 whileHover={{ y: -5 }}
                 className="group"
               >
@@ -185,6 +205,8 @@ export function NewsSection() {
                       <div 
                         className="h-48 md:h-full bg-cover bg-center"
                         style={{ backgroundImage: `url(${article.image})` }}
+                        role="img"
+                        aria-label={article.title}
                       />
                     </div>
                     <CardContent className="md:w-2/3 p-6">
@@ -222,7 +244,16 @@ export function NewsSection() {
 
           {/* Sidebar Updates */}
           <motion.div
-            variants={containerVariants}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.1,
+                  delayChildren: 0.2,
+                },
+              },
+            }}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
@@ -237,7 +268,17 @@ export function NewsSection() {
                   {updates.map((update, index) => (
                     <motion.div
                       key={index}
-                      variants={itemVariants}
+                      variants={{
+                        hidden: { opacity: 0, y: 20 },
+                        visible: {
+                          opacity: 1,
+                          y: 0,
+                          transition: {
+                            duration: 0.5,
+                            ease: 'easeOut',
+                          },
+                        },
+                      }}
                       className="flex items-start space-x-4"
                     >
                       <div className={`p-2 rounded-lg bg-gray-50 dark:bg-gray-700 ${update.color}`}>
@@ -273,10 +314,19 @@ export function NewsSection() {
                       placeholder="Your email address"
                       className="bg-white/10 border-white/20 text-white placeholder-white/60 focus:border-white"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        if (errors) setErrors(null);
+                      }}
                       disabled={isSubmitting}
                       required
+                      aria-label="Email for newsletter"
+                      aria-invalid={errors ? "true" : "false"}
+                      aria-describedby={errors ? "news-email-error" : undefined}
                     />
+                    {errors && (
+                      <p id="news-email-error" className="text-sm text-red-300 mt-1">{errors}</p>
+                    )}
                     <Button 
                       type="submit"
                       className="w-full bg-white text-blue-600 hover:bg-gray-100"
