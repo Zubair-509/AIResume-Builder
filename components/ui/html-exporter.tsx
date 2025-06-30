@@ -1,19 +1,18 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ResumeFormData } from '@/lib/validations';
 import { Button } from '@/components/ui/button';
 import { Globe, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { findResumeElement } from '@/lib/pdf-utils';
 
 interface HTMLExporterProps {
-  resumeData: ResumeFormData;
+  resumeData: any;
   templateId: string;
   customizationSettings?: any;
   variant?: 'default' | 'outline' | 'secondary';
   size?: 'default' | 'sm' | 'lg' | 'icon';
   className?: string;
-  onExportStart?: () => void;
   onExportComplete?: () => void;
   onExportError?: (error: Error) => void;
 }
@@ -25,7 +24,6 @@ export function HTMLExporter({
   variant = 'outline',
   size = 'default',
   className = '',
-  onExportStart,
   onExportComplete,
   onExportError
 }: HTMLExporterProps) {
@@ -37,31 +35,18 @@ export function HTMLExporter({
     return `${name}_${templateId}_${date}.html`;
   };
 
-  const sanitizeFilename = (filename: string): string => {
-    return filename
-      .replace(/[/\\?%*:|"<>]/g, '-') // Remove invalid filename characters
-      .replace(/\.{2,}/g, '.'); // Prevent directory traversal
-  };
-
   const handleExport = async () => {
     setIsExporting(true);
-    if (onExportStart) onExportStart();
     
     try {
       // Find the resume element
-      const previewElement = document.querySelector('[data-resume-preview]') || 
-                             document.querySelector('[data-template-id]') || 
-                             document.querySelector('[data-resume-template]');
+      const resumeElement = findResumeElement();
       
-      if (!previewElement) {
-        throw new Error('Resume preview element not found');
+      if (!resumeElement) {
+        throw new Error('Could not find resume content');
       }
-
-      // Create complete HTML document
-      const fontFamily = customizationSettings?.font?.family || 'Arial, sans-serif';
-      const textColor = customizationSettings?.colors?.text || '#1f2937';
-      const backgroundColor = customizationSettings?.colors?.background || '#ffffff';
       
+      // Create complete HTML document
       const htmlContent = `
 <!DOCTYPE html>
 <html lang="en">
@@ -77,20 +62,86 @@ export function HTMLExporter({
         }
         
         body {
-            font-family: "${fontFamily}", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-family: ${customizationSettings?.font?.family || 'Arial'}, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             line-height: 1.6;
-            color: ${textColor};
-            background-color: ${backgroundColor};
+            color: ${customizationSettings?.colors?.text || '#1f2937'};
+            background-color: ${customizationSettings?.colors?.background || '#ffffff'};
             max-width: 210mm;
             margin: 0 auto;
             padding: 20px;
         }
         
         .resume-container {
-            background: ${backgroundColor};
+            background: ${customizationSettings?.colors?.background || '#ffffff'};
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
             border-radius: 8px;
             overflow: hidden;
+        }
+        
+        h1 {
+            font-size: ${customizationSettings?.font?.sizes?.heading || '24'}px;
+            color: ${customizationSettings?.colors?.primary || '#2563eb'};
+            margin-bottom: 8px;
+        }
+        
+        h2 {
+            font-size: ${customizationSettings?.font?.sizes?.subheading || '18'}px;
+            color: ${customizationSettings?.colors?.primary || '#2563eb'};
+            margin-bottom: 12px;
+            padding-bottom: 4px;
+            border-bottom: 2px solid ${customizationSettings?.colors?.primary || '#2563eb'}20;
+        }
+        
+        h3 {
+            font-size: ${customizationSettings?.font?.sizes?.body || '14'}px;
+            color: ${customizationSettings?.colors?.text || '#1f2937'};
+            margin-bottom: 4px;
+        }
+        
+        p, li {
+            font-size: ${customizationSettings?.font?.sizes?.body || '14'}px;
+            margin-bottom: 8px;
+        }
+        
+        .contact-info {
+            font-size: ${customizationSettings?.font?.sizes?.small || '12'}px;
+            color: ${customizationSettings?.colors?.secondary || '#64748b'};
+            margin-bottom: 20px;
+        }
+        
+        .section {
+            margin-bottom: 24px;
+        }
+        
+        .skill-tag {
+            display: inline-block;
+            background-color: ${customizationSettings?.colors?.accent || '#7c3aed'}20;
+            color: ${customizationSettings?.colors?.accent || '#7c3aed'};
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: ${customizationSettings?.font?.sizes?.small || '12'}px;
+            margin: 2px 4px 2px 0;
+        }
+        
+        .experience-item, .education-item {
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid ${customizationSettings?.colors?.secondary || '#64748b'}20;
+        }
+        
+        .experience-item:last-child, .education-item:last-child {
+            border-bottom: none;
+        }
+        
+        .date-range {
+            font-size: ${customizationSettings?.font?.sizes?.small || '12'}px;
+            color: ${customizationSettings?.colors?.secondary || '#64748b'};
+            font-weight: 500;
+        }
+        
+        .company, .institution {
+            color: ${customizationSettings?.colors?.accent || '#7c3aed'};
+            font-weight: 600;
         }
         
         @media print {
@@ -107,12 +158,18 @@ export function HTMLExporter({
             body {
                 padding: 10px;
             }
+            h1 {
+                font-size: ${Math.max(20, (customizationSettings?.font?.sizes?.heading || 24) - 4)}px;
+            }
+            h2 {
+                font-size: ${Math.max(16, (customizationSettings?.font?.sizes?.subheading || 18) - 2)}px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="resume-container">
-        ${previewElement.innerHTML}
+        ${resumeElement.innerHTML}
     </div>
     
     <script>
@@ -137,7 +194,10 @@ export function HTMLExporter({
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = sanitizeFilename(generateFilename());
+      
+      // Sanitize filename
+      const filename = generateFilename().replace(/[/\\?%*:|"<>]/g, '-').replace(/\.{2,}/g, '.');
+      link.download = filename;
       
       document.body.appendChild(link);
       link.click();
@@ -145,19 +205,24 @@ export function HTMLExporter({
       URL.revokeObjectURL(url);
 
       toast.success('HTML file downloaded successfully!', {
-        description: `Your resume has been saved as ${link.download}`,
-        duration: 5000
-      });
-
-      if (onExportComplete) onExportComplete();
-    } catch (error) {
-      console.error('HTML generation error:', error);
-      toast.error('Failed to download HTML', {
-        description: error instanceof Error ? error.message : 'Please try again or contact support if the issue persists.',
+        description: `Your resume has been saved as ${filename}`,
         duration: 5000
       });
       
-      if (onExportError && error instanceof Error) onExportError(error);
+      if (onExportComplete) {
+        onExportComplete();
+      }
+    } catch (error) {
+      console.error('HTML generation error:', error);
+      
+      toast.error('Failed to download HTML', {
+        description: 'Please try again or contact support if the issue persists.',
+        duration: 5000
+      });
+      
+      if (onExportError && error instanceof Error) {
+        onExportError(error);
+      }
     } finally {
       setIsExporting(false);
     }
@@ -170,7 +235,6 @@ export function HTMLExporter({
       variant={variant}
       size={size}
       className={className}
-      aria-label="Export resume as HTML"
     >
       {isExporting ? (
         <>

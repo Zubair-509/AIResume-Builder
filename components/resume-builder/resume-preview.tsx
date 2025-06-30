@@ -81,7 +81,8 @@ export function ResumePreview({ data, template }: ResumePreviewProps) {
       transition={{ duration: 0.3 }}
       className={`bg-white shadow-2xl rounded-lg overflow-hidden max-w-full ${styles.container}`}
       style={{ minHeight: '842px' }} // A4 aspect ratio
-      data-resume-preview // Add this attribute for PDF export
+      data-pdf-capture-element // Changed from data-resume-preview to data-pdf-capture-element
+      data-template-id={template}
     >
       {/* Header */}
       <div className={styles.header}>

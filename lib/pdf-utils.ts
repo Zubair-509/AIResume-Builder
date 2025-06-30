@@ -175,9 +175,9 @@ export async function generatePDF(
 export function findResumeElement(): HTMLElement | null {
   // Try different selectors used across the application
   const selectors = [
-    '[data-resume-preview]',
-    '[data-template-id]',
+    '[data-pdf-capture-element]',
     '[data-resume-template]',
+    '[data-template-id]',
     '.resume-container',
     '.resume-preview'
   ];

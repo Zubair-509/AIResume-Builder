@@ -38,6 +38,7 @@ export function ExecutiveTemplate({ data, showEditButton = false, className = ''
       }}
       data-template-id="executive"
       data-resume-template
+      data-pdf-capture-element
     >
       {/* Edit Button */}
       {showEditButton && (

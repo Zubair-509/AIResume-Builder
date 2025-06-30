@@ -38,6 +38,7 @@ export function ModernTemplate({ data, showEditButton = false, className = '' }:
       }}
       data-template-id="modern"
       data-resume-template
+      data-pdf-capture-element
     >
       {/* Edit Button */}
       {showEditButton && (
