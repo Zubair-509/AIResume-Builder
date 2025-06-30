@@ -140,10 +140,10 @@ export function TemplateSelector({
         >
           <SelectTrigger 
             id="template-select"
-            className="w-full bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 transition-colors duration-200"
+            className="w-full bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 transition-colors duration-200 text-center"
             aria-label="Select resume template"
           >
-            <SelectValue placeholder="Select a template" />
+            <SelectValue placeholder="Select a template" className="text-center" />
           </SelectTrigger>
           <SelectContent>
             {templates.map((template) => (
