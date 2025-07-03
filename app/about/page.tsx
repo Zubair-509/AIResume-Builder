@@ -117,24 +117,24 @@ export default function AboutPage() {
   const teamMembers = [
     {
       name: 'Muhammad Zubair',
-      role: 'CEO & Co-Founder',
-      bio: 'Former tech recruiter with 10+ years of experience helping professionals land their dream jobs.',
+      role: 'Full Stack Developer & Project Lead',
+      bio: 'Software Engineering student at DHA Suffa University with expertise in full-stack development. Led the project development and implemented both frontend and backend systems for Snap CV\'s core functionality.',
       avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2',
-      linkedin: 'https://linkedin.com/in/muhammadzubair'
+      linkedin: 'https://www.linkedin.com/in/zubairabid509'
     },
     {
       name: 'Sarhan Ahmed',
-      role: 'CTO & Co-Founder',
-      bio: 'AI specialist with a background in natural language processing and machine learning.',
+      role: 'AI Integration Specialist & Developer',
+      bio: 'Software Engineering student at DHA Suffa University specializing in artificial intelligence and API integrations. Responsible for implementing and optimizing the AI-powered resume generation features that power Snap CV.',
       avatar: 'https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2',
-      linkedin: 'https://linkedin.com/in/sarhanahmed'
+      linkedin: 'https://www.linkedin.com/in/sarhan-ahmed-1935b9341?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app'
     },
     {
       name: 'Abdul Hannan',
-      role: 'Head of Design',
-      bio: 'Award-winning UX designer focused on creating beautiful, functional user experiences.',
+      role: 'UI/UX Designer & Developer',
+      bio: 'Software Engineering student at DHA Suffa University with a passion for creating intuitive user experiences. Designed and crafted the complete user interface and user experience for Snap CV\'s platform.',
       avatar: 'https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2',
-      linkedin: 'https://linkedin.com/in/abdulhannan'
+      linkedin: 'https://www.linkedin.com/in/abdul-hannan-b82301306'
     }
   ];
 
