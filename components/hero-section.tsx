@@ -94,14 +94,6 @@ export function HeroSection() {
               AI-Powered Resume Builder
             </span>
           </motion.div>
-          
-          {/* Bolt Badge positioned under the tagline */}
-          <motion.div 
-            variants={itemVariants}
-            className="flex justify-center mb-6"
-          >
-            <BoltBadge />
-          </motion.div>
         </motion.div>
 
         <motion.h1
