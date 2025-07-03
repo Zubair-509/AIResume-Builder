@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { FileText, Mail, Phone, MapPin, Github, Twitter, Linkedin, ArrowRight } from 'lucide-react';
+import { FileText, Mail, Phone, MapPin, Github } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
@@ -32,8 +32,6 @@ export function Footer() {
   };
 
   const socialLinks = [
-    { name: 'Twitter', icon: Twitter, href: '#' },
-    { name: 'LinkedIn', icon: Linkedin, href: '#' },
     { name: 'GitHub', icon: Github, href: '#' }
   ];
 
@@ -225,10 +223,7 @@ export function Footer() {
                       <span>Subscribing...</span>
                     </div>
                   ) : (
-                    <>
-                      Subscribe
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </>
+                    <>Subscribe</>
                   )}
                 </Button>
               </form>
