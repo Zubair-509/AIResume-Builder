@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { FileText, Mail, Phone, MapPin, Github } from 'lucide-react';
+import { FileText, Mail, MapPin, Github, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
@@ -132,14 +132,8 @@ export function Footer() {
                 </a>
               </div>
               <div className="flex items-center space-x-3">
-                <Phone className="w-4 h-4" />
-                <a href="tel:+1-555-123-4567" className="hover:text-white transition-colors">
-                  +1 (555) 123-4567
-                </a>
-              </div>
-              <div className="flex items-center space-x-3">
                 <MapPin className="w-4 h-4" />
-                <span>San Francisco, CA</span>
+                <span>Karachi, Sindh Pakistan</span>
               </div>
             </div>
           </motion.div>
