@@ -45,35 +45,45 @@ export const AnimatedButton = forwardRef<HTMLButtonElement, AnimatedButtonProps>
         setTimeout(() => {
           setRipples(prev => prev.filter(r => r.id !== newRipple.id));
         }, 600);
-    <MotionConfig reducedMotion="user">
-      <motion.div
-        whileHover={
-          disabled
-            ? {}
-            : {
-                scale: 1.02,
-                transition: { duration: 0.2 },
-              }
-        }
-        whileTap={
-          disabled
-            ? {}
-            : {
-                scale: 0.98,
-                transition: { duration: 0.2 },
-              }
-        }
+      }
+    };
+
+    return (
+      <motion.button
+        ref={ref}
+        className={baseClasses}
+        onClick={handleClick}
+        {...props}
       >
-        <Button
-          ref={ref}
-          className={cn('', className)}
-          disabled={disabled}
-          {...props}
-        >
-          {children}
-        </Button>
-      </motion.div>
-    </MotionConfig>
+        <MotionConfig reducedMotion="user">
+          <motion.div
+            whileHover={
+              disabled
+                ? {}
+                : {
+                    scale: 1.02,
+                    transition: { duration: 0.2 },
+                  }
+            }
+            whileTap={
+              disabled
+                ? {}
+                : {
+                    scale: 0.98,
+                    transition: { duration: 0.2 },
+                  }
+            }
+          >
+            <Button
+              ref={ref}
+              className={cn('', className)}
+              disabled={disabled}
+              {...props}
+            >
+              {children}
+            </Button>
+          </motion.div>
+        </MotionConfig>
         {ripple && (
           <div className="absolute inset-0 pointer-events-none">
             {ripples.map((ripple) => (

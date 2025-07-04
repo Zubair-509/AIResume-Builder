@@ -73,6 +73,8 @@ export function AnimatedLogo() {
             backgroundPosition: ['0% center', '200% center']
           }}
           transition={{
+          }
+          }
     <MotionConfig reducedMotion="user">
       <Link href="/" className="flex items-center space-x-2" onMouseEnter={handleMouseEnter}>
         <motion.div
@@ -87,4 +89,6 @@ export function AnimatedLogo() {
           animate={isHovered ? 'hovered' : 'idle'}
           variants={textVariants}
         >
+}
+  )
 }
