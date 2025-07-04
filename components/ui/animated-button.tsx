@@ -1,8 +1,9 @@
 'use client';
 
-import { motion, HTMLMotionProps } from 'framer-motion';
-import { motion, MotionConfig } from 'framer-motion';
+import React, { useState, forwardRef, ReactNode } from 'react';
+import { motion, HTMLMotionProps, MotionConfig } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 interface AnimatedButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'> {
   children: ReactNode;
@@ -10,10 +11,11 @@ interface AnimatedButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'
   size?: 'sm' | 'md' | 'lg';
   ripple?: boolean;
   className?: string;
+  disabled?: boolean;
 }
 
 export const AnimatedButton = forwardRef<HTMLButtonElement, AnimatedButtonProps>(
-  ({ children, variant = 'default', size = 'md', ripple = true, className, ...props }, ref) => {
+  ({ children, variant = 'default', size = 'md', ripple = true, className, disabled, ...props }, ref) => {
     const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number }>>([]);
 
     const baseClasses = cn(
@@ -34,7 +36,7 @@ export const AnimatedButton = forwardRef<HTMLButtonElement, AnimatedButtonProps>
     );
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      if (ripple) {
+      if (ripple && !disabled) {
         const rect = e.currentTarget.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
@@ -46,64 +48,59 @@ export const AnimatedButton = forwardRef<HTMLButtonElement, AnimatedButtonProps>
           setRipples(prev => prev.filter(r => r.id !== newRipple.id));
         }, 600);
       }
+
+      if (props.onClick) {
+        props.onClick(e);
+      }
     };
 
     return (
-      <motion.button
-        ref={ref}
-        className={baseClasses}
-        onClick={handleClick}
-        {...props}
-      >
-        <MotionConfig reducedMotion="user">
-          <motion.div
-            whileHover={
-              disabled
-                ? {}
-                : {
-                    scale: 1.02,
-                    transition: { duration: 0.2 },
-                  }
-            }
-            whileTap={
-              disabled
-                ? {}
-                : {
-                    scale: 0.98,
-                    transition: { duration: 0.2 },
-                  }
-            }
-          >
-            <Button
-              ref={ref}
-              className={cn('', className)}
-              disabled={disabled}
-              {...props}
-            >
-              {children}
-            </Button>
-          </motion.div>
-        </MotionConfig>
-        {ripple && (
-          <div className="absolute inset-0 pointer-events-none">
-            {ripples.map((ripple) => (
-              <motion.div
-                key={ripple.id}
-                className="absolute rounded-full bg-white/30"
-                style={{
-                  left: ripple.x - 10,
-                  top: ripple.y - 10,
-                  width: 20,
-                  height: 20,
-                }}
-                initial={{ scale: 0, opacity: 1 }}
-                animate={{ scale: 4, opacity: 0 }}
-                transition={{ duration: 0.6, ease: 'easeOut' }}
-              />
-            ))}
-          </div>
-        )}
-      </motion.button>
+      <MotionConfig reducedMotion="user">
+        <motion.button
+          ref={ref}
+          className={baseClasses}
+          onClick={handleClick}
+          disabled={disabled}
+          whileHover={
+            disabled
+              ? {}
+              : {
+                  scale: 1.02,
+                  transition: { duration: 0.2 },
+                }
+          }
+          whileTap={
+            disabled
+              ? {}
+              : {
+                  scale: 0.98,
+                  transition: { duration: 0.2 },
+                }
+          }
+          {...props}
+        >
+          {children}
+          {ripple && (
+            <div className="absolute inset-0 pointer-events-none">
+              {ripples.map((ripple) => (
+                <motion.div
+                  key={ripple.id}
+                  className="absolute rounded-full bg-white/30"
+                  style={{
+                    left: ripple.x - 10,
+                    top: ripple.y - 10,
+                    width: 20,
+                    height: 20,
+                  }}
+                  initial={{ scale: 0, opacity: 1 }}
+                  animate={{ scale: 4, opacity: 0 }}
+                  transition={{ duration: 0.6, ease: 'easeOut' }}
+                />
+              ))}
+            </div>
+          )}
+        </motion.button>
+      </MotionConfig>
     );
   }
 );

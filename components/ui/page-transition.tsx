@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
 import { usePathname } from 'next/navigation';
-import { PageLoader } from './page-loader';
 
 interface PageTransitionProps {
   children: React.ReactNode;
@@ -28,10 +27,6 @@ export function PageTransition({ children }: PageTransitionProps) {
   }, [pathname, children]);
 
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={pathname}
-        initial={{ opacity: 0, y: 10 }}
     <MotionConfig reducedMotion="user">
       <AnimatePresence mode="wait">
         <motion.div
@@ -45,6 +40,5 @@ export function PageTransition({ children }: PageTransitionProps) {
         </motion.div>
       </AnimatePresence>
     </MotionConfig>
-  )
   );
 }
