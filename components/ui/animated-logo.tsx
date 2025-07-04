@@ -12,54 +12,41 @@ export function AnimatedLogo() {
         className="relative w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center overflow-hidden"
         whileHover={{ 
           scale: 1.05,
-          boxShadow: "0 0 20px rgba(79, 70, 229, 0.5)"
-        }}
-        transition={{ 
-          type: "spring", 
-          stiffness: 400, 
-          damping: 10 
+          rotate: [0, 5, -5, 0],
+          transition: { duration: 0.5 }
         }}
       >
-        {/* Animated background gradient */}
+        {/* Animated background glow */}
         <motion.div
-          className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600"
+          className="absolute inset-0 opacity-60 bg-blue-400"
           animate={{ 
-            backgroundPosition: ["0% 0%", "100% 100%"],
+            scale: [1, 1.2, 1],
+            opacity: [0.6, 0.8, 0.6],
           }}
           transition={{ 
-            duration: 3, 
-            repeat: Infinity, 
-            repeatType: "reverse",
-            ease: "linear"
+            duration: 3,
+            repeat: Infinity,
+            repeatType: "reverse"
+          }}
+          style={{ 
+            filter: "blur(8px)",
+            transform: "translateZ(0)"
           }}
         />
         
         {/* Logo icon */}
-        <FileText className="w-5 h-5 text-white relative z-10" />
-        
-        {/* Animated glow effect */}
-        <motion.div
-          className="absolute inset-0 bg-white opacity-0"
-          animate={{ 
-            opacity: [0, 0.2, 0],
-          }}
-          transition={{ 
-            duration: 2, 
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
+        <FileText className="w-4 h-4 text-white relative z-10" />
       </motion.div>
       
       {/* Logo Text */}
       <motion.span 
         className="font-bold text-xl text-gray-900 dark:text-white"
         whileHover={{ 
-          color: "#4f46e5",
+          scale: 1.05,
           transition: { duration: 0.2 }
         }}
       >
-        SnapCV
+        <span className="text-blue-600">Snap</span>CV
       </motion.span>
     </Link>
   );
