@@ -14,7 +14,8 @@ import {
   AlertTriangle,
   Clock,
   Globe,
-  Linkedin
+  Linkedin,
+  Mail
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -31,14 +32,11 @@ export default function PrivacyPolicyPage() {
       
       {/* Header */}
       <section className="pt-24 pb-12 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-purple-900/20">
-
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div>
-              <Badge variant="outline" className="mb-4 px-4 py-2 text-blue-600 border-blue-200">
-                Legal
-              </Badge>
-            </div>
+            <Badge variant="outline" className="mb-4 px-4 py-2 text-blue-600 border-blue-200">
+              Legal
+            </Badge>
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Privacy Policy
@@ -58,37 +56,35 @@ export default function PrivacyPolicyPage() {
       {/* Table of Contents */}
       <section className="py-8 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div>
-            <Card className="border-0 shadow-lg bg-white dark:bg-gray-800">
-              <CardHeader>
-                <CardTitle className="text-xl">Table of Contents</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <nav className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                  {[
-                    { id: 'information-collection', title: '1. Information We Collect' },
-                    { id: 'information-use', title: '2. How We Use Your Information' },
-                    { id: 'information-sharing', title: '3. Information Sharing and Disclosure' },
-                    { id: 'cookies', title: '4. Cookies and Tracking Technologies' },
-                    { id: 'data-security', title: '5. Data Security' },
-                    { id: 'user-rights', title: '6. Your Rights and Choices' },
-                    { id: 'children', title: '7. Children\'s Privacy' },
-                    { id: 'international', title: '8. International Data Transfers' },
-                    { id: 'changes', title: '9. Changes to This Privacy Policy' },
-                    { id: 'contact', title: '10. Contact Us' }
-                  ].map((item) => (
-                    <a 
-                      key={item.id}
-                      href={`#${item.id}`}
-                      className="p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-                    >
-                      {item.title}
-                    </a>
-                  ))}
-                </nav>
-              </CardContent>
-            </Card>
-          </div>
+          <Card className="border-0 shadow-lg bg-white dark:bg-gray-800">
+            <CardHeader>
+              <CardTitle className="text-xl">Table of Contents</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <nav className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                {[
+                  { id: 'information-collection', title: '1. Information We Collect' },
+                  { id: 'information-use', title: '2. How We Use Your Information' },
+                  { id: 'information-sharing', title: '3. Information Sharing and Disclosure' },
+                  { id: 'cookies', title: '4. Cookies and Tracking Technologies' },
+                  { id: 'data-security', title: '5. Data Security' },
+                  { id: 'user-rights', title: '6. Your Rights and Choices' },
+                  { id: 'children', title: '7. Children\'s Privacy' },
+                  { id: 'international', title: '8. International Data Transfers' },
+                  { id: 'changes', title: '9. Changes to This Privacy Policy' },
+                  { id: 'contact', title: '10. Contact Us' }
+                ].map((item) => (
+                  <a 
+                    key={item.id}
+                    href={`#${item.id}`}
+                    className="p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                  >
+                    {item.title}
+                  </a>
+                ))}
+              </nav>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
@@ -349,7 +345,7 @@ export default function PrivacyPolicyPage() {
             {/* Contact Us */}
             <div id="contact" className="scroll-mt-24">
               <div className="flex items-center mb-4">
-                <Linkedin className="w-6 h-6 text-blue-600 mr-3" />
+                <Mail className="w-6 h-6 text-blue-600 mr-3" />
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">10. Contact Us</h2>
               </div>
               
@@ -363,7 +359,7 @@ export default function PrivacyPolicyPage() {
                     <strong>Mail:</strong> SnapCV Privacy Team, 123 Innovation Way, Karachi, Sindh, Pakistan
                   </li>
                   <li>
-                    <strong>Project Lead:</strong> <a href="https://www.linkedin.com/in/zubairabid509" target=\"_blank\" rel=\"noopener noreferrer\" className=\"text-blue-600 hover:underline">Muhammad Zubair on LinkedIn</a>
+                    <strong>Project Lead:</strong> <a href="https://www.linkedin.com/in/zubairabid509" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Muhammad Zubair on LinkedIn</a>
                   </li>
                 </ul>
                 
