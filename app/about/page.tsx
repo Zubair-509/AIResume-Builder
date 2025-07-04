@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
 import { Navigation } from '@/components/navigation';
 import { Footer } from '@/components/footer';
 import { 
@@ -117,21 +117,21 @@ export default function AboutPage() {
   const teamMembers = [
     {
       name: 'Muhammad Zubair',
-      role: 'Full Stack Developer & Project Lead',
+      role: 'CEO & Co-Founder',
       bio: 'Software Engineering student at DHA Suffa University with expertise in full-stack development. Led the project development and implemented both frontend and backend systems for Snap CV\'s core functionality.',
       avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2',
       linkedin: 'https://www.linkedin.com/in/zubairabid509'
     },
     {
       name: 'Sarhan Ahmed',
-      role: 'AI Integration Specialist & Developer',
+      role: 'CTO & Co-Founder',
       bio: 'Software Engineering student at DHA Suffa University specializing in artificial intelligence and API integrations. Responsible for implementing and optimizing the AI-powered resume generation features that power Snap CV.',
       avatar: 'https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2',
       linkedin: 'https://www.linkedin.com/in/sarhan-ahmed-1935b9341?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app'
     },
     {
       name: 'Abdul Hannan',
-      role: 'UI/UX Designer & Developer',
+      role: 'Head of Design',
       bio: 'Software Engineering student at DHA Suffa University with a passion for creating intuitive user experiences. Designed and crafted the complete user interface and user experience for Snap CV\'s platform.',
       avatar: 'https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2',
       linkedin: 'https://www.linkedin.com/in/abdul-hannan-b82301306'

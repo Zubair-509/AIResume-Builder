@@ -22,12 +22,12 @@ export interface PDFExportOptions {
 export async function generatePDF(
   element: HTMLElement | null,
   options: PDFExportOptions = {}
-): Promise<void> {
+): Promise<boolean> {
   if (!element) {
     const error = new Error('Element not found for PDF generation');
     console.error(error);
     options.onError?.(error);
-    throw error;
+    return false;
   }
 
   try {
@@ -147,7 +147,7 @@ export async function generatePDF(
     }
     
     options.onComplete?.();
-    return;
+    return true;
   } catch (error) {
     console.error('PDF generation error:', error);
     
@@ -159,11 +159,11 @@ export async function generatePDF(
     
     if (error instanceof Error) {
       options.onError?.(error);
-      throw error;
+      return false;
     } else {
       const genericError = new Error('Unknown error during PDF generation');
       options.onError?.(genericError);
-      throw genericError;
+      return false;
     }
   }
 }

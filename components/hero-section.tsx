@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { AnimatedButton } from '@/components/ui/animated-button';
 import { BoltBadge } from '@/components/ui/bolt-badge';
 import Link from 'next/link';
@@ -86,10 +86,9 @@ export function HeroSection() {
         <motion.div variants={itemVariants} className="mb-8">
           <motion.div 
             className="inline-flex items-center space-x-2 bg-white/10 dark:bg-gray-800/10 backdrop-blur-sm border border-white/20 dark:border-gray-700/20 rounded-full px-5 py-2.5 mb-6"
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.03 }}
             transition={{ type: 'spring', stiffness: 400, damping: 17 }}
           >
-            <Sparkles className="w-4 h-4 text-blue-600 dark:text-blue-400" />
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
               AI-Powered Resume Builder
             </span>

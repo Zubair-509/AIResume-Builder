@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, MotionConfig } from 'framer-motion';
 import { ResumeFormData } from '@/lib/validations';
 import { TemplatePreview } from './template-preview';
 import { TemplateRenderer } from './template-renderer';
@@ -110,16 +110,17 @@ export function TemplateGallery({ resumeData, onTemplateSelect }: TemplateGaller
   };
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="text-center">
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-          Professional Resume Templates
-        </h2>
-        <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-          Choose from our collection of ATS-optimized templates designed to help you land your dream job.
-        </p>
-      </div>
+    <MotionConfig reducedMotion="user">
+      <div className="space-y-8">
+        {/* Header */}
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+            Professional Resume Templates
+          </h2>
+          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+            Choose from our collection of ATS-optimized templates designed to help you land your dream job.
+          </p>
+        </div>
 
       {/* ATS Information Banner */}
       <Card className="border-0 shadow-lg bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
@@ -275,6 +276,7 @@ export function TemplateGallery({ resumeData, onTemplateSelect }: TemplateGaller
         />
       </div>
     </div>
+    </MotionConfig>
   );
 }
 

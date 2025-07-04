@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
 import { 
   Palette, 
   Type, 
@@ -250,25 +250,26 @@ export function ResumeCustomizer({ resumeData, onSave }: ResumeCustomizerProps) 
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-8"
-        >
-          <motion.div 
-            className="inline-flex items-center space-x-2 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 rounded-full px-6 py-3 mb-6"
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+    <MotionConfig reducedMotion="user">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-8"
           >
-            <Sparkles className="w-5 h-5 text-purple-600" />
-            <span className="text-sm font-medium text-purple-700 dark:text-purple-300">
-              Resume Customization Studio
-            </span>
-          </motion.div>
+            <motion.div 
+              className="inline-flex items-center space-x-2 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 rounded-full px-6 py-3 mb-6"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+            >
+              <Sparkles className="w-5 h-5 text-purple-600" />
+              <span className="text-sm font-medium text-purple-700 dark:text-purple-300">
+                Resume Customization Studio
+              </span>
+            </motion.div>
           
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-4">
             Personalize Your
@@ -478,6 +479,6 @@ export function ResumeCustomizer({ resumeData, onSave }: ResumeCustomizerProps) 
           </div>
         </div>
       </div>
-    </div>
+    </MotionConfig>
   );
 }

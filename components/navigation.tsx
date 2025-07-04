@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, Sparkles, Menu, X, Home, Zap, Edit, FileImage } from 'lucide-react';
+import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
+import { FileText, Menu, X, Home, Zap, Edit, FileImage } from 'lucide-react';
 import { AnimatedButton } from '@/components/ui/animated-button';
 import { AnimatedLogo } from '@/components/ui/animated-logo';
 import Link from 'next/link';
@@ -61,27 +61,28 @@ export function Navigation() {
   };
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-sm'
-          : 'bg-transparent'
-      }`}
-      style={{ scrollPaddingTop: '80px' }}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Animated Logo */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <AnimatedLogo />
-          </motion.div>
+    <MotionConfig reducedMotion="user">
+      <motion.nav
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5 }}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled
+            ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-sm'
+            : 'bg-transparent'
+        }`}
+        style={{ scrollPaddingTop: '80px' }}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            {/* Animated Logo */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <AnimatedLogo />
+            </motion.div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
@@ -174,6 +175,7 @@ export function Navigation() {
           )}
         </AnimatePresence>
       </div>
-    </motion.nav>
+    </MotionConfig>
+  </motion.nav>
   );
 }

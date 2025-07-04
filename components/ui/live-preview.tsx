@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, MotionConfig } from 'framer-motion';
 import { Maximize2, Minimize2, Download, Edit, Copy, Share2, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -98,7 +98,7 @@ export function LivePreview({
   };
 
   return (
-    <div className={`relative ${className}`}>
+    <MotionConfig reducedMotion="user">
       <Card className={`border-0 shadow-xl bg-white dark:bg-gray-800 overflow-hidden transition-all duration-300 ${
         isFullscreen ? 'fixed inset-0 z-50 rounded-none' : ''
       }`}>
@@ -182,7 +182,7 @@ export function LivePreview({
           </div>
         </div>
         
-        <CardContent className={`p-0 ${isVisible ? '' : 'hidden'}`}>
+    </MotionConfig>
           <AnimatePresence mode="wait">
             <motion.div
               key={`preview-${isVisible}-${isFullscreen}`}

@@ -65,11 +65,17 @@ export function ResumeForm() {
   const handleFileSelect = (file: File | null) => {
     setProfilePhoto(file);
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setPhotoPreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+      try {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (e.target?.result) {
+            setPhotoPreview(e.target.result as string);
+          }
+        };
+        reader.readAsDataURL(file);
+      } catch (error) {
+        console.error('Error reading file:', error);
+      }
     } else {
       setPhotoPreview('');
     }

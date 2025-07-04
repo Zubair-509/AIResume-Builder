@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Globe, Loader2 } from 'lucide-react';
+import { Globe, Loader2, Code } from 'lucide-react';
 import { toast } from 'sonner';
 import { findResumeElement } from '@/lib/pdf-utils';
 
@@ -201,15 +201,15 @@ export function HTMLExporter({
       aria-label="Export resume as HTML"
     >
       {isExporting ? (
-        <>
+        <div className="flex items-center">
           <Loader2 className="w-4 h-4 mr-2 animate-spin" />
           Exporting...
-        </>
+        </div>
       ) : (
-        <>
-          <Globe className="w-4 h-4 mr-2" />
+        <div className="flex items-center">
+          <Code className="w-4 h-4 mr-2" />
           Export HTML
-        </>
+        </div>
       )}
     </Button>
   );

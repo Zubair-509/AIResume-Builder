@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
 import { 
   Save, 
   Download, 
@@ -203,7 +203,8 @@ export function ResumeEditor({
   };
 
   return (
-    <div className="min-h-screen">
+    <MotionConfig reducedMotion="user">
+      <div className="min-h-screen">
       {/* Enhanced Header */}
       <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-b border-gray-200/50 dark:border-gray-700/50 sticky top-16 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -504,6 +505,7 @@ export function ResumeEditor({
         onSave={autoSave}
         enabled={hasUnsavedChanges}
       />
-    </div>
+      </div>
+    </MotionConfig>
   );
 }
