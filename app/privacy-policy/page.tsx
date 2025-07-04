@@ -723,7 +723,7 @@ export default function PrivacyPolicyPage() {
                     variants={itemVariants}
                     whileHover={{ x: 5, transition: { duration: 0.2 } }}
                   >
-                    <strong>Project Lead:</strong> <a href="https://www.linkedin.com/in/zubairabid509" target=\"_blank\" rel="noopener noreferrer\" className=\"text-blue-600 hover:underline">Muhammad Zubair on LinkedIn</a>
+                    <strong>Project Lead:</strong> <a href="https://www.linkedin.com/in/zubairabid509" target=\"_blank\" rel=\"noopener noreferrer\" className=\"text-blue-600 hover:underline">Muhammad Zubair on LinkedIn</a>
                   </motion.li>
                 </motion.ul>
                 
