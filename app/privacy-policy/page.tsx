@@ -359,7 +359,7 @@ export default function PrivacyPolicyPage() {
                     <strong>Mail:</strong> SnapCV Privacy Team, 123 Innovation Way, Karachi, Sindh, Pakistan
                   </li>
                   <li>
-                    <strong>Project Lead:</strong> <a href="https://www.linkedin.com/in/zubairabid509" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Muhammad Zubair on LinkedIn</a>
+                    <strong>Project Lead:</strong> <a href="https://www.linkedin.com/in/zubairabid509" target=\"_blank" rel="noopener noreferrer\" className="text-blue-600 hover:underline">Muhammad Zubair on LinkedIn</a>
                   </li>
                 </ul>
                 
