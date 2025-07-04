@@ -271,210 +271,211 @@ export function ResumeCustomizer({ resumeData, onSave }: ResumeCustomizerProps) 
               </span>
             </motion.div>
           
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-            Personalize Your
-            <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"> Perfect Resume</span>
-          </h1>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+              Personalize Your
+              <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"> Perfect Resume</span>
+            </h1>
           
-          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
-            Build custom sections, customize fonts and colors, and create a resume that perfectly represents your professional brand.
-          </p>
-        </motion.div>
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
+              Build custom sections, customize fonts and colors, and create a resume that perfectly represents your professional brand.
+            </p>
+          </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Customization Panel */}
-          <div className="lg:col-span-2">
-            <Card className="border-0 shadow-2xl bg-white dark:bg-gray-800">
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center">
-                    <Settings className="w-5 h-5 mr-2 text-purple-600" />
-                    Customization Options
-                  </CardTitle>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Customization Panel */}
+            <div className="lg:col-span-2">
+              <Card className="border-0 shadow-2xl bg-white dark:bg-gray-800">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center">
+                      <Settings className="w-5 h-5 mr-2 text-purple-600" />
+                      Customization Options
+                    </CardTitle>
                   
-                  <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={undo}
+                        disabled={historyIndex <= 0}
+                        title="Undo"
+                      >
+                        <RotateCcw className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={redo}
+                        disabled={historyIndex >= history.length - 1}
+                        title="Redo"
+                      >
+                        <RotateCcw className="w-4 h-4 scale-x-[-1]" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={resetToDefaults}
+                      >
+                        Reset
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+              
+                <CardContent className="p-0">
+                  <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                    <div className="border-b border-gray-200 dark:border-gray-700 px-6">
+                      <TabsList className="grid w-full grid-cols-3 bg-gray-100 dark:bg-gray-700">
+                        {tabs.map((tab) => (
+                          <TabsTrigger 
+                            key={tab.id}
+                            value={tab.id}
+                            className="flex items-center space-x-2 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800"
+                          >
+                            <tab.icon className="w-4 h-4" />
+                            <span className="hidden sm:inline">{tab.title.split(' ')[0]}</span>
+                          </TabsTrigger>
+                        ))}
+                      </TabsList>
+                    </div>
+
+                    <div className="p-6">
+                      <AnimatePresence mode="wait">
+                        <TabsContent value="sections" className="mt-0">
+                          <motion.div
+                            key="sections"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 20 }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            <DynamicSectionBuilder
+                              sections={dynamicSections}
+                              onUpdate={setDynamicSections}
+                            />
+                          </motion.div>
+                        </TabsContent>
+
+                        <TabsContent value="fonts" className="mt-0">
+                          <motion.div
+                            key="fonts"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 20 }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            <FontSelector
+                              settings={settings.font}
+                              onUpdate={(fontSettings) => updateSettings({ font: fontSettings })}
+                            />
+                          </motion.div>
+                        </TabsContent>
+
+                        <TabsContent value="colors" className="mt-0">
+                          <motion.div
+                            key="colors"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 20 }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            <ColorSchemeSelector
+                              settings={settings.colors}
+                              onUpdate={(colorSettings) => updateSettings({ colors: colorSettings })}
+                            />
+                          </motion.div>
+                        </TabsContent>
+                      </AnimatePresence>
+                    </div>
+                  </Tabs>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Preview Panel */}
+            <div className="lg:col-span-1">
+              <div className="sticky top-8 space-y-6">
+                {/* Preview Card */}
+                <LivePreview 
+                  title="Resume Preview" 
+                  templateId={settings.layout.template}
+                  showEditButton={false}
+                  showDownloadButton={true}
+                  onDownload={() => {
+                    // Save current data for download
+                    sessionStorage.setItem('resume-data', JSON.stringify(resumeData));
+                    toast.success('Resume ready for download');
+                  }}
+                >
+                  <div className="p-4">
+                    <ResumePreview 
+                      data={resumeData}
+                      settings={settings}
+                    />
+                  </div>
+                </LivePreview>
+
+                {/* Action Buttons */}
+                <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
+                  <CardContent className="p-6 space-y-4">
                     <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={undo}
-                      disabled={historyIndex <= 0}
-                      title="Undo"
+                      onClick={saveCustomization}
+                      className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+                      size="lg"
                     >
-                      <RotateCcw className="w-4 h-4" />
+                      <Save className="w-4 h-4 mr-2" />
+                      Save Customization
                     </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={redo}
-                      disabled={historyIndex >= history.length - 1}
-                      title="Redo"
-                    >
-                      <RotateCcw className="w-4 h-4 scale-x-[-1]" />
-                    </Button>
+                  
                     <Button
                       variant="outline"
-                      size="sm"
-                      onClick={resetToDefaults}
+                      className="w-full"
+                      size="lg"
+                      onClick={() => {
+                        // Save current data for download
+                        sessionStorage.setItem('resume-data', JSON.stringify(resumeData));
+                        toast.success('Resume ready for download');
+                      }}
                     >
-                      Reset
+                      <Download className="w-4 h-4 mr-2" />
+                      Download PDF
                     </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              
-              <CardContent className="p-0">
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                  <div className="border-b border-gray-200 dark:border-gray-700 px-6">
-                    <TabsList className="grid w-full grid-cols-3 bg-gray-100 dark:bg-gray-700">
-                      {tabs.map((tab) => (
-                        <TabsTrigger 
-                          key={tab.id}
-                          value={tab.id}
-                          className="flex items-center space-x-2 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800"
-                        >
-                          <tab.icon className="w-4 h-4" />
-                          <span className="hidden sm:inline">{tab.title.split(' ')[0]}</span>
-                        </TabsTrigger>
-                      ))}
-                    </TabsList>
-                  </div>
-
-                  <div className="p-6">
-                    <AnimatePresence mode="wait">
-                      <TabsContent value="sections" className="mt-0">
-                        <motion.div
-                          key="sections"
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: 20 }}
-                          transition={{ duration: 0.3 }}
-                        >
-                          <DynamicSectionBuilder
-                            sections={dynamicSections}
-                            onUpdate={setDynamicSections}
-                          />
-                        </motion.div>
-                      </TabsContent>
-
-                      <TabsContent value="fonts" className="mt-0">
-                        <motion.div
-                          key="fonts"
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: 20 }}
-                          transition={{ duration: 0.3 }}
-                        >
-                          <FontSelector
-                            settings={settings.font}
-                            onUpdate={(fontSettings) => updateSettings({ font: fontSettings })}
-                          />
-                        </motion.div>
-                      </TabsContent>
-
-                      <TabsContent value="colors" className="mt-0">
-                        <motion.div
-                          key="colors"
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: 20 }}
-                          transition={{ duration: 0.3 }}
-                        >
-                          <ColorSchemeSelector
-                            settings={settings.colors}
-                            onUpdate={(colorSettings) => updateSettings({ colors: colorSettings })}
-                          />
-                        </motion.div>
-                      </TabsContent>
-                    </AnimatePresence>
-                  </div>
-                </Tabs>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Preview Panel */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-8 space-y-6">
-              {/* Preview Card */}
-              <LivePreview 
-                title="Resume Preview" 
-                templateId={settings.layout.template}
-                showEditButton={false}
-                showDownloadButton={true}
-                onDownload={() => {
-                  // Save current data for download
-                  sessionStorage.setItem('resume-data', JSON.stringify(resumeData));
-                  toast.success('Resume ready for download');
-                }}
-              >
-                <div className="p-4">
-                  <ResumePreview 
-                    data={resumeData}
-                    settings={settings}
-                  />
-                </div>
-              </LivePreview>
-
-              {/* Action Buttons */}
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
-                <CardContent className="p-6 space-y-4">
-                  <Button
-                    onClick={saveCustomization}
-                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
-                    size="lg"
-                  >
-                    <Save className="w-4 h-4 mr-2" />
-                    Save Customization
-                  </Button>
                   
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    size="lg"
-                    onClick={() => {
-                      // Save current data for download
-                      sessionStorage.setItem('resume-data', JSON.stringify(resumeData));
-                      toast.success('Resume ready for download');
-                    }}
-                  >
-                    <Download className="w-4 h-4 mr-2" />
-                    Download PDF
-                  </Button>
-                  
-                  <HTMLExporter
-                    resumeData={resumeData}
-                    templateId={settings.layout.template}
-                    customizationSettings={settings}
-                    className="w-full border-2 border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
-                    size="lg"
-                  />
-                </CardContent>
-              </Card>
+                    <HTMLExporter
+                      resumeData={resumeData}
+                      templateId={settings.layout.template}
+                      customizationSettings={settings}
+                      className="w-full border-2 border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                      size="lg"
+                    />
+                  </CardContent>
+                </Card>
 
-              {/* Quick Stats */}
-              <Card className="border-0 shadow-lg bg-white dark:bg-gray-800">
-                <CardHeader>
-                  <CardTitle className="text-base">Customization Stats</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Changes Made</span>
-                    <Badge variant="secondary">{history.length - 1}</Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Active Sections</span>
-                    <Badge variant="secondary">{settings.sections.filter(s => s.visible).length}</Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Custom Sections</span>
-                    <Badge variant="secondary">{dynamicSections.length}</Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Total Entries</span>
-                    <Badge variant="secondary">{dynamicSections.reduce((acc, section) => acc + section.entries.length, 0)}</Badge>
-                  </div>
-                </CardContent>
-              </Card>
+                {/* Quick Stats */}
+                <Card className="border-0 shadow-lg bg-white dark:bg-gray-800">
+                  <CardHeader>
+                    <CardTitle className="text-base">Customization Stats</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Changes Made</span>
+                      <Badge variant="secondary">{history.length - 1}</Badge>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Active Sections</span>
+                      <Badge variant="secondary">{settings.sections.filter(s => s.visible).length}</Badge>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Custom Sections</span>
+                      <Badge variant="secondary">{dynamicSections.length}</Badge>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Total Entries</span>
+                      <Badge variant="secondary">{dynamicSections.reduce((acc, section) => acc + section.entries.length, 0)}</Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
         </div>
