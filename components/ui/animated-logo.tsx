@@ -1,20 +1,46 @@
 'use client';
 
-import { motion, MotionConfig } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { FileText } from 'lucide-react';
 import Link from 'next/link';
+import { useState } from 'react';
 
 export function AnimatedLogo() {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const logoVariants = {
+    idle: {
+      rotate: 0,
+      scale: 1,
+      boxShadow: '0 0 0px rgba(124, 58, 237, 0)'
+    },
+    hovered: {
+      rotate: 5,
+      scale: 1.05,
+      boxShadow: '0 0 15px rgba(124, 58, 237, 0.5)'
+    }
+  };
+
+  const textVariants = {
+    idle: {
+      scale: 1
+    },
+    hovered: {
+      scale: 1.05
+    }
+  };
+
   return (
-    <Link href="/" className="flex items-center space-x-2 group">
-      {/* Logo Icon with Glow and Animation */}
-      <motion.div 
+    <Link 
+      href="/" 
+      className="flex items-center space-x-2 group"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <motion.div
         className="relative w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center overflow-hidden"
-        whileHover={{ 
-          rotate: 5,
-          scale: 1.05,
-          boxShadow: '0 0 15px rgba(124, 58, 237, 0.5)'
-        }}
+        animate={isHovered ? 'hovered' : 'idle'}
+        variants={logoVariants}
         transition={{ 
           type: 'spring', 
           stiffness: 400, 
@@ -56,7 +82,8 @@ export function AnimatedLogo() {
       {/* Animated Text */}
       <motion.span 
         className="text-xl font-bold relative"
-        whileHover={{ scale: 1.05 }}
+        animate={isHovered ? 'hovered' : 'idle'}
+        variants={textVariants}
       >
         {/* Animated Gradient Text */}
         <motion.span
@@ -67,28 +94,24 @@ export function AnimatedLogo() {
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
-            textFillColor: 'transparent',
           }}
           animate={{
             backgroundPosition: ['0% center', '200% center']
           }}
           transition={{
-          }
-          }
-    <MotionConfig reducedMotion="user">
-      <Link href="/" className="flex items-center space-x-2" onMouseEnter={handleMouseEnter}>
-        <motion.div
-          className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center"
-          animate={isHovered ? 'hovered' : 'idle'}
-          variants={logoVariants}
+            duration: 2,
+            repeat: Infinity,
+            ease: "linear"
+          }}
         >
-          <FileText className="w-5 h-5 text-white" />
-        </motion.div>
-        <motion.span
-          className="text-xl font-bold text-gray-900 dark:text-white"
-          animate={isHovered ? 'hovered' : 'idle'}
-          variants={textVariants}
-        >
-}
-  )
+          ResumeAI
+        </motion.span>
+        
+        {/* Fallback Text */}
+        <span className="text-gray-900 dark:text-white opacity-0">
+          ResumeAI
+        </span>
+      </motion.span>
+    </Link>
+  );
 }
