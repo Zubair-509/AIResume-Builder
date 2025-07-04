@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, MotionConfig } from 'framer-motion';
 import { FileText } from 'lucide-react';
 import Link from 'next/link';
 
@@ -73,17 +73,18 @@ export function AnimatedLogo() {
             backgroundPosition: ['0% center', '200% center']
           }}
           transition={{
-            duration: 5,
-            repeat: Infinity,
-            ease: "linear"
-          }}
+    <MotionConfig reducedMotion="user">
+      <Link href="/" className="flex items-center space-x-2" onMouseEnter={handleMouseEnter}>
+        <motion.div
+          className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center"
+          animate={isHovered ? 'hovered' : 'idle'}
+          variants={logoVariants}
         >
-          SnapCV
-        </motion.span>
-        
-        {/* Base Text (for layout purposes) */}
-        <span className="opacity-0">SnapCV</span>
-      </motion.span>
-    </Link>
-  );
+          <FileText className="w-5 h-5 text-white" />
+        </motion.div>
+        <motion.span
+          className="text-xl font-bold text-gray-900 dark:text-white"
+          animate={isHovered ? 'hovered' : 'idle'}
+          variants={textVariants}
+        >
 }

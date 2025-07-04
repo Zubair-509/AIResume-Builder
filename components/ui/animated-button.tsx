@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, HTMLMotionProps } from 'framer-motion';
-import { forwardRef, ReactNode, useState } from 'react';
+import { motion, MotionConfig } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 interface AnimatedButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'> {
@@ -45,33 +45,35 @@ export const AnimatedButton = forwardRef<HTMLButtonElement, AnimatedButtonProps>
         setTimeout(() => {
           setRipples(prev => prev.filter(r => r.id !== newRipple.id));
         }, 600);
-      }
-      
-      if (props.onClick) {
-        props.onClick(e);
-      }
-    };
-
-    return (
-      <motion.button
-        ref={ref}
-        className={baseClasses}
-        whileHover={{ 
-          scale: 1.02,
-          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)',
-        }}
-        whileTap={{ scale: 0.95 }}
-        transition={{ 
-          type: 'spring', 
-          stiffness: 400, 
-          damping: 17 
-        }}
-        onClick={handleClick}
-        {...props}
+    <MotionConfig reducedMotion="user">
+      <motion.div
+        whileHover={
+          disabled
+            ? {}
+            : {
+                scale: 1.02,
+                transition: { duration: 0.2 },
+              }
+        }
+        whileTap={
+          disabled
+            ? {}
+            : {
+                scale: 0.98,
+                transition: { duration: 0.2 },
+              }
+        }
       >
-        {children}
-        
-        {/* Ripple Effect */}
+        <Button
+          ref={ref}
+          className={cn('', className)}
+          disabled={disabled}
+          {...props}
+        >
+          {children}
+        </Button>
+      </motion.div>
+    </MotionConfig>
         {ripple && (
           <div className="absolute inset-0 pointer-events-none">
             {ripples.map((ripple) => (
