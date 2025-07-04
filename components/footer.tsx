@@ -23,6 +23,7 @@ export function Footer() {
     ],
     company: [
       { name: 'About Us', href: '/about' },
+      { name: 'Privacy Policy', href: '/privacy-policy' },
       { name: 'Terms of Service', href: '/terms-of-service' }
     ],
     support: [
