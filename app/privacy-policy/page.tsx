@@ -15,7 +15,7 @@ import {
   AlertTriangle,
   Clock,
   Globe,
-  Mail
+  Linkedin
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -692,7 +692,7 @@ export default function PrivacyPolicyPage() {
                 animate={sectionsInView[9] ? "visible" : "hidden"}
                 variants={fadeInLeftVariants}
               >
-                <Mail className="w-6 h-6 text-blue-600 mr-3" />
+                <Linkedin className="w-6 h-6 text-blue-600 mr-3" />
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">10. Contact Us</h2>
               </motion.div>
               
@@ -723,7 +723,7 @@ export default function PrivacyPolicyPage() {
                     variants={itemVariants}
                     whileHover={{ x: 5, transition: { duration: 0.2 } }}
                   >
-                    <strong>Project Lead:</strong> <a href="https://www.linkedin.com/in/zubairabid509" target=\"_blank" rel="noopener noreferrer\" className="text-blue-600 hover:underline">Muhammad Zubair on LinkedIn</a>
+                    <strong>Project Lead:</strong> <a href="https://www.linkedin.com/in/zubairabid509" target=\"_blank\" rel="noopener noreferrer\" className=\"text-blue-600 hover:underline">Muhammad Zubair on LinkedIn</a>
                   </motion.li>
                 </motion.ul>
                 
