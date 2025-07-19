@@ -1,12 +1,16 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
+import { useRef } from 'react';
 import { Star, Quote, Briefcase, MapPin } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 
 export function TestimonialsSection() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(sectionRef, { once: false, amount: 0.2 });
+
   const testimonials = [
     {
       id: 1,
@@ -81,52 +85,128 @@ export function TestimonialsSection() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
+        staggerChildren: 0.2,
+        delayChildren: 0.3,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { opacity: 0, y: 60, scale: 0.8, rotateY: -15 },
     visible: {
       opacity: 1,
       y: 0,
+      scale: 1,
+      rotateY: 0,
       transition: {
-        duration: 0.6,
-        ease: 'easeOut',
+        duration: 0.8,
+        ease: [0.22, 1, 0.36, 1],
       },
     },
   };
 
+  const cardHoverVariants = {
+    hover: {
+      y: -15,
+      scale: 1.03,
+      rotateY: 5,
+      boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+      transition: {
+        duration: 0.4,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  const quoteVariants = {
+    hover: {
+      scale: 1.1,
+      rotate: 10,
+      color: "#8b5cf6",
+      transition: {
+        duration: 0.3
+      }
+    }
+  };
+
+  const avatarVariants = {
+    hover: {
+      scale: 1.1,
+      boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+      transition: {
+        duration: 0.3
+      }
+    }
+  };
+
   return (
-    <section className="py-20 bg-white dark:bg-gray-800" id="testimonials">
+    <section ref={sectionRef} className="py-20 bg-white dark:bg-gray-800 relative overflow-hidden" id="testimonials">
+      {/* Animated Background */}
+      <motion.div
+        className="absolute inset-0 opacity-20"
+        animate={{
+          background: [
+            "radial-gradient(circle at 30% 20%, rgba(147, 51, 234, 0.1) 0%, transparent 50%)",
+            "radial-gradient(circle at 70% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%)",
+            "radial-gradient(circle at 30% 20%, rgba(147, 51, 234, 0.1) 0%, transparent 50%)"
+          ]
+        }}
+        transition={{
+          duration: 12,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           className="text-center mb-16"
         >
-          <Badge variant="outline" className="mb-4 px-4 py-2 text-purple-600 border-purple-200">
-            Success Stories
-          </Badge>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+          >
+            <Badge variant="outline" className="mb-6 px-6 py-3 text-purple-600 border-purple-200 shadow-lg">
+              Success Stories
+            </Badge>
+          </motion.div>
+          <motion.h2 
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6"
+            animate={{
+              backgroundPosition: ['0% 50%', '100% 50%', '0% 50%']
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+          >
             Trusted by
-            <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"> 50,000+ Professionals</span>
-          </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            <motion.span 
+              className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"
+              style={{ backgroundSize: '200% 200%' }}
+            > 50,000+ Professionals</motion.span>
+          </motion.h2>
+          <motion.p 
+            className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed"
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+          >
             See how SnapCV has helped professionals across industries land their dream jobs at top companies worldwide.
-          </p>
+          </motion.p>
         </motion.div>
 
         {/* Testimonials Grid */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
-          whileInView="visible"
+          animate={isInView ? "visible" : "hidden"}
           viewport={{ once: true }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
@@ -134,46 +214,78 @@ export function TestimonialsSection() {
             <motion.div
               key={testimonial.id}
               variants={itemVariants}
-              whileHover={{ y: -5, scale: 1.02 }}
+              whileHover="hover"
               className="group"
             >
-              <Card className="h-full border-0 shadow-lg hover:shadow-2xl transition-all duration-300 bg-white dark:bg-gray-900 overflow-hidden">
-                <CardContent className="p-6">
+              <motion.div
+                variants={cardHoverVariants}
+                className="h-full border-0 shadow-xl hover:shadow-3xl transition-all duration-500 bg-white dark:bg-gray-900 overflow-hidden rounded-3xl transform-gpu"
+              >
+                <div className="p-8">
                   {/* Quote Icon */}
                   <div className="flex justify-between items-start mb-4">
-                    <Quote className="w-8 h-8 text-purple-500 opacity-50" />
-                    <div className="flex space-x-1">
+                    <motion.div variants={quoteVariants}>
+                      <Quote className="w-10 h-10 text-purple-500 opacity-60" />
+                    </motion.div>
+                    <motion.div 
+                      className="flex space-x-1"
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0 }}
+                      transition={{ delay: 0.5 + index * 0.1, duration: 0.5 }}
+                    >
                       {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, scale: 0, rotate: -180 }}
+                          animate={isInView ? { opacity: 1, scale: 1, rotate: 0 } : { opacity: 0, scale: 0, rotate: -180 }}
+                          transition={{ delay: 0.7 + index * 0.1 + i * 0.1, duration: 0.3 }}
+                          whileHover={{ scale: 1.3, rotate: 180 }}
+                        >
+                          <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                        </motion.div>
                       ))}
-                    </div>
+                    </motion.div>
                   </div>
 
                   {/* Testimonial Text */}
-                  <blockquote className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6 italic">
+                  <motion.blockquote 
+                    className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6 italic text-lg"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.2 }}
+                  >
                     "{testimonial.text}"
-                  </blockquote>
+                  </motion.blockquote>
 
                   {/* Highlight Badge */}
-                  <Badge 
-                    variant="secondary" 
-                    className="mb-4 bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300"
+                  <motion.div
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    transition={{ duration: 0.2 }}
                   >
-                    {testimonial.highlight}
-                  </Badge>
+                    <Badge 
+                      variant="secondary" 
+                      className="mb-6 bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300 px-4 py-2 shadow-md"
+                    >
+                      {testimonial.highlight}
+                    </Badge>
+                  </motion.div>
 
                   {/* Author Info */}
                   <div className="flex items-center space-x-4">
-                    <Avatar className="w-12 h-12 ring-2 ring-purple-100 dark:ring-purple-800">
-                      <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
-                      <AvatarFallback className="bg-purple-100 text-purple-600 font-semibold">
-                        {testimonial.name.split(' ').map(n => n[0]).join('')}
-                      </AvatarFallback>
-                    </Avatar>
+                    <motion.div variants={avatarVariants}>
+                      <Avatar className="w-14 h-14 ring-4 ring-purple-100 dark:ring-purple-800 shadow-lg">
+                        <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
+                        <AvatarFallback className="bg-purple-100 text-purple-600 font-semibold text-lg">
+                          {testimonial.name.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                    </motion.div>
                     <div className="flex-1">
-                      <div className="font-semibold text-gray-900 dark:text-white">
+                      <motion.div 
+                        className="font-semibold text-gray-900 dark:text-white text-lg"
+                        whileHover={{ color: "#8b5cf6" }}
+                      >
                         {testimonial.name}
-                      </div>
+                      </motion.div>
                       <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
                         <Briefcase className="w-3 h-3" />
                         <span>{testimonial.role} at {testimonial.company}</span>
@@ -184,8 +296,8 @@ export function TestimonialsSection() {
                       </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </motion.div>
             </motion.div>
           ))}
         </motion.div>
@@ -193,19 +305,39 @@ export function TestimonialsSection() {
         {/* Trust Indicators */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.4 }}
+          transition={{ duration: 0.8, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mt-16 text-center"
         >
-          <p className="text-gray-600 dark:text-gray-400 mb-8">
+          <motion.p 
+            className="text-gray-600 dark:text-gray-400 mb-10 text-lg"
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ delay: 0.8, duration: 0.8 }}
+          >
             Trusted by professionals at leading companies worldwide
-          </p>
-          <div className="flex flex-wrap justify-center items-center space-x-8 opacity-60">
+          </motion.p>
+          <div className="flex flex-wrap justify-center items-center gap-8 opacity-60">
             {['Google', 'Microsoft', 'Apple', 'Amazon', 'Netflix', 'Spotify', 'Airbnb', 'Nike'].map((company) => (
-              <div key={company} className="text-2xl font-bold text-gray-400 dark:text-gray-600 mb-4">
+              <motion.div 
+                key={company} 
+                className="text-2xl font-bold text-gray-400 dark:text-gray-600 mb-4 cursor-pointer"
+                whileHover={{ 
+                  scale: 1.1, 
+                  opacity: 1,
+                  color: "#6b7280",
+                  y: -5
+                }}
+                transition={{ duration: 0.3 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 0.6, y: 0 } : { opacity: 0, y: 20 }}
+                style={{ 
+                  transitionDelay: `${Math.random() * 0.5}s`
+                }}
+              >
                 {company}
-              </div>
+              </motion.div>
             ))}
           </div>
         </motion.div>
