@@ -168,7 +168,7 @@ export function HeroSection() {
           className="absolute top-2/3 right-1/5"
         >
           <Zap className="w-4 h-4 text-purple-400" />
-        />
+        </motion.div>
       </div>
 
       {/* Content */}
