@@ -150,11 +150,6 @@ export function FeaturesSection() {
             }}
             transition={{
               duration: 8,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-          >
-            Everything You Need to Land Your
             <motion.span 
               className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
               style={{ backgroundSize: '200% 200%' }}
