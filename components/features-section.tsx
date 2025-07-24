@@ -151,10 +151,10 @@ export function FeaturesSection() {
             transition={{
               duration: 8,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: "linear"
             }}
           >
-            Features That Land Your{' '}
+            Everything You Need to Land Your
             <motion.span 
               className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
               style={{ backgroundSize: '200% 200%' }}
