@@ -121,7 +121,8 @@ export function CTASection() {
                 transition={{
                   duration: 8,
                   repeat: Infinity,
-                  ease: "linear"
+                  ease: "linear",
+                  type: "tween"
                 }}
               >
                 Ready to Land Your

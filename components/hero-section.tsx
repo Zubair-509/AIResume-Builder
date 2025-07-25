@@ -1,10 +1,10 @@
 'use client';
 
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
+import { useRef } from 'react';
 import { ArrowRight, Sparkles, Zap, Star } from 'lucide-react';
 import { AnimatedButton } from '@/components/ui/animated-button';
 import { BoltBadge } from '@/components/ui/bolt-badge';
-import { useRef } from 'react';
 import Link from 'next/link';
 
 export function HeroSection() {
@@ -211,14 +211,7 @@ export function HeroSection() {
               scale: 1.05,
               transition: { duration: 0.3, ease: "easeOut" }
             }}
-            animate={{
-              backgroundPosition: ['0% 50%', '100% 50%', '0% 50%']
-            }}
             transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-              duration: 8,
-              repeat: Infinity,
-              ease: "linear",
-              type: "tween"
           >
             Snap
           </motion.span>
@@ -273,14 +266,6 @@ export function HeroSection() {
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-10 py-5 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-500 group w-full sm:w-auto flex items-center justify-center text-lg font-semibold"
               >
                 <motion.span
-                  animate={{
-                    backgroundPosition: ['0% 50%', '100% 50%', '0% 50%']
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "linear"
-                  }}
                   className="bg-gradient-to-r from-white to-blue-100 bg-clip-text"
                 >
                   Start Building Resume

@@ -202,7 +202,8 @@ export default function AboutPage() {
                 transition={{ 
                   duration: 8, 
                   repeat: Infinity, 
-                  ease: "linear" 
+                  ease: "linear",
+                  type: "tween"
                 }}
               > SnapCV</motion.span>
             </h1>
