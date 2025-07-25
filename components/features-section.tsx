@@ -151,7 +151,8 @@ export function FeaturesSection() {
             transition={{
               duration: 8,
               repeat: Infinity,
-              ease: "linear"
+              ease: "linear",
+              type: "tween"
             }}
           >
             Everything You Need to Land Your

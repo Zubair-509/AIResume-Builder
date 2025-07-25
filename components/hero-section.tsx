@@ -215,9 +215,10 @@ export function HeroSection() {
               backgroundPosition: ['0% 50%', '100% 50%', '0% 50%']
             }}
             transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-            style={{
-              backgroundSize: '200% 200%'
-            }}
+              duration: 8,
+              repeat: Infinity,
+              ease: "linear",
+              type: "tween"
           >
             Snap
           </motion.span>
