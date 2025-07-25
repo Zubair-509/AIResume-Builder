@@ -115,21 +115,9 @@ export function CTASection() {
             <div className="mb-6">
               <motion.h2 
                 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight"
-                animate={{
-                  backgroundPosition: ['0% 50%', '100% 50%', '0% 50%']
-                }}
-                transition={{
-                  duration: 8,
-                  repeat: Infinity,
-                  ease: "linear",
-                  type: "tween"
-                }}
               >
                 Ready to Land Your
-                <motion.span 
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
-                  style={{ backgroundSize: '200% 200%' }}
-                > Dream Job?</motion.span>
+                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Dream Job?</span>
               </motion.h2>
               <motion.p 
                 className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed mb-8"
