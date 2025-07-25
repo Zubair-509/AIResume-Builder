@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { ArrowRight, Sparkles, Zap, Star } from 'lucide-react';
