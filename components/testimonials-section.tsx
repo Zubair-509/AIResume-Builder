@@ -211,81 +211,47 @@ export function TestimonialsSection() {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
           {testimonials.map((testimonial, index) => (
-            <motion.div
+            <Card 
               key={testimonial.id}
-              variants={itemVariants}
-              whileHover="hover"
-              className="group"
+              className="border-0 shadow-lg transition-all duration-300 hover:shadow-xl bg-white dark:bg-gray-900 overflow-hidden rounded-2xl"
             >
-              <motion.div
-                variants={cardHoverVariants}
-                className="h-full border-0 shadow-xl hover:shadow-3xl transition-all duration-500 bg-white dark:bg-gray-900 overflow-hidden rounded-3xl transform-gpu"
-              >
+              <CardContent className="p-6">
                 <div className="p-8">
                   {/* Quote Icon */}
                   <div className="flex justify-between items-start mb-4">
-                    <motion.div variants={quoteVariants}>
-                      <Quote className="w-10 h-10 text-purple-500 opacity-60" />
-                    </motion.div>
-                    <motion.div 
-                      className="flex space-x-1"
-                      initial={{ opacity: 0, scale: 0 }}
-                      animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0 }}
-                      transition={{ delay: 0.5 + index * 0.1, duration: 0.5 }}
-                    >
+                    <Quote className="w-8 h-8 text-purple-500 opacity-60" />
+                    <div className="flex space-x-1">
                       {[...Array(testimonial.rating)].map((_, i) => (
-                        <motion.div
-                          key={i}
-                          initial={{ opacity: 0, scale: 0, rotate: -180 }}
-                          animate={isInView ? { opacity: 1, scale: 1, rotate: 0 } : { opacity: 0, scale: 0, rotate: -180 }}
-                          transition={{ delay: 0.7 + index * 0.1 + i * 0.1, duration: 0.3 }}
-                          whileHover={{ scale: 1.3, rotate: 180 }}
-                        >
-                          <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                        </motion.div>
+                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                       ))}
-                    </motion.div>
+                    </div>
                   </div>
 
                   {/* Testimonial Text */}
-                  <motion.blockquote 
-                    className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6 italic text-lg"
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ duration: 0.2 }}
-                  >
+                  <blockquote className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6 italic">
                     "{testimonial.text}"
-                  </motion.blockquote>
+                  </blockquote>
 
                   {/* Highlight Badge */}
-                  <motion.div
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    transition={{ duration: 0.2 }}
+                  <Badge 
+                    variant="secondary" 
+                    className="mb-4 bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300"
                   >
-                    <Badge 
-                      variant="secondary" 
-                      className="mb-6 bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300 px-4 py-2 shadow-md"
-                    >
-                      {testimonial.highlight}
-                    </Badge>
-                  </motion.div>
+                    {testimonial.highlight}
+                  </Badge>
 
                   {/* Author Info */}
                   <div className="flex items-center space-x-4">
-                    <motion.div variants={avatarVariants}>
-                      <Avatar className="w-14 h-14 ring-4 ring-purple-100 dark:ring-purple-800 shadow-lg">
-                        <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
-                        <AvatarFallback className="bg-purple-100 text-purple-600 font-semibold text-lg">
-                          {testimonial.name.split(' ').map(n => n[0]).join('')}
-                        </AvatarFallback>
-                      </Avatar>
-                    </motion.div>
+                    <Avatar className="w-12 h-12">
+                      <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
+                      <AvatarFallback className="bg-purple-100 text-purple-600 font-semibold">
+                        {testimonial.name.split(' ').map(n => n[0]).join('')}
+                      </AvatarFallback>
+                    </Avatar>
                     <div className="flex-1">
-                      <motion.div 
-                        className="font-semibold text-gray-900 dark:text-white text-lg"
-                        whileHover={{ color: "#8b5cf6" }}
-                      >
+                      <div className="font-semibold text-gray-900 dark:text-white">
                         {testimonial.name}
-                      </motion.div>
+                      </div>
                       <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
                         <Briefcase className="w-3 h-3" />
                         <span>{testimonial.role} at {testimonial.company}</span>
@@ -297,8 +263,8 @@ export function TestimonialsSection() {
                     </div>
                   </div>
                 </div>
-              </motion.div>
-            </motion.div>
+              </CardContent>
+            </Card>
           ))}
         </motion.div>
 
@@ -306,38 +272,17 @@ export function TestimonialsSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mt-16 text-center"
         >
-          <motion.p 
-            className="text-gray-600 dark:text-gray-400 mb-10 text-lg"
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-            transition={{ delay: 0.8, duration: 0.8 }}
-          >
+          <p className="text-gray-600 dark:text-gray-400 mb-8">
             Trusted by professionals at leading companies worldwide
-          </motion.p>
+          </p>
           <div className="flex flex-wrap justify-center items-center gap-8 opacity-60">
             {['Google', 'Microsoft', 'Apple', 'Amazon', 'Netflix', 'Spotify', 'Airbnb', 'Nike'].map((company) => (
-              <motion.div 
-                key={company} 
-                className="text-2xl font-bold text-gray-400 dark:text-gray-600 mb-4 cursor-pointer"
-                whileHover={{ 
-                  scale: 1.1, 
-                  opacity: 1,
-                  color: "#6b7280",
-                  y: -5
-                }}
-                transition={{ duration: 0.3 }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 0.6, y: 0 } : { opacity: 0, y: 20 }}
-                style={{ 
-                  transitionDelay: `${Math.random() * 0.5}s`
-                }}
-              >
+              <div key={company} className="text-xl font-bold text-gray-400 dark:text-gray-600">
                 {company}
-              </motion.div>
+              </div>
             ))}
           </div>
         </motion.div>
