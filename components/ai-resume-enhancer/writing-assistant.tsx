@@ -86,13 +86,13 @@ export function WritingAssistant({ onAssistance }: WritingAssistantProps) {
     }
 
     setIsAnalyzing(true);
-    
+
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       const fullAnalysis = await simulateWritingAnalysis(content, true);
       setAnalysis(fullAnalysis);
-      
+
       onAssistance({
         type: 'writing-assistance',
         analysis: fullAnalysis,
@@ -106,7 +106,7 @@ export function WritingAssistant({ onAssistance }: WritingAssistantProps) {
           ]
         }
       });
-      
+
       toast.success('Writing analysis complete!', {
         description: `Found ${fullAnalysis.issues.length} suggestions for improvement`
       });
@@ -298,7 +298,7 @@ export function WritingAssistant({ onAssistance }: WritingAssistantProps) {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="space-y-2">
               <Label>Tone Level</Label>
               <Select value={toneLevel} onValueChange={setToneLevel}>
@@ -312,7 +312,7 @@ export function WritingAssistant({ onAssistance }: WritingAssistantProps) {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="space-y-2">
               <Label>Real-time Analysis</Label>
               <div className="flex items-center space-x-2">
@@ -368,7 +368,7 @@ export function WritingAssistant({ onAssistance }: WritingAssistantProps) {
               )}
             </div>
           </div>
-          
+
           <div className="flex justify-center">
             <Button
               onClick={performFullAnalysis}
@@ -401,7 +401,7 @@ export function WritingAssistant({ onAssistance }: WritingAssistantProps) {
           className="space-y-6"
         >
           <Separator />
-          
+
           {/* Score Overview */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card className={`border-0 shadow-lg ${getScoreBg(analysis.overallScore)}`}>
@@ -413,7 +413,7 @@ export function WritingAssistant({ onAssistance }: WritingAssistantProps) {
                 <Progress value={analysis.overallScore} className="h-2 mt-2" />
               </CardContent>
             </Card>
-            
+
             <Card className={`border-0 shadow-lg ${getScoreBg(analysis.readabilityScore)}`}>
               <CardContent className="p-4 text-center">
                 <div className={`text-2xl font-bold ${getScoreColor(analysis.readabilityScore)} mb-1`}>
@@ -423,7 +423,7 @@ export function WritingAssistant({ onAssistance }: WritingAssistantProps) {
                 <Progress value={analysis.readabilityScore} className="h-2 mt-2" />
               </CardContent>
             </Card>
-            
+
             <Card className={`border-0 shadow-lg ${getScoreBg(analysis.atsScore)}`}>
               <CardContent className="p-4 text-center">
                 <div className={`text-2xl font-bold ${getScoreColor(analysis.atsScore)} mb-1`}>
@@ -433,7 +433,7 @@ export function WritingAssistant({ onAssistance }: WritingAssistantProps) {
                 <Progress value={analysis.atsScore} className="h-2 mt-2" />
               </CardContent>
             </Card>
-            
+
             <Card className={`border-0 shadow-lg ${getScoreBg(analysis.professionalTone)}`}>
               <CardContent className="p-4 text-center">
                 <div className={`text-2xl font-bold ${getScoreColor(analysis.professionalTone)} mb-1`}>

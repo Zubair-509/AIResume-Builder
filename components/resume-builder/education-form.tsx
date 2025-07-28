@@ -80,7 +80,7 @@ export function EducationForm({ control, errors }: EducationFormProps) {
                   />
                   {errors?.education?.[index]?.institution && (
                     <p className="text-sm text-red-600">
-                      {errors.education[index].institution.message}
+                      {errors.education[index]?.institution?.message}
                     </p>
                   )}
                 </div>
@@ -113,7 +113,7 @@ export function EducationForm({ control, errors }: EducationFormProps) {
                     />
                     {errors?.education?.[index]?.fieldOfStudy && (
                       <p className="text-sm text-red-600">
-                        {errors.education[index].fieldOfStudy.message}
+                        {errors.education[index]?.fieldOfStudy?.message}
                       </p>
                     )}
                   </div>

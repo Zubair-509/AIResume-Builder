@@ -8,6 +8,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Edit } from 'lucide-react';
 
+import { format } from 'date-fns';
+
 interface ExecutiveTemplateProps {
   data: ResumeFormData;
   showEditButton?: boolean;

@@ -6,22 +6,7 @@ const nextConfig = {
   images: { unoptimized: true },
   experimental: {
     optimizePackageImports: ['framer-motion'],
-    // Enable faster builds and pre-compilation
-    // Removed turbo configuration to fix TypeError: bindings.turbo.createProject is not a function
-    // turbo: {
-    //   rules: {
-    //     '*.svg': {
-    //       loaders: ['@svgr/webpack'],
-    //       as: '*.js',
-    //     },
-    //   },
-    // },
-    // Pre-compile pages in development
     serverComponentsExternalPackages: [],
-    // Disable serverActions to fix syntax error
-    serverActions: false,
-    // Optimize CSS loading
-    optimizeCss: true,
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',

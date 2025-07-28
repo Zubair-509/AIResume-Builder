@@ -128,6 +128,8 @@ export function TechnicalTemplate({ data, showEditButton = false, className = ''
         </section>
       )}
 
+      import { format } from 'date-fns';
+
       {/* Education */}
       {data.education && data.education.length > 0 && (
         <section>

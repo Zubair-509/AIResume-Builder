@@ -121,6 +121,8 @@ export function EntryLevelTemplate({ data, showEditButton = false, className = '
         </section>
       )}
 
+      import { format } from 'date-fns';
+
       {/* Experience / Internships */}
       {data.workExperience && data.workExperience.length > 0 && (
         <section className="mb-6">
