@@ -1,32 +1,57 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(req: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const { resumeData, templateId } = await req.json();
-    
-    if (!resumeData || !templateId) {
+    const body = await request.json();
+
+    // Validate required fields
+    if (!body.resumeData || !body.format) {
       return NextResponse.json(
-        { error: 'Resume data and template ID are required' },
+        { error: 'Missing required fields: resumeData and format are required' },
         { status: 400 }
       );
     }
-    
-    // In a real implementation, you might:
-    // 1. Generate the PDF server-side using a library like Puppeteer
-    // 2. Store the PDF in a storage service
-    // 3. Return a download URL or the PDF data
-    
-    // For now, we'll just return a success message
-    return NextResponse.json({
-      success: true,
-      message: 'Resume export initiated',
-      downloadUrl: `/api/download-resume?id=${Date.now()}`
+
+    const { resumeData, format } = body;
+
+    // Validate format
+    const validFormats = ['pdf', 'docx', 'html'];
+    if (!validFormats.includes(format)) {
+      return NextResponse.json(
+        { error: 'Invalid format. Supported formats: pdf, docx, html' },
+        { status: 400 }
+      );
+    }
+
+    // Validate resume data structure
+    if (!resumeData.fullName || !resumeData.email) {
+      return NextResponse.json(
+        { error: 'Resume data must include fullName and email' },
+        { status: 400 }
+      );
+    }
+
+    // Simulate PDF generation
+    const mockPdf = Buffer.from('Mock PDF content');
+
+    return new NextResponse(mockPdf, {
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="resume.${format}"`
+      }
     });
-    
   } catch (error) {
-    console.error('Error exporting resume:', error);
+    console.error('Resume export error:', error);
+
+    if (error instanceof SyntaxError) {
+      return NextResponse.json(
+        { error: 'Invalid JSON format' },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(
-      { error: 'Failed to export resume' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }

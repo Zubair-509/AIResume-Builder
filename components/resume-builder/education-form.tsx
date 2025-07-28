@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ResumeFormData } from '@/lib/validations';
+import { toast } from 'sonner';
 
 interface EducationFormProps {
   control: Control<ResumeFormData>;
@@ -67,7 +68,7 @@ export function EducationForm({ control, errors }: EducationFormProps) {
                   )}
                 </div>
               </CardHeader>
-              
+
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor={`education.${index}.institution`}>

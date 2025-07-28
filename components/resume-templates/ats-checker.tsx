@@ -112,6 +112,26 @@ export function ATSChecker({ resumeData, templateId }: ATSCheckerProps) {
     return Math.floor(Math.random() * 21) + 80;
   };
 
+  const generateRecommendations = (data: ResumeFormData): string[] => {
+    const recommendations = [
+      'Use industry-specific keywords naturally throughout your resume',
+      'Include quantifiable achievements with specific numbers and percentages',
+      'Ensure consistent formatting and clear section headers',
+      'Use standard fonts like Arial, Calibri, or Times New Roman',
+      'Save your resume in both PDF and Word formats for different ATS systems'
+    ];
+    
+    if (!data.professionalSummary || data.professionalSummary.length < 100) {
+      recommendations.push('Expand your professional summary to better highlight your key qualifications');
+    }
+    
+    if (data.skills && data.skills.split('\n').filter(s => s.trim()).length < 5) {
+      recommendations.push('Add more relevant technical and soft skills');
+    }
+    
+    return recommendations;
+  };
+
   const generateIssues = (data: ResumeFormData): any[] => {
     const issues = [];
     

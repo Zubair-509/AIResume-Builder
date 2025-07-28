@@ -9,59 +9,45 @@ const contactFormSchema = z.object({
   message: z.string().min(10, 'Message must be at least 10 characters')
 });
 
-export async function POST(req: NextRequest) {
+export async function POST(request: Request) {
   try {
-    // Parse request body
-    const body = await req.json();
-    
-    // Validate form data
-    const result = contactFormSchema.safeParse(body);
-    
-    if (!result.success) {
-      // Return validation errors
+    const body = await request.json();
+
+    // Validate required fields
+    if (!body.name || !body.email || !body.message) {
       return NextResponse.json(
-        { 
-          success: false, 
-          errors: result.error.format() 
-        },
+        { error: 'Missing required fields: name, email, and message are required' },
         { status: 400 }
       );
     }
-    
-    const { name, email, subject, message } = result.data;
-    
-    // In a real implementation, you would:
-    // 1. Store the message in a database
-    // 2. Send an email notification
-    // 3. Possibly integrate with a CRM or ticketing system
-    
-    // For now, we'll simulate a successful submission
-    console.log('Contact form submission:', { name, email, subject, message });
-    
-    // Simulate processing time
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    // Return success response
-    return NextResponse.json({
-      success: true,
-      message: 'Your message has been received. We will contact you shortly.',
-      data: {
-        id: Date.now().toString(),
-        timestamp: new Date().toISOString(),
-        name,
-        email,
-        subject
-      }
-    });
-    
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(body.email)) {
+      return NextResponse.json(
+        { error: 'Invalid email format' },
+        { status: 400 }
+      );
+    }
+
+    const { name, email, message } = body;
+
+    // Here you would typically send the email or save to database
+    // For now, we'll just simulate success
+
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Contact form error:', error);
-    
+
+    if (error instanceof SyntaxError) {
+      return NextResponse.json(
+        { error: 'Invalid JSON format' },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(
-      { 
-        success: false, 
-        message: 'An error occurred while processing your request. Please try again later.' 
-      },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
