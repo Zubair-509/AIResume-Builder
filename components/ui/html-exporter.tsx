@@ -9,83 +9,6 @@ import { findResumeElement } from '@/lib/pdf-utils';
 interface HTMLExporterProps {
   resumeData?: any;
   templateId?: string;
-}
-
-export function HTMLExporter({ resumeData, templateId }: HTMLExporterProps) {
-  const [isExporting, setIsExporting] = useState(false);
-
-  const exportToHTML = async () => {
-    setIsExporting(true);
-    try {
-      const resumeElement = findResumeElement();
-      if (!resumeElement) {
-        toast.error('Resume element not found');
-        return;
-      }
-
-      const htmlContent = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resume</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-        .resume { max-width: 800px; margin: 0 auto; }
-    </style>
-</head>
-<body>
-    <div class="resume">
-        ${resumeElement.innerHTML}
-    </div>
-</body>
-</html>`;
-
-      const blob = new Blob([htmlContent], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'resume.html';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-
-      toast.success('HTML exported successfully!');
-    } catch (error) {
-      console.error('HTML export error:', error);
-      toast.error('Failed to export HTML');
-    } finally {
-      setIsExporting(false);
-    }
-  };
-
-  return (
-    <Button
-      onClick={exportToHTML}
-      disabled={isExporting}
-      variant="outline"
-      size="sm"
-    >
-      {isExporting ? (
-        <>
-          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-          Exporting...
-        </>
-      ) : (
-        <>
-          <Code className="w-4 h-4 mr-2" />
-          Export HTML
-        </>
-      )}
-    </Button>
-  );
-}
-
-interface HTMLExporterProps {
-  resumeData: any;
-  templateId: string;
   customizationSettings?: any;
   variant?: 'default' | 'outline' | 'secondary';
   size?: 'default' | 'sm' | 'lg' | 'icon';
@@ -96,7 +19,7 @@ interface HTMLExporterProps {
 
 export function HTMLExporter({
   resumeData,
-  templateId,
+  templateId = 'default',
   customizationSettings,
   variant = 'outline',
   size = 'default',
@@ -107,7 +30,7 @@ export function HTMLExporter({
   const [isExporting, setIsExporting] = useState(false);
 
   const generateFilename = () => {
-    const name = resumeData.fullName?.replace(/\s+/g, '_') || 'Resume';
+    const name = resumeData?.fullName?.replace(/\s+/g, '_') || 'Resume';
     const date = new Date().toISOString().split('T')[0];
     return `${name}_${templateId}_${date}.html`;
   };
@@ -120,30 +43,30 @@ export function HTMLExporter({
 
   const handleExport = async () => {
     setIsExporting(true);
-    
+
     try {
       // Find the resume element
       const resumeElement = findResumeElement();
-      
+
       if (!resumeElement) {
         throw new Error('Resume element not found');
       }
-      
+
       // Create complete HTML document
       const fontFamily = customizationSettings?.font?.family || 'Inter';
       const primaryColor = customizationSettings?.colors?.primary || '#2563eb';
       const textColor = customizationSettings?.colors?.text || '#1f2937';
       const backgroundColor = customizationSettings?.colors?.background || '#ffffff';
-      
+
       const htmlContent = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${resumeData.fullName || 'Resume'} - ${templateId.charAt(0).toUpperCase() + templateId.slice(1)} Template</title>
-    <meta name="description" content="Professional resume for ${resumeData.fullName || 'candidate'}">
-    <meta name="author" content="${resumeData.fullName || 'Resume Author'}">
+    <title>${resumeData?.fullName || 'Resume'} - ${templateId.charAt(0).toUpperCase() + templateId.slice(1)} Template</title>
+    <meta name="description" content="Professional resume for ${resumeData?.fullName || 'candidate'}">
+    <meta name="author" content="${resumeData?.fullName || 'Resume Author'}">
     <meta name="generator" content="SnapCV">
     <style>
         /* Reset and base styles */
@@ -152,7 +75,7 @@ export function HTMLExporter({
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: "${fontFamily}", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             line-height: 1.6;
@@ -162,7 +85,7 @@ export function HTMLExporter({
             margin: 0 auto;
             padding: 20px;
         }
-        
+
         .resume-container {
             background: ${backgroundColor};
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
@@ -170,31 +93,31 @@ export function HTMLExporter({
             overflow: hidden;
             position: relative;
         }
-        
+
         h1 {
             color: ${primaryColor};
             margin-bottom: 8px;
         }
-        
+
         h2 {
             color: ${primaryColor};
             margin-bottom: 12px;
             padding-bottom: 4px;
             border-bottom: 2px solid ${primaryColor}20;
         }
-        
+
         h3 {
             margin-bottom: 4px;
         }
-        
+
         p, li {
             margin-bottom: 8px;
         }
-        
+
         .section {
             margin-bottom: 24px;
         }
-        
+
         @media print {
             body {
                 background: white;
@@ -204,7 +127,7 @@ export function HTMLExporter({
                 box-shadow: none;
             }
         }
-        
+
         @media (max-width: 768px) {
             body {
                 padding: 10px;
@@ -216,13 +139,13 @@ export function HTMLExporter({
     <div class="resume-container">
         ${resumeElement.outerHTML}
     </div>
-    
+
     <script>
         // Print functionality
         function printResume() {
             window.print();
         }
-        
+
         // Add print button if needed
         document.addEventListener('DOMContentLoaded', function() {
             // Any additional JavaScript functionality
@@ -252,14 +175,14 @@ export function HTMLExporter({
       }
     } catch (error) {
       console.error('HTML generation error:', error);
-      
+
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      
+
       toast.error('Failed to download HTML', {
         description: 'Please try again or contact support if the issue persists.',
         duration: 5000
       });
-      
+
       if (onExportError && error instanceof Error) {
         onExportError(error);
       }
