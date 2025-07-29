@@ -85,11 +85,14 @@ export function HeroSection() {
     },
   };
 
-  return (
-    <section 
-      ref={containerRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden pb-32 pt-20"
-      {/* Background Elements */}
+return (
+  <section 
+    ref={containerRef}
+    className="relative min-h-screen flex items-center justify-center overflow-hidden pb-32 pt-20"
+  >
+    {/* Background Elements */}
+  </section>
+);
       <motion.div 
         className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-purple-900/20"
         style={{ opacity }}
