@@ -476,16 +476,7 @@ export function DownloadManager({ resumeData, customizationSettings, onSave }: D
         </DropdownMenu>
       </div>
 
-      {/* HTML Export Button */}
-      <div className="mt-4">
-        <HTMLExporter
-          resumeData={resumeData}
-          templateId={customizationSettings.layout.template}
-          customizationSettings={customizationSettings}
-          className="w-full border-2 border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
-          size="lg"
-        />
-      </div>
+      
 
       {/* Download Progress Modal */}
       <AnimatePresence>

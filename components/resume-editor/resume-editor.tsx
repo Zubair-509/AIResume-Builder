@@ -309,16 +309,6 @@ export function ResumeEditor({
                 Save
               </Button>
 
-              {/* HTML Export Button */}
-              <HTMLExporter
-                resumeData={formData}
-                templateId={customizationSettings.layout.template}
-                customizationSettings={customizationSettings}
-                variant="outline"
-                size="sm"
-                className="transition-all duration-300"
-              />
-
               {/* Download Manager */}
               <DownloadManager
                 resumeData={formData}
