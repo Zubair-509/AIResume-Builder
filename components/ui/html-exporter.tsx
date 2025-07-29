@@ -7,6 +7,83 @@ import { toast } from 'sonner';
 import { findResumeElement } from '@/lib/pdf-utils';
 
 interface HTMLExporterProps {
+  resumeData?: any;
+  templateId?: string;
+}
+
+export function HTMLExporter({ resumeData, templateId }: HTMLExporterProps) {
+  const [isExporting, setIsExporting] = useState(false);
+
+  const exportToHTML = async () => {
+    setIsExporting(true);
+    try {
+      const resumeElement = findResumeElement();
+      if (!resumeElement) {
+        toast.error('Resume element not found');
+        return;
+      }
+
+      const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .resume { max-width: 800px; margin: 0 auto; }
+    </style>
+</head>
+<body>
+    <div class="resume">
+        ${resumeElement.innerHTML}
+    </div>
+</body>
+</html>`;
+
+      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'resume.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      toast.success('HTML exported successfully!');
+    } catch (error) {
+      console.error('HTML export error:', error);
+      toast.error('Failed to export HTML');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  return (
+    <Button
+      onClick={exportToHTML}
+      disabled={isExporting}
+      variant="outline"
+      size="sm"
+    >
+      {isExporting ? (
+        <>
+          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          Exporting...
+        </>
+      ) : (
+        <>
+          <Code className="w-4 h-4 mr-2" />
+          Export HTML
+        </>
+      )}
+    </Button>
+  );
+}
+
+interface HTMLExporterProps {
   resumeData: any;
   templateId: string;
   customizationSettings?: any;

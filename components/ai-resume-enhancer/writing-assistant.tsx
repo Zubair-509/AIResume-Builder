@@ -53,13 +53,117 @@ interface WritingAssistantProps {
   onAssistance: (data: any) => void;
 }
 
-export function WritingAssistant({ onAssistance }: WritingAssistantProps) {
+export function WritingAssistant() {
   const [content, setContent] = useState('');
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<WritingAnalysis | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [realTimeCheck, setRealTimeCheck] = useState(true);
   const [industry, setIndustry] = useState('technology');
   const [toneLevel, setToneLevel] = useState('professional');
+
+  const analyzeWriting = async (text: string): Promise<WritingAnalysis> => {
+    // Word and sentence analysis
+    const words = text.split(/\s+/).filter(word => word.length > 0);
+    const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+    const wordCount = words.length;
+    const sentenceCount = sentences.length;
+    const avgWordsPerSentence = sentenceCount > 0 ? Math.round(wordCount / sentenceCount) : 0;
+
+    // Detect passive voice
+    const passivePatterns = /\b(was|were|is|are|been|being)\s+\w+ed\b/gi;
+    const passiveMatches = text.match(passivePatterns) || [];
+    const passiveVoiceCount = passiveMatches.length;
+
+    // Generate issues
+    const issues: WritingIssue[] = [];
+
+    // Grammar issues
+    if (text.includes('there is') || text.includes('there are')) {
+      issues.push({
+        type: 'style',
+        severity: 'suggestion',
+        message: 'Consider using more direct language',
+        suggestion: 'Replace "there is/are" constructions with more active language',
+        position: { start: 0, end: 10 }
+      });
+    }
+
+    // Passive voice
+    if (passiveVoiceCount > 0) {
+      issues.push({
+        type: 'passive',
+        severity: 'warning',
+        message: `Found ${passiveVoiceCount} instances of passive voice`,
+        suggestion: 'Convert to active voice for stronger impact',
+        position: { start: 0, end: 10 }
+      });
+    }
+
+    // Length issues
+    if (avgWordsPerSentence > 25) {
+      issues.push({
+        type: 'length',
+        severity: 'warning',
+        message: 'Some sentences are too long',
+        suggestion: 'Break long sentences into shorter, clearer ones',
+        position: { start: 0, end: 10 }
+      });
+    }
+
+    // ATS issues
+    if (text.includes('&') || text.includes('#')) {
+      issues.push({
+        type: 'ats',
+        severity: 'error',
+        message: 'Special characters may cause ATS parsing issues',
+        suggestion: 'Replace special characters with words (& → and)',
+        position: { start: 0, end: 10 }
+      });
+    }
+
+    // Calculate scores
+    const readabilityScore = Math.max(0, 100 - (avgWordsPerSentence - 15) * 2);
+    const atsScore = Math.max(0, 100 - issues.filter(i => i.type === 'ats').length * 20);
+    const professionalTone = Math.max(0, 100 - passiveVoiceCount * 5);
+    const overallScore = Math.round((readabilityScore + atsScore + professionalTone) / 3);
+
+    return {
+      overallScore,
+      readabilityScore,
+      atsScore,
+      professionalTone,
+      issues,
+      wordCount,
+      sentenceCount,
+      avgWordsPerSentence,
+      passiveVoiceCount,
+      suggestions: [
+        'Use action verbs to start bullet points',
+        'Quantify achievements with numbers',
+        'Keep sentences under 20 words',
+        'Avoid special characters for ATS compatibility'
+      ]
+    };
+  };
+
+  const performFullAnalysis = async () => {
+    if (!content.trim()) {
+      toast.error('Please enter some content to analyze');
+      return;
+    }
+
+    setIsAnalyzing(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      const result = await analyzeWriting(content);
+      setAnalysis(result);
+      toast.success('Analysis complete!');
+    } catch (error) {
+      toast.error('Analysis failed. Please try again.');
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
 
   // Real-time analysis with debounce
   useEffect(() => {
@@ -79,56 +183,16 @@ export function WritingAssistant({ onAssistance }: WritingAssistantProps) {
     setAnalysis(quickAnalysis);
   };
 
-  const performFullAnalysis = async () => {
-    if (!content.trim()) {
-      toast.error('Please enter some text to analyze');
-      return;
-    }
-
-    setIsAnalyzing(true);
-
-    try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      const fullAnalysis = await simulateWritingAnalysis(content, true);
-      setAnalysis(fullAnalysis);
-
-      onAssistance({
-        type: 'writing-assistance',
-        analysis: fullAnalysis,
-        summary: {
-          overallScore: fullAnalysis.overallScore,
-          issuesFound: fullAnalysis.issues.length,
-          keyMetrics: [
-            `${fullAnalysis.wordCount} words`,
-            `${fullAnalysis.atsScore}% ATS score`,
-            `${fullAnalysis.readabilityScore}% readability`
-          ]
-        }
-      });
-
-      toast.success('Writing analysis complete!', {
-        description: `Found ${fullAnalysis.issues.length} suggestions for improvement`
-      });
-    } catch (error) {
-      toast.error('Analysis failed', {
-        description: 'Please try again or contact support.'
-      });
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
-
   const simulateWritingAnalysis = async (text: string, detailed: boolean): Promise<WritingAnalysis> => {
     // Validate input
     if (!text || typeof text !== 'string') {
       throw new Error('Invalid text input for analysis');
     }
-    
+
     if (text.trim().length === 0) {
       throw new Error('Text cannot be empty');
     }
-    
+
     // Simulate processing time
     if (detailed) {
       await new Promise(resolve => setTimeout(resolve, 1000));
