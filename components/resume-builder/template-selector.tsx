@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ChevronDown, Download, Copy, ExternalLink, Loader2, Globe } from 'lucide-react';
+import { ChevronDown, Download, Copy, Loader2, Globe } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -30,7 +30,6 @@ export function TemplateSelector({
 }: TemplateSelectorProps) {
   const [isDownloading, setIsDownloading] = useState(false);
   const [isCopying, setIsCopying] = useState(false);
-  const [isExporting, setIsExporting] = useState(false);
 
   const templates = [
     {
@@ -59,11 +58,11 @@ export function TemplateSelector({
 
   const handleDownloadPDF = async () => {
     setIsDownloading(true);
-    
+
     try {
       // Save resume data to session storage for export functionality
       sessionStorage.setItem('resume-data', JSON.stringify(resumeData));
-      
+
       // Use the standardized export function
       await exportResumeToPDF(resumeData, selectedTemplate, {
         filename: generateFileName(),
@@ -89,15 +88,15 @@ export function TemplateSelector({
       if (!previewElement) {
         throw new Error('Resume preview element not found');
       }
-      
+
       const htmlContent = previewElement?.outerHTML || '';
-      
+
       if (!htmlContent) {
         throw new Error('No HTML content found to copy');
       }
-      
+
       await navigator.clipboard.writeText(htmlContent);
-      
+
       toast.success('HTML copied to clipboard!', {
         description: 'You can now paste the HTML code anywhere.',
       });
@@ -108,25 +107,6 @@ export function TemplateSelector({
       });
     } finally {
       setIsCopying(false);
-    }
-  };
-
-  const handleExportToNotion = async () => {
-    setIsExporting(true);
-    try {
-      // Simulate Notion export
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      toast.success('Exported to Notion!', {
-        description: 'Your resume has been added to your Notion workspace.',
-      });
-    } catch (error) {
-      console.error('Notion export error:', error);
-      toast.error('Failed to export to Notion', {
-        description: 'Please check your Notion integration settings.',
-      });
-    } finally {
-      setIsExporting(false);
     }
   };
 
@@ -180,7 +160,7 @@ export function TemplateSelector({
         <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
           Export Options
         </h3>
-        
+
         {/* Download PDF Button */}
         <Button
           onClick={handleDownloadPDF}
@@ -228,28 +208,6 @@ export function TemplateSelector({
             <>
               <Copy className="w-4 h-4 mr-2" />
               Copy HTML
-            </>
-          )}
-        </Button>
-
-        {/* Export to Notion Button */}
-        <Button
-          onClick={handleExportToNotion}
-          disabled={isExporting}
-          variant="outline"
-          className="w-full border-gray-300 dark:border-gray-600 hover:border-purple-500 dark:hover:border-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-          size="lg"
-          aria-label="Export resume to Notion"
-        >
-          {isExporting ? (
-            <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Exporting...
-            </>
-          ) : (
-            <>
-              <ExternalLink className="w-4 h-4 mr-2" />
-              Export to Notion
             </>
           )}
         </Button>
