@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -191,12 +190,7 @@ export function HeroSection() {
             whileTap={{ scale: 0.98 }}
             transition={{ type: 'spring', stiffness: 400, damping: 17 }}
           >
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-            >
-              <Sparkles className="w-4 h-4 text-blue-600" />
-            </motion.div>
+            <Sparkles className="w-4 h-4 text-blue-600" />
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
               AI-Powered Resume Builder
             </span>
