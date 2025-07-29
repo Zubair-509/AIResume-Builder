@@ -88,17 +88,17 @@ export function TemplateSelector({
     try {
       // Dynamically import html2pdf to avoid SSR issues
       const html2pdf = (await import('html2pdf.js')).default;
-      
+
       // Find the resume preview element
       const previewElement = document.querySelector('[data-resume-preview]') as HTMLElement;
-      
+
       if (!previewElement) {
         throw new Error('Resume preview element not found');
       }
 
       // Clone the element for PDF generation
       const clonedElement = previewElement.cloneNode(true) as HTMLElement;
-      
+
       // Apply styles for PDF generation
       clonedElement.style.position = 'absolute';
       clonedElement.style.left = '-9999px';
@@ -110,7 +110,7 @@ export function TemplateSelector({
       clonedElement.style.transform = 'scale(1)';
       clonedElement.style.transformOrigin = 'top left';
       clonedElement.style.padding = '20px';
-      
+
       // Append to body for processing
       document.body.appendChild(clonedElement);
 
@@ -144,10 +144,10 @@ export function TemplateSelector({
 
       // Generate and download PDF
       await html2pdf().set(options).from(clonedElement).save();
-      
+
       // Clean up
       document.body.removeChild(clonedElement);
-      
+
       toast.success('PDF downloaded successfully!', {
         description: 'Your resume has been saved to your downloads folder.',
       });
@@ -167,9 +167,9 @@ export function TemplateSelector({
       // Get the resume preview HTML
       const previewElement = document.querySelector('[data-resume-preview]');
       const htmlContent = previewElement?.outerHTML || '';
-      
+
       await navigator.clipboard.writeText(htmlContent);
-      
+
       toast.success('HTML copied to clipboard!', {
         description: 'You can now paste the HTML code anywhere.',
       });
@@ -185,7 +185,7 @@ export function TemplateSelector({
   const handleEditResume = () => {
     // Save current resume data to session storage for the editor
     sessionStorage.setItem('resume-data', JSON.stringify(resumeData));
-    
+
     toast.success('Opening resume editor...', {
       description: 'Your resume data has been loaded for editing.'
     });
@@ -228,7 +228,7 @@ export function TemplateSelector({
                 />
               </div>
             </div>
-            
+
             {/* Preview Controls */}
             <div className="mt-4 flex items-center justify-between">
               <div className="text-sm text-gray-600 dark:text-gray-400">
@@ -284,7 +284,7 @@ export function TemplateSelector({
                     ))}
                   </SelectContent>
                 </Select>
-                
+
                 <Link href="/templates" onClick={handleViewMoreTemplates}>
                   <Button 
                     variant="outline" 
@@ -304,7 +304,7 @@ export function TemplateSelector({
             <CardHeader>
               <CardTitle>Export Options</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-8">
               {/* Download PDF Button */}
               <Button
                 onClick={handleDownloadPDF}
@@ -330,46 +330,40 @@ export function TemplateSelector({
                 <Button
                   onClick={handleEditResume}
                   variant="outline"
-                  className="w-full border-2 border-gray-300 dark:border-gray-600 hover:border-green-500 dark:hover:border-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 transition-all duration-300 h-14 text-base font-semibold"
-                  aria-label="Edit resume content"
+                  className="w-full border-2 border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 h-14 text-base font-semibold"
+                  aria-label="Edit resume"
                 >
                   <Edit className="w-5 h-5 mr-3" />
                   Edit Resume
                 </Button>
-              </Link>
 
-              {/* Separator Line */}
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white dark:bg-gray-800 px-2 text-gray-500 dark:text-gray-400">
-                    Additional Options
-                  </span>
-                </div>
+              {/* Additional Options */}
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-6 mt-8">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 text-center">
+                  ADDITIONAL OPTIONS
+                </p>
+
+                {/* Copy HTML Button */}
+                <Button
+                  onClick={handleCopyHTML}
+                  disabled={isCopying}
+                  variant="outline"
+                  className="w-full border-gray-300 dark:border-gray-600 hover:border-green-500 dark:hover:border-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed h-12"
+                  aria-label="Copy HTML code"
+                >
+                  {isCopying ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Copying...
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4 mr-2" />
+                      Copy HTML
+                    </>
+                  )}
+                </Button>
               </div>
-
-              {/* Copy HTML Button */}
-              <Button
-                onClick={handleCopyHTML}
-                disabled={isCopying}
-                variant="outline"
-                className="w-full border-2 border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed h-12 text-sm font-medium"
-                aria-label="Copy resume HTML to clipboard"
-              >
-                {isCopying ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Copying...
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-4 h-4 mr-2" />
-                    Copy HTML
-                  </>
-                )}
-              </Button>
             </CardContent>
           </Card>
 
