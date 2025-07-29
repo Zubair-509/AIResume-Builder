@@ -200,6 +200,7 @@ export function ResumeEditor({
       }
     };
     onUpdateCustomization(updatedSettings);
+    toast.success(`Switched to ${template} template`);
   };
 
   return (
@@ -391,9 +392,14 @@ export function ResumeEditor({
             {/* Template Selector */}
             <Card className="border-0 shadow-lg bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Settings className="w-5 h-5 mr-2 text-purple-600" />
-                  Template Settings
+                <CardTitle className="flex items-center justify-between">
+                  <span className="flex items-center">
+                    <Settings className="w-5 h-5 mr-2 text-purple-600" />
+                    Template Settings
+                  </span>
+                  <Badge variant="outline" className="border-purple-200 text-purple-700 dark:border-purple-700 dark:text-purple-300">
+                    {customizationSettings.layout.template}
+                  </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -403,14 +409,18 @@ export function ResumeEditor({
                       key={tmpl}
                       variant={customizationSettings.layout.template === tmpl ? "default" : "outline"}
                       onClick={() => handleTemplateChange(tmpl)}
-                      className="capitalize h-12 transition-all duration-300 hover:scale-105"
+                      className={`capitalize h-12 transition-all duration-300 hover:scale-105 ${
+                        customizationSettings.layout.template === tmpl 
+                          ? 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg' 
+                          : 'hover:border-purple-400 hover:text-purple-600'
+                      }`}
                     >
                       {tmpl}
                     </Button>
                   ))}
                 </div>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 text-center">
-                  Switch to the Customize tab for advanced styling options
+                  Template changes are applied instantly to your resume preview
                 </p>
               </CardContent>
             </Card>

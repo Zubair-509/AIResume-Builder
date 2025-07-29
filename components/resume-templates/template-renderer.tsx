@@ -17,45 +17,47 @@ interface TemplateRendererProps {
   templateId: string;
   data: ResumeFormData;
   showEditButton?: boolean;
-  className?: string;
+  customSettings?: any;
 }
 
-export function TemplateRenderer({ templateId, data, showEditButton = false, className = '' }: TemplateRendererProps) {
-  // Save resume data to session storage for edit functionality
-  const saveResumeData = () => {
-    sessionStorage.setItem('resume-data', JSON.stringify(data));
+export function TemplateRenderer({ 
+  templateId, 
+  data, 
+  showEditButton = false,
+  customSettings 
+}: TemplateRendererProps) {
+  const renderTemplate = () => {
+    const props = { 
+      data, 
+      showEditButton, 
+      customSettings: customSettings || undefined 
+    };
+
+    switch (templateId) {
+      case 'classic':
+        return <ClassicTemplate key={`classic-${Date.now()}`} {...props} />;
+      case 'modern':
+        return <ModernTemplate key={`modern-${Date.now()}`} {...props} />;
+      case 'professional':
+        return <ProfessionalTemplate key={`professional-${Date.now()}`} {...props} />;
+      case 'technical':
+        return <TechnicalTemplate key={`technical-${Date.now()}`} {...props} />;
+      case 'entry-level':
+        return <EntryLevelTemplate key={`entry-level-${Date.now()}`} {...props} />;
+      case 'executive':
+        return <ExecutiveTemplate key={`executive-${Date.now()}`} {...props} />;
+      case 'creative':
+        return <CreativeTemplate key={`creative-${Date.now()}`} {...props} />;
+      default:
+        return <ModernTemplate key={`default-${Date.now()}`} {...props} />;
+    }
   };
 
-  // Edit button that will be passed to templates
-  const editButton = showEditButton ? (
-    <div className="absolute top-4 right-4 print:hidden">
-      <Link href={`/edit-resume?template=${templateId}`} onClick={saveResumeData}>
-        <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-          <Edit className="w-4 h-4 mr-2" />
-          Edit Resume
-        </Button>
-      </Link>
+  return (
+    <div key={`template-${templateId}`} className="w-full h-full">
+      {renderTemplate()}
     </div>
-  ) : null;
-
-  switch (templateId) {
-    case 'classic':
-      return <ClassicTemplate data={data} showEditButton={showEditButton} className={className} />;
-    case 'modern':
-      return <ModernTemplate data={data} showEditButton={showEditButton} className={className} />;
-    case 'professional':
-      return <ProfessionalTemplate data={data} showEditButton={showEditButton} className={className} />;
-    case 'technical':
-      return <TechnicalTemplate data={data} showEditButton={showEditButton} className={className} />;
-    case 'entry-level':
-      return <EntryLevelTemplate data={data} showEditButton={showEditButton} className={className} />;
-    case 'executive':
-      return <ExecutiveTemplate data={data} showEditButton={showEditButton} className={className} />;
-    case 'creative':
-      return <CreativeTemplate data={data} showEditButton={showEditButton} className={className} />;
-    default:
-      return <ModernTemplate data={data} showEditButton={showEditButton} className={className} />;
-  }
+  );
 }
 
 export default TemplateRenderer;

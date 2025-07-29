@@ -88,7 +88,7 @@ export function ResumePreview({ data, settings }: ResumePreviewProps) {
       'Times New Roman': '"Times New Roman", serif',
       'Helvetica': 'Helvetica, Arial, sans-serif'
     };
-    
+
     return fontMap[settings.font.family] || fontMap['Inter'];
   };
 

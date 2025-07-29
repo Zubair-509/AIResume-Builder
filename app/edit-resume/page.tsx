@@ -159,9 +159,12 @@ export default function EditResumePage() {
   };
 
   const handleUpdateCustomization = (settings: CustomizationSettings) => {
-    setCustomizationSettings(settings);
-    // Save customization settings to localStorage
-    localStorage.setItem('resume-customization', JSON.stringify(settings));
+    setCustomizationSettings(prev => {
+      const updated = { ...settings };
+      // Save customization settings to localStorage
+      localStorage.setItem('resume-customization', JSON.stringify(updated));
+      return updated;
+    });
   };
 
   // Load saved customization settings on mount
