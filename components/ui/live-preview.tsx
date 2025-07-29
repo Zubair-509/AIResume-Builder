@@ -1,7 +1,8 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion, MotionConfig } from 'framer-motion';
+import { motion, MotionConfig, AnimatePresence } from 'framer-motion';
 import { Maximize2, Minimize2, Download, Edit, Copy, Share2, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -182,20 +183,22 @@ export function LivePreview({
           </div>
         </div>
         
-    </MotionConfig>
+        <CardContent className="p-0">
           <AnimatePresence mode="wait">
-            <motion.div
-              key={`preview-${isVisible}-${isFullscreen}`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className={`bg-gray-50 dark:bg-gray-900 ${
-                isFullscreen ? 'min-h-screen overflow-y-auto' : ''
-              }`}
-            >
-              {children}
-            </motion.div>
+            {isVisible && (
+              <motion.div
+                key={`preview-${isVisible}-${isFullscreen}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className={`bg-gray-50 dark:bg-gray-900 ${
+                  isFullscreen ? 'min-h-screen overflow-y-auto' : ''
+                }`}
+              >
+                {children}
+              </motion.div>
+            )}
           </AnimatePresence>
         </CardContent>
       </Card>
@@ -212,6 +215,6 @@ export function LivePreview({
           </Badge>
         </div>
       )}
-    </div>
+    </MotionConfig>
   );
 }
