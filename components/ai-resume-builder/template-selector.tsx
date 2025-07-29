@@ -326,17 +326,19 @@ export function TemplateSelector({
               </Button>
 
               {/* Edit Resume Button */}
-              <Link href={`/edit-resume?template=${selectedTemplate}`}>
-                <Button
-                  onClick={handleEditResume}
-                  variant="outline"
-                  className="w-full border-2 border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 h-14 text-base font-semibold"
-                  aria-label="Edit resume"
-                >
-                  <Edit className="w-5 h-5 mr-3" />
-                  Edit Resume
-                </Button>
-              </Link>
+              <div className="pt-4">
+                <Link href={`/edit-resume?template=${selectedTemplate}`}>
+                  <Button
+                    onClick={handleEditResume}
+                    variant="outline"
+                    className="w-full border-2 border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 h-14 text-base font-semibold"
+                    aria-label="Edit resume"
+                  >
+                    <Edit className="w-5 h-5 mr-3" />
+                    Edit Resume
+                  </Button>
+                </Link>
+              </div>
 
               {/* Additional Options */}
               <div className="border-t border-gray-200 dark:border-gray-700 pt-6 mt-8">
