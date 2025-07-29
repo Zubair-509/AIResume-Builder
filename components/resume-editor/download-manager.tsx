@@ -384,96 +384,18 @@ export function DownloadManager({ resumeData, customizationSettings, onSave }: D
 
   return (
     <>
-      {/* Main Download Button */}
-      <div className="flex items-center space-x-2">
-        {/* Quick Download Button */}
-        <Button
-          onClick={handleQuickDownload}
-          disabled={downloadProgress.isDownloading}
-          className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden"
+      {/* Download Options - Settings Only */}
+      <div className="flex items-center">
+        <Button 
+          variant="outline" 
           size="lg"
+          onClick={() => setShowSettings(true)}
+          disabled={downloadProgress.isDownloading}
+          className="border-2 hover:border-blue-500 hover:text-blue-600 transition-all duration-300"
         >
-          <AnimatePresence mode="wait">
-            {downloadProgress.isDownloading ? (
-              <motion.div
-                key="downloading"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                className="flex items-center"
-              >
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Downloading...
-              </motion.div>
-            ) : (
-              <motion.div
-                key="download"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                className="flex items-center"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Download PDF
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <Settings className="w-4 h-4 mr-2" />
+          Export Settings
         </Button>
-
-        {/* Download Options Dropdown */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button 
-              variant="outline" 
-              size="lg"
-              disabled={downloadProgress.isDownloading}
-              className="border-2 hover:border-blue-500 hover:text-blue-600 transition-all duration-300"
-            >
-              <ChevronDown className="w-4 h-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-64">
-            <DropdownMenuLabel className="flex items-center">
-              <Download className="w-4 h-4 mr-2" />
-              Export Options
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            
-            <DropdownMenuItem onClick={() => downloadAsPDF()} className="cursor-pointer">
-              <FileText className="w-4 h-4 mr-2 text-red-600" />
-              <div>
-                <div className="font-medium">Download as PDF</div>
-                <div className="text-xs text-gray-500">High-quality, print-ready format</div>
-              </div>
-            </DropdownMenuItem>
-            
-            <DropdownMenuItem onClick={() => downloadAsHTML()} className="cursor-pointer">
-              <Globe className="w-4 h-4 mr-2 text-blue-600" />
-              <div>
-                <div className="font-medium">Download as HTML</div>
-                <div className="text-xs text-gray-500">Web-compatible format</div>
-              </div>
-            </DropdownMenuItem>
-            
-            <DropdownMenuSeparator />
-            
-            <DropdownMenuItem onClick={handlePreview} className="cursor-pointer">
-              <Eye className="w-4 h-4 mr-2 text-purple-600" />
-              <div>
-                <div className="font-medium">Preview Before Download</div>
-                <div className="text-xs text-gray-500">Review your resume first</div>
-              </div>
-            </DropdownMenuItem>
-            
-            <DropdownMenuItem onClick={() => setShowSettings(true)} className="cursor-pointer">
-              <Settings className="w-4 h-4 mr-2 text-gray-600" />
-              <div>
-                <div className="font-medium">Download Settings</div>
-                <div className="text-xs text-gray-500">Customize export options</div>
-              </div>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
 
       
