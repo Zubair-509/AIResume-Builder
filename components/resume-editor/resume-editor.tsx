@@ -434,39 +434,12 @@ export function ResumeEditor({
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Button
-                    onClick={handleManualSave}
-                    disabled={!hasUnsavedChanges || isSaving}
-                    className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white h-12"
-                  >
-                    {isSaving ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Saving...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="w-4 h-4 mr-2" />
-                        Save Resume
-                      </>
-                    )}
-                  </Button>
-                  
-                  <HTMLExporter
-                    resumeData={formData}
-                    templateId={customizationSettings.layout.template}
-                    customizationSettings={customizationSettings}
-                    className="h-12 border-2 border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
-                  />
-                </div>
-                
-                <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg text-sm text-gray-600 dark:text-gray-400">
+                <div className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg text-sm text-gray-600 dark:text-gray-400">
                   <div className="flex items-start">
                     <Info className="w-4 h-4 mr-2 text-blue-600 mt-0.5" />
                     <p>
-                      The HTML export includes all necessary styles and is ready for use in other web projects. 
-                      It's also optimized for printing directly from a web browser.
+                      Use the export buttons in the header above to save or download your resume. 
+                      The HTML export includes all necessary styles and is ready for use in other web projects.
                     </p>
                   </div>
                 </div>
