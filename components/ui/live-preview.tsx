@@ -1,9 +1,8 @@
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import { motion, MotionConfig, AnimatePresence } from 'framer-motion';
-import { Maximize2, Minimize2, Download, Edit, Copy, Share2, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Maximize2, Minimize2, Edit, Copy, Share2, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -54,7 +53,7 @@ export function LivePreview({
 
   const handleDownload = () => {
     setIsLoading(true);
-    
+
     setTimeout(() => {
       if (onDownload) {
         onDownload();
@@ -72,7 +71,7 @@ export function LivePreview({
       await navigator.clipboard.writeText(window.location.href);
       setIsCopied(true);
       toast.success('Link copied to clipboard!');
-      
+
       setTimeout(() => {
         setIsCopied(false);
       }, 2000);
@@ -114,7 +113,7 @@ export function LivePreview({
               <span className="text-xs text-gray-500 dark:text-gray-400">Live</span>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-2">
             {showEditButton && templateId && (
               <Link href={`/edit-resume?template=${templateId}`}>
@@ -123,23 +122,7 @@ export function LivePreview({
                 </Button>
               </Link>
             )}
-            
-            {showDownloadButton && (
-              <Button 
-                size="sm" 
-                variant="ghost" 
-                className="h-8 w-8 p-0"
-                onClick={handleDownload}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Download className="h-4 w-4" />
-                )}
-              </Button>
-            )}
-            
+
             {showShareButton && (
               <Button 
                 size="sm" 
@@ -154,7 +137,7 @@ export function LivePreview({
                 )}
               </Button>
             )}
-            
+
             <Button 
               size="sm" 
               variant="ghost" 
@@ -167,7 +150,7 @@ export function LivePreview({
                 <Eye className="h-4 w-4" />
               )}
             </Button>
-            
+
             <Button 
               size="sm" 
               variant="ghost" 
@@ -182,7 +165,7 @@ export function LivePreview({
             </Button>
           </div>
         </div>
-        
+
         <CardContent className="p-0">
           <AnimatePresence mode="wait">
             {isVisible && (
@@ -202,7 +185,7 @@ export function LivePreview({
           </AnimatePresence>
         </CardContent>
       </Card>
-      
+
       {!isVisible && (
         <div className="mt-4 text-center">
           <Badge 
