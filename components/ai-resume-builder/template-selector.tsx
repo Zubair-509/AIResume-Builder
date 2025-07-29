@@ -336,6 +336,7 @@ export function TemplateSelector({
                   <Edit className="w-5 h-5 mr-3" />
                   Edit Resume
                 </Button>
+              </Link>
 
               {/* Additional Options */}
               <div className="border-t border-gray-200 dark:border-gray-700 pt-6 mt-8">
