@@ -392,7 +392,7 @@ export function DownloadManager({ resumeData, customizationSettings, onSave }: D
               variant="outline" 
               size="lg"
               disabled={downloadProgress.isDownloading}
-              className="border-2 hover:border-blue-500 hover:text-blue-600 transition-all duration-300"
+              className="border-2 bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 text-white border-green-400 hover:border-green-500 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               <Download className="w-4 h-4 mr-2" />
               Export Options
