@@ -7,6 +7,7 @@ import { ScrollToTop } from '@/components/ui/scroll-to-top';
 import { Toaster } from '@/components/ui/sonner';
 import { PagePreloader } from '@/components/ui/page-preloader';
 import { PageLoader } from '@/components/ui/page-loader';
+import { LenisProvider } from '@/components/ui/lenis-provider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -32,13 +33,15 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <PagePreloader />
-          <PageLoader />
-          <PageTransition>
-            {children}
-          </PageTransition>
-          <ScrollToTop />
-          <Toaster />
+          <LenisProvider>
+            <PagePreloader />
+            <PageLoader />
+            <PageTransition>
+              {children}
+            </PageTransition>
+            <ScrollToTop />
+            <Toaster />
+          </LenisProvider>
         </ThemeProvider>
       </body>
     </html>

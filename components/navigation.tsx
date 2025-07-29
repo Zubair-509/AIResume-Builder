@@ -97,6 +97,15 @@ export function Navigation() {
                   <Link
                     href={item.href}
                     className="flex items-center space-x-1 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                    onClick={(e) => {
+                      if (item.href.startsWith('#')) {
+                        e.preventDefault();
+                        const element = document.querySelector(item.href);
+                        if (element && window.lenis) {
+                          window.lenis.scrollTo(element, { offset: -80, duration: 1.5 });
+                        }
+                      }
+                    }}
                   >
                     <item.icon className="w-4 h-4" />
                     <span className="hidden lg:inline">{item.name}</span>
@@ -163,7 +172,16 @@ export function Navigation() {
                       <Link
                         href={item.href}
                         className="flex items-center space-x-3 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 px-3 py-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20"
-                        onClick={() => setIsMobileMenuOpen(false)}
+                        onClick={(e) => {
+                          setIsMobileMenuOpen(false);
+                          if (item.href.startsWith('#')) {
+                            e.preventDefault();
+                            const element = document.querySelector(item.href);
+                            if (element && window.lenis) {
+                              window.lenis.scrollTo(element, { offset: -80, duration: 1.5 });
+                            }
+                          }
+                        }}
                       >
                         <item.icon className="w-5 h-5" />
                         <span className="font-medium">{item.name}</span>

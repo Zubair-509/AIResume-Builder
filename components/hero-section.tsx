@@ -384,7 +384,13 @@ export function HeroSection() {
             ease: "easeInOut"
           }}
           className="relative cursor-pointer group flex flex-col items-center transform-gpu"
-          onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
+          onClick={() => {
+            if (typeof window !== 'undefined' && window.lenis) {
+              window.lenis.scrollTo(window.innerHeight, { duration: 1.5 });
+            } else {
+              window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+            }
+          }}
         >
           {/* Floating Mouse Icon */}
           <motion.div 
