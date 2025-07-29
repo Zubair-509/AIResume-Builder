@@ -384,18 +384,55 @@ export function DownloadManager({ resumeData, customizationSettings, onSave }: D
 
   return (
     <>
-      {/* Download Options - Settings Only */}
+      {/* Export Options Dropdown */}
       <div className="flex items-center">
-        <Button 
-          variant="outline" 
-          size="lg"
-          onClick={() => setShowSettings(true)}
-          disabled={downloadProgress.isDownloading}
-          className="border-2 hover:border-blue-500 hover:text-blue-600 transition-all duration-300"
-        >
-          <Settings className="w-4 h-4 mr-2" />
-          Export Settings
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button 
+              variant="outline" 
+              size="lg"
+              disabled={downloadProgress.isDownloading}
+              className="border-2 hover:border-blue-500 hover:text-blue-600 transition-all duration-300"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Export Options
+              <ChevronDown className="w-4 h-4 ml-2" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuLabel className="flex items-center">
+              <Download className="w-4 h-4 mr-2 text-blue-600" />
+              Export Your Resume
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            
+            <DropdownMenuItem 
+              onClick={() => setShowSettings(true)}
+              className="cursor-pointer"
+            >
+              <Settings className="w-4 h-4 mr-2" />
+              Export Settings
+            </DropdownMenuItem>
+            
+            <DropdownMenuItem 
+              onClick={() => downloadAsHTML()}
+              disabled={downloadProgress.isDownloading}
+              className="cursor-pointer"
+            >
+              <Globe className="w-4 h-4 mr-2" />
+              Export HTML
+            </DropdownMenuItem>
+            
+            <DropdownMenuItem 
+              onClick={() => downloadAsPDF()}
+              disabled={downloadProgress.isDownloading}
+              className="cursor-pointer"
+            >
+              <FileText className="w-4 h-4 mr-2" />
+              Export PDF
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       
@@ -506,6 +543,7 @@ export function DownloadManager({ resumeData, customizationSettings, onSave }: D
             <div className="grid grid-cols-2 gap-4">
               <Button
                 onClick={() => handleCustomDownload('pdf')}
+                disabled={downloadProgress.isDownloading}
                 className="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white h-12"
               >
                 <FileText className="w-4 h-4 mr-2" />
@@ -514,6 +552,7 @@ export function DownloadManager({ resumeData, customizationSettings, onSave }: D
               
               <Button
                 onClick={() => handleCustomDownload('html')}
+                disabled={downloadProgress.isDownloading}
                 variant="outline"
                 className="border-2 border-blue-500 text-blue-600 hover:bg-blue-50 h-12"
               >
