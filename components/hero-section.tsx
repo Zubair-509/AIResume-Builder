@@ -1,108 +1,174 @@
+
 'use client';
 
 import React from 'react';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import { useRef } from 'react';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, Zap, Star } from 'lucide-react';
 import { AnimatedButton } from '@/components/ui/animated-button';
+import { BoltBadge } from '@/components/ui/bolt-badge';
 import Link from 'next/link';
 
 export function HeroSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
-  const isInView = useInView(containerRef, { once: true, amount: 0.2 });
+  const isInView = useInView(containerRef, { once: false, amount: 0.3 });
 
-  // Lightweight parallax effects
-  const y = useTransform(scrollY, [0, 500], [0, -100]);
-  const opacity = useTransform(scrollY, [0, 300], [1, 0.9]);
+  // Parallax effects
+  const y1 = useTransform(scrollY, [0, 300], [0, -50]);
+  const y2 = useTransform(scrollY, [0, 300], [0, -100]);
+  const opacity = useTransform(scrollY, [0, 300], [1, 0.8]);
 
-  // Simplified animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
-        duration: 0.6,
-        ease: "easeOut"
+        staggerChildren: 0.15,
+        delayChildren: 0.2,
+        duration: 0.8,
+        ease: [0.22, 1, 0.36, 1]
       },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, y: 50, scale: 0.95 },
     visible: {
       opacity: 1,
       y: 0,
+      scale: 1,
       transition: {
-        duration: 0.5,
-        ease: "easeOut",
+        duration: 1,
+        ease: [0.22, 1, 0.36, 1],
       },
     },
   };
 
   const floatingVariants = {
     animate: {
-      y: [-10, 10, -10],
+      y: [0, -20, 0],
+      rotate: [0, 5, -5, 0],
+      scale: [1, 1.05, 1],
       transition: {
-        duration: 4,
+        duration: 6,
         repeat: Infinity,
         ease: "easeInOut"
       }
     }
   };
 
+  const sparkleVariants = {
+    animate: {
+      scale: [0, 1, 0],
+      rotate: [0, 180, 360],
+      opacity: [0, 1, 0],
+      transition: {
+        duration: 2,
+        repeat: Infinity,
+        ease: "easeInOut",
+        times: [0, 0.5, 1]
+      }
+    }
+  };
+
+  const statsVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        delay: 0.8,
+        ease: "easeOut",
+      },
+    },
+  };
+
   return (
     <section 
       ref={containerRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden pb-16 sm:pb-32 pt-16 sm:pt-20 px-4"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden pb-32 pt-20"
     >
-      {/* Simplified Background */}
+      {/* Background Elements */}
       <motion.div 
         className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-purple-900/20"
         style={{ opacity }}
       />
 
-      {/* Lightweight Background Shapes */}
-      <div className="absolute inset-0 opacity-40">
+      {/* Animated Background Shapes */}
+      <div className="absolute inset-0">
         <motion.div
-          style={{ y }}
-          className="absolute top-1/4 left-1/4 w-48 sm:w-96 h-48 sm:h-96 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"
+          style={{ y: y1 }}
+          animate={{
+            scale: [1, 1.3, 1],
+            rotate: [0, 180, 360],
+            x: [0, 50, 0],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute top-1/6 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-400/30 to-purple-400/30 rounded-full blur-3xl"
         />
         <motion.div
-          style={{ y: useTransform(y, [0, -100], [0, -50]) }}
-          className="absolute top-1/3 right-1/4 w-64 sm:w-[500px] h-64 sm:h-[500px] bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-full blur-3xl"
+          style={{ y: y2 }}
+          animate={{
+            scale: [1.3, 1, 1.3],
+            rotate: [360, 180, 0],
+            x: [0, -30, 0],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-gradient-to-r from-purple-400/30 to-pink-400/30 rounded-full blur-3xl"
         />
 
-        {/* Simple floating dots */}
+        {/* Floating Elements */}
         <motion.div
           variants={floatingVariants}
           animate="animate"
-          className="absolute top-1/4 left-1/6 w-2 h-2 bg-blue-500 rounded-full opacity-60"
+          className="absolute top-1/4 left-1/6 w-4 h-4 bg-blue-500 rounded-full opacity-60"
+        />
+        <motion.div
+          variants={floatingVariants}
+          animate="animate"
+          style={{ animationDelay: '1s' }}
+          className="absolute top-1/3 right-1/6 w-3 h-3 bg-purple-500 rounded-full opacity-60"
         />
         <motion.div
           variants={floatingVariants}
           animate="animate"
           style={{ animationDelay: '2s' }}
-          className="absolute top-2/3 right-1/6 w-2 h-2 bg-purple-500 rounded-full opacity-60"
+          className="absolute bottom-1/3 left-1/3 w-2 h-2 bg-pink-500 rounded-full opacity-60"
         />
+
+        
       </div>
 
       {/* Content */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
-        animate={isInView ? "visible" : "hidden"}
-        className="relative z-10 max-w-5xl mx-auto text-center w-full"
+        animate="visible"
+        className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
       >
-        <motion.div variants={itemVariants} className="mb-6 sm:mb-8">
+        <motion.div variants={itemVariants} className="mb-8">
           <motion.div 
-            className="inline-flex items-center space-x-2 bg-white/20 dark:bg-gray-800/20 backdrop-blur-md border border-white/30 dark:border-gray-700/30 rounded-full px-4 sm:px-6 py-2 sm:py-3 mb-4 sm:mb-6 shadow-lg"
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.2 }}
+            className="inline-flex items-center space-x-2 bg-white/20 dark:bg-gray-800/20 backdrop-blur-md border border-white/30 dark:border-gray-700/30 rounded-full px-6 py-3 mb-6 shadow-lg"
+            whileHover={{ 
+              scale: 1.05,
+              boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+              transition: { duration: 0.2 }
+            }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 17 }}
           >
-            <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600" />
-            <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+            <Sparkles className="w-4 h-4 text-blue-600" />
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
               AI-Powered Resume Builder
             </span>
           </motion.div>
@@ -110,92 +176,148 @@ export function HeroSection() {
 
         <motion.h1
           variants={itemVariants}
-          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 sm:mb-8 leading-tight px-2"
+          className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold mb-8 leading-tight"
         >
           <motion.span 
             className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent inline-block"
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.2 }}
+            whileHover={{ 
+              scale: 1.05,
+              transition: { duration: 0.3, ease: "easeOut" }
+            }}
+            transition={{ type: 'spring', stiffness: 400, damping: 17 }}
           >
             Snap
           </motion.span>
-          <span className="text-gray-900 dark:text-white">CV</span>
+          <motion.span 
+            className="text-gray-900 dark:text-white"
+            animate={{
+              textShadow: [
+                "0 0 0px rgba(0,0,0,0)",
+                "0 0 20px rgba(59, 130, 246, 0.3)",
+                "0 0 0px rgba(0,0,0,0)"
+              ]
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          >
+            CV
+          </motion.span>
         </motion.h1>
 
         <motion.p
           variants={itemVariants}
-          className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 dark:text-gray-300 mb-8 sm:mb-10 max-w-3xl mx-auto leading-relaxed px-2"
+          className="text-lg sm:text-xl lg:text-2xl text-gray-600 dark:text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed"
         >
-          Create professional resumes in minutes with our AI-powered builder. 
-          Stand out from the crowd with beautiful, ATS-friendly designs.
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1, duration: 1 }}
+          >
+            Create professional resumes in minutes with our AI-powered builder. 
+            Stand out from the crowd with beautiful, ATS-friendly designs.
+          </motion.span>
         </motion.p>
 
         <motion.div
           variants={itemVariants}
-          className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4 mb-12 sm:mb-16 px-2"
+          className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 mb-16"
         >
-          <Link href="/resume-builder" className="w-full sm:w-auto">
+          <Link href="/resume-builder">
             <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ duration: 0.2 }}
-              className="w-full sm:w-auto"
+              whileHover={{ 
+                scale: 1.05,
+                boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
+              }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 17 }}
             >
               <AnimatedButton
                 size="lg"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 sm:px-10 py-4 sm:py-5 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 group w-full sm:w-auto flex items-center justify-center text-base sm:text-lg font-semibold"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-10 py-5 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-500 group w-full sm:w-auto flex items-center justify-center text-lg font-semibold"
               >
-                <span>Start Building Resume</span>
-                <motion.div
-                  whileHover={{ x: 4 }}
-                  transition={{ duration: 0.2 }}
-                  className="ml-2 sm:ml-3 flex items-center"
+                <motion.span
+                  className="bg-gradient-to-r from-white to-blue-100 bg-clip-text"
                 >
-                  <ArrowRight className="w-4 h-4 sm:w-6 sm:h-6" />
+                  Start Building Resume
+                </motion.span>
+                <motion.div
+                  whileHover={{ x: 8, scale: 1.2 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  className="ml-3 flex items-center"
+                >
+                  <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
                 </motion.div>
               </AnimatedButton>
             </motion.div>
           </Link>
 
-          <Link href="/resume-example" className="w-full sm:w-auto">
+          <Link href="/resume-example">
             <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ duration: 0.2 }}
-              className="w-full sm:w-auto"
+              whileHover={{ 
+                scale: 1.05,
+                backgroundColor: "rgba(255, 255, 255, 0.9)"
+              }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 17 }}
             >
               <AnimatedButton
                 variant="outline"
                 size="lg"
-                className="px-6 sm:px-10 py-4 sm:py-5 rounded-2xl border-2 border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 transition-all duration-300 backdrop-blur-md bg-white/60 dark:bg-gray-800/60 w-full sm:w-auto text-base sm:text-lg font-semibold hover:shadow-xl"
+                className="px-10 py-5 rounded-2xl border-2 border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 transition-all duration-500 backdrop-blur-md bg-white/60 dark:bg-gray-800/60 w-full sm:w-auto text-lg font-semibold hover:shadow-xl"
               >
-                View Examples
+                <motion.span
+                  whileHover={{ color: "#3b82f6" }}
+                  transition={{ duration: 0.2 }}
+                >
+                  View Examples
+                </motion.span>
               </AnimatedButton>
             </motion.div>
           </Link>
         </motion.div>
 
-        {/* Stats - Mobile Optimized */}
+        {/* Stats - Moved up to create space for scroll indicator */}
         <motion.div
-          variants={itemVariants}
-          className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6 max-w-4xl mx-auto mb-16 sm:mb-24 px-2"
+          variants={statsVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-10 max-w-3xl mx-auto mb-24"
         >
           {[
             { number: '50K+', label: 'Resumes Created' },
             { number: '95%', label: 'Success Rate' },
             { number: '24/7', label: 'AI Support' },
-            { number: '100%', label: 'ATS Compatible' },
           ].map((stat, index) => (
             <motion.div
               key={stat.label}
-              whileHover={{ scale: 1.02, y: -2 }}
-              transition={{ duration: 0.2 }}
-              className="text-center p-3 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl bg-white/20 dark:bg-gray-800/20 backdrop-blur-md border border-white/30 dark:border-gray-700/30 cursor-pointer shadow-xl hover:shadow-2xl transition-shadow duration-200"
+              whileHover={{ 
+                scale: 1.03,
+                y: -4
+              }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="text-center p-6 sm:p-8 rounded-3xl bg-white/20 dark:bg-gray-800/20 backdrop-blur-md border border-white/30 dark:border-gray-700/30 cursor-pointer shadow-xl hover:shadow-2xl transition-shadow duration-300"
             >
-              <div className="text-xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-3">
+              <motion.div 
+                className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-3"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ 
+                  delay: 1 + index * 0.1, 
+                  duration: 0.4,
+                  ease: "easeOut"
+                }}
+                whileHover={{
+                  scale: 1.05,
+                  transition: { duration: 0.15 }
+                }}
+              >
                 {stat.number}
-              </div>
-              <div className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 leading-tight">
+              </motion.div>
+              <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
                 {stat.label}
               </div>
             </motion.div>
@@ -203,15 +325,15 @@ export function HeroSection() {
         </motion.div>
       </motion.div>
 
-      {/* Mobile-Optimized Scroll Indicator */}
+      {/* Simple Floating Scroll Indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 1 }}
-        className="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center z-30"
+        transition={{ duration: 1.2, delay: 2 }}
+        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 hidden sm:flex flex-col items-center z-30"
       >
         <motion.div
-          animate={{ y: [0, -6, 0] }}
+          animate={{ y: [0, -10, 0] }}
           transition={{ 
             duration: 2, 
             repeat: Infinity,
@@ -219,20 +341,24 @@ export function HeroSection() {
           }}
           className="cursor-pointer flex flex-col items-center"
           onClick={() => {
-            window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+            if (typeof window !== 'undefined' && window.lenis) {
+              window.lenis.scrollTo(window.innerHeight, { duration: 1.5 });
+            } else {
+              window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+            }
           }}
         >
-          {/* Simplified Mouse Icon */}
-          <div className="relative w-5 h-8 sm:w-7 sm:h-12 border-2 border-gray-400 dark:border-gray-300 rounded-full flex justify-center bg-white/10 dark:bg-gray-800/10 backdrop-blur-md hover:border-blue-500 dark:hover:border-blue-400 transition-colors duration-200">
+          {/* Simple Mouse Icon */}
+          <div className="relative w-7 h-12 border-2 border-gray-400 dark:border-gray-300 rounded-full flex justify-center bg-white/10 dark:bg-gray-800/10 backdrop-blur-md hover:border-blue-500 dark:hover:border-blue-400 transition-colors duration-300">
             <motion.div
-              animate={{ y: [0, 4, 0] }}
+              animate={{ y: [0, 8, 0] }}
               transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              className="w-1 h-2 sm:w-2 sm:h-4 bg-gray-400 dark:bg-gray-300 rounded-full mt-1 sm:mt-2"
+              className="w-2 h-4 bg-gray-400 dark:bg-gray-300 rounded-full mt-2"
             />
           </div>
 
-          {/* Scroll Text - Hidden on very small screens */}
-          <div className="mt-2 sm:mt-4 text-xs text-gray-500 dark:text-gray-400 font-medium hidden sm:block">
+          {/* Scroll Text */}
+          <div className="mt-4 text-xs text-gray-500 dark:text-gray-400 font-medium">
             Scroll to explore
           </div>
         </motion.div>
