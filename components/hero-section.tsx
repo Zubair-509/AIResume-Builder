@@ -175,49 +175,54 @@ export function HeroSection() {
         </motion.div>
 
         <motion.h1
-          variants={itemVariants}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ 
+            duration: 0.6,
+            delay: 0.3,
+            ease: [0.16, 1, 0.3, 1]
+          }}
           className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold mb-8 leading-tight"
         >
+          Everything You Need to Land Your{' '}
           <motion.span 
             className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent inline-block"
-            whileHover={{ 
-              scale: 1.05,
-              transition: { duration: 0.3, ease: "easeOut" }
-            }}
-            transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-          >
-            Snap
-          </motion.span>
-          <motion.span 
-            className="text-gray-900 dark:text-white"
-            animate={{
-              textShadow: [
-                "0 0 0px rgba(0,0,0,0)",
-                "0 0 20px rgba(59, 130, 246, 0.3)",
-                "0 0 0px rgba(0,0,0,0)"
-              ]
-            }}
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: "easeInOut"
+              duration: 0.5,
+              delay: 0.6,
+              ease: [0.16, 1, 0.3, 1]
+            }}
+            whileHover={{ 
+              scale: 1.02,
+              transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] }
             }}
           >
-            CV
+            Dream Job
           </motion.span>
         </motion.h1>
 
         <motion.p
-          variants={itemVariants}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ 
+            duration: 0.5,
+            delay: 0.7,
+            ease: [0.16, 1, 0.3, 1]
+          }}
           className="text-lg sm:text-xl lg:text-2xl text-gray-600 dark:text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed"
         >
           <motion.span
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1, duration: 1 }}
+            transition={{ 
+              duration: 0.6,
+              delay: 0.9
+            }}
           >
-            Create professional resumes in minutes with our AI-powered builder. 
-            Stand out from the crowd with beautiful, ATS-friendly designs.
+            Our AI-powered platform combines cutting-edge technology with proven recruitment
+            insights to create resumes that get noticed by both ATS systems and hiring managers.
           </motion.span>
         </motion.p>
 
@@ -279,47 +284,99 @@ export function HeroSection() {
           </Link>
         </motion.div>
 
-        {/* Stats - Moved up to create space for scroll indicator */}
+        {/* Stats - New fast and smooth animations */}
         <motion.div
-          variants={statsVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-10 max-w-3xl mx-auto mb-24"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ 
+            duration: 0.6,
+            delay: 0.8,
+            ease: [0.16, 1, 0.3, 1]
+          }}
+          className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 max-w-4xl mx-auto mb-24"
         >
           {[
-            { number: '50K+', label: 'Resumes Created' },
-            { number: '95%', label: 'Success Rate' },
-            { number: '24/7', label: 'AI Support' },
+            { number: '50,000+', label: 'Resumes Created', icon: '👥' },
+            { number: '95%', label: 'Success Rate', icon: '🎯' },
+            { number: '24/7', label: 'AI Support', icon: '⚡' },
+            { number: '100%', label: 'ATS Compatible', icon: '✓' },
           ].map((stat, index) => (
             <motion.div
               key={stat.label}
-              whileHover={{ 
-                scale: 1.03,
-                y: -4
+              initial={{ opacity: 0, y: 20, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{
+                duration: 0.4,
+                delay: 1 + index * 0.1,
+                ease: [0.16, 1, 0.3, 1]
               }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              className="text-center p-6 sm:p-8 rounded-3xl bg-white/20 dark:bg-gray-800/20 backdrop-blur-md border border-white/30 dark:border-gray-700/30 cursor-pointer shadow-xl hover:shadow-2xl transition-shadow duration-300"
+              whileHover={{ 
+                y: -6,
+                scale: 1.02,
+                transition: { 
+                  duration: 0.2, 
+                  ease: [0.16, 1, 0.3, 1] 
+                }
+              }}
+              whileTap={{ 
+                scale: 0.98,
+                transition: { duration: 0.1 }
+              }}
+              className="text-center p-4 sm:p-6 rounded-2xl bg-white/10 dark:bg-gray-800/10 backdrop-blur-sm border border-white/20 dark:border-gray-700/20 cursor-pointer group hover:bg-white/15 dark:hover:bg-gray-800/15 transition-colors duration-200"
             >
               <motion.div 
-                className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-3"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ 
-                  delay: 1 + index * 0.1, 
+                className="text-2xl mb-2 opacity-70"
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{
+                  duration: 0.5,
+                  delay: 1.2 + index * 0.1,
+                  ease: [0.16, 1, 0.3, 1]
+                }}
+                whileHover={{
+                  scale: 1.2,
+                  rotate: 5,
+                  transition: { duration: 0.2 }
+                }}
+              >
+                {stat.icon}
+              </motion.div>
+              <motion.div 
+                className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
                   duration: 0.4,
-                  ease: "easeOut"
+                  delay: 1.3 + index * 0.1,
+                  ease: [0.16, 1, 0.3, 1]
                 }}
                 whileHover={{
                   scale: 1.05,
                   transition: { duration: 0.15 }
                 }}
               >
-                {stat.number}
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{
+                    duration: 0.8,
+                    delay: 1.4 + index * 0.1
+                  }}
+                >
+                  {stat.number}
+                </motion.span>
               </motion.div>
-              <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
+              <motion.div 
+                className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors duration-200"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                  duration: 0.4,
+                  delay: 1.5 + index * 0.1
+                }}
+              >
                 {stat.label}
-              </div>
+              </motion.div>
             </motion.div>
           ))}
         </motion.div>
