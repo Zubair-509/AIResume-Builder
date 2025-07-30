@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -341,7 +342,7 @@ export function HeroSection() {
               </motion.div>
               <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
                 {stat.label}
-              </motion.div>
+              </div>
             </motion.div>
           ))}
         </motion.div>
