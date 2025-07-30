@@ -359,7 +359,7 @@ export function HeroSection() {
         </motion.div>
       </motion.div>
 
-      {/* Enhanced Floating Scroll Indicator */}
+      {/* Simple Floating Scroll Indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -367,17 +367,13 @@ export function HeroSection() {
         className="absolute bottom-8 left-1/2 transform -translate-x-1/2 hidden sm:flex flex-col items-center z-30"
       >
         <motion.div
-          animate={{ 
-            y: [0, 20, 0],
-            scale: [1, 1.1, 1],
-            rotateX: [0, 10, 0]
-          }}
+          animate={{ y: [0, -10, 0] }}
           transition={{ 
-            duration: 4, 
+            duration: 2, 
             repeat: Infinity,
             ease: "easeInOut"
           }}
-          className="relative cursor-pointer group flex flex-col items-center transform-gpu"
+          className="cursor-pointer flex flex-col items-center"
           onClick={() => {
             if (typeof window !== 'undefined' && window.lenis) {
               window.lenis.scrollTo(window.innerHeight, { duration: 1.5 });
@@ -386,96 +382,19 @@ export function HeroSection() {
             }
           }}
         >
-          {/* Floating Mouse Icon */}
-          <motion.div 
-            className="relative w-7 h-12 border-2 border-gray-400 dark:border-gray-300 rounded-full flex justify-center bg-white/10 dark:bg-gray-800/10 backdrop-blur-md group-hover:border-blue-500 dark:group-hover:border-blue-400 transition-all duration-500 shadow-xl"
-            whileHover={{
-              scale: 1.1,
-              boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
-            }}
-          >
+          {/* Simple Mouse Icon */}
+          <div className="relative w-7 h-12 border-2 border-gray-400 dark:border-gray-300 rounded-full flex justify-center bg-white/10 dark:bg-gray-800/10 backdrop-blur-md hover:border-blue-500 dark:hover:border-blue-400 transition-colors duration-300">
             <motion.div
-              animate={{ y: [0, 16, 0] }}
-              transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-              className="w-2 h-4 bg-gray-400 dark:bg-gray-300 rounded-full mt-2 group-hover:bg-blue-500 dark:group-hover:bg-blue-400 transition-colors duration-500"
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+              className="w-2 h-4 bg-gray-400 dark:bg-gray-300 rounded-full mt-2"
             />
-          </motion.div>
-
-          {/* Floating Glow Effect */}
-          <motion.div 
-            className="absolute inset-0 w-7 h-12 border border-blue-400/60 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-            animate={{ 
-              scale: [1, 1.3, 1],
-              opacity: [0, 0.6, 0]
-            }}
-            transition={{ 
-              duration: 3, 
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-
-          {/* Floating Particles */}
-          <motion.div
-            className="absolute -top-3 -left-3 w-1.5 h-1.5 bg-blue-400 rounded-full opacity-70"
-            animate={{
-              y: [0, -25, 0],
-              x: [0, 8, 0],
-              opacity: [0.7, 0, 0.7],
-              scale: [1, 1.5, 1]
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              delay: 0.5,
-              ease: "easeInOut"
-            }}
-          />
-          <motion.div
-            className="absolute -top-2 -right-4 w-1.5 h-1.5 bg-purple-400 rounded-full opacity-70"
-            animate={{
-              y: [0, -30, 0],
-              x: [0, -10, 0],
-              opacity: [0.7, 0, 0.7],
-              scale: [1, 1.5, 1]
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              delay: 1.5,
-              ease: "easeInOut"
-            }}
-          />
-          <motion.div
-            className="absolute -bottom-2 left-1/2 w-1 h-1 bg-pink-400 rounded-full opacity-70"
-            animate={{
-              y: [0, 20, 0],
-              x: [0, -5, 0],
-              opacity: [0.7, 0, 0.7],
-              scale: [1, 1.3, 1]
-            }}
-            transition={{
-              duration: 3.5,
-              repeat: Infinity,
-              delay: 2,
-              ease: "easeInOut"
-            }}
-          />
+          </div>
 
           {/* Scroll Text */}
-          <motion.div
-            className="mt-4 text-xs text-gray-500 dark:text-gray-400 font-medium"
-            animate={{
-              opacity: [0.5, 1, 0.5]
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          >
+          <div className="mt-4 text-xs text-gray-500 dark:text-gray-400 font-medium">
             Scroll to explore
-          </motion.div>
+          </div>
         </motion.div>
       </motion.div>
     </section>
