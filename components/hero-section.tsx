@@ -150,13 +150,6 @@ export function HeroSection() {
         <motion.div
           variants={sparkleVariants}
           animate="animate"
-          className="absolute top-1/5 right-1/3"
-        >
-          <Sparkles className="w-6 h-6 text-yellow-400" />
-        </motion.div>
-        <motion.div
-          variants={sparkleVariants}
-          animate="animate"
           style={{ animationDelay: '1.5s' }}
           className="absolute bottom-1/4 left-1/5"
         >
