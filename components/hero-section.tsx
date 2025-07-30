@@ -146,23 +146,7 @@ export function HeroSection() {
           className="absolute bottom-1/3 left-1/3 w-2 h-2 bg-pink-500 rounded-full opacity-60"
         />
 
-        {/* Sparkle Effects */}
-        <motion.div
-          variants={sparkleVariants}
-          animate="animate"
-          style={{ animationDelay: '1.5s' }}
-          className="absolute bottom-1/4 left-1/5"
-        >
-          <Star className="w-5 h-5 text-blue-400" />
-        </motion.div>
-        <motion.div
-          variants={sparkleVariants}
-          animate="animate"
-          style={{ animationDelay: '3s' }}
-          className="absolute top-2/3 right-1/5"
-        >
-          <Zap className="w-4 h-4 text-purple-400" />
-        </motion.div>
+        
       </div>
 
       {/* Content */}
