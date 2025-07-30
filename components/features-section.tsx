@@ -98,8 +98,8 @@ export function FeaturesSection() {
 
   const iconVariants = {
     hover: {
-      scale: 1.2,
-      rotate: 10,
+      scale: 1,
+      rotate: 0,
       transition: {
         duration: 0.3,
         ease: "easeOut"
@@ -185,8 +185,8 @@ export function FeaturesSection() {
               <motion.div 
                 className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl mb-6 shadow-lg"
                 whileHover={{
-                  scale: 1.2,
-                  rotate: 10,
+                  scale: 1,
+                  rotate: 0,
                   boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
                 }}
                 transition={{ duration: 0.3 }}
