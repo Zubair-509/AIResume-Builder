@@ -90,8 +90,8 @@ export function FeaturesSection() {
       rotateY: 5,
       boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
       transition: {
-        duration: 0.3,
-        ease: "easeOut"
+        duration: 0.15,
+        ease: [0.25, 0.46, 0.45, 0.94]
       }
     }
   };
@@ -248,14 +248,15 @@ export function FeaturesSection() {
                         rotate: 15,
                         boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
                       }}
+                      transition={{ duration: 0.12, ease: [0.25, 0.46, 0.45, 0.94] }}
                     >
                       <feature.icon className="w-10 h-10 text-white" />
                     </motion.div>
                     <div className="flex-1">
                       <motion.h3 
-                        className="text-2xl font-bold text-gray-900 dark:text-white mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300"
+                        className="text-2xl font-bold text-gray-900 dark:text-white mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200"
                         whileHover={{ x: 5 }}
-                        transition={{ duration: 0.2 }}
+                        transition={{ duration: 0.12, ease: [0.25, 0.46, 0.45, 0.94] }}
                       >
                         {feature.title}
                       </motion.h3>
@@ -281,10 +282,11 @@ export function FeaturesSection() {
                           duration: 0.5
                         }}
                         whileHover={{ x: 8, scale: 1.02 }}
+                        transition={{ duration: 0.12, ease: [0.25, 0.46, 0.45, 0.94] }}
                       >
                         <motion.div
                           whileHover={{ scale: 1.2, rotate: 180 }}
-                          transition={{ duration: 0.3 }}
+                          transition={{ duration: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
                         >
                           <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
                         </motion.div>
