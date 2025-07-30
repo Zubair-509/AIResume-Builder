@@ -72,15 +72,14 @@ export function HeroSection() {
   };
 
   const statsVariants = {
-    hidden: { opacity: 0, y: 50, scale: 0.8 },
+    hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
-      scale: 1,
       transition: {
-        duration: 1.2,
-        delay: 1.2,
-        ease: [0.22, 1, 0.36, 1],
+        duration: 0.5,
+        delay: 0.8,
+        ease: "easeOut",
       },
     },
   };
@@ -317,41 +316,30 @@ export function HeroSection() {
             <motion.div
               key={stat.label}
               whileHover={{ 
-                scale: 1.08,
-                y: -8,
-                rotateY: 5,
-                boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
+                scale: 1.03,
+                y: -4
               }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-              className="text-center p-6 sm:p-8 rounded-3xl bg-white/20 dark:bg-gray-800/20 backdrop-blur-md border border-white/30 dark:border-gray-700/30 cursor-pointer shadow-xl hover:shadow-2xl transition-all duration-500"
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="text-center p-6 sm:p-8 rounded-3xl bg-white/20 dark:bg-gray-800/20 backdrop-blur-md border border-white/30 dark:border-gray-700/30 cursor-pointer shadow-xl hover:shadow-2xl transition-shadow duration-300"
             >
               <motion.div 
                 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-3"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
                 transition={{ 
-                  delay: 1.5 + index * 0.2, 
-                  type: 'spring', 
-                  stiffness: 300, 
-                  damping: 15,
-                  duration: 0.8
+                  delay: 1 + index * 0.1, 
+                  duration: 0.4,
+                  ease: "easeOut"
                 }}
                 whileHover={{
-                  scale: 1.1,
-                  color: "#3b82f6",
-                  transition: { duration: 0.2 }
+                  scale: 1.05,
+                  transition: { duration: 0.15 }
                 }}
               >
                 {stat.number}
               </motion.div>
-              <motion.div 
-                className="text-sm font-medium text-gray-600 dark:text-gray-400"
-                whileHover={{
-                  color: "#6b7280",
-                  transition: { duration: 0.2 }
-                }}
-              >
+              <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
                 {stat.label}
               </motion.div>
             </motion.div>
