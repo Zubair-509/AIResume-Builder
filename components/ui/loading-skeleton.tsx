@@ -1,6 +1,8 @@
+
 'use client';
 
 import { motion } from 'framer-motion';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface LoadingSkeletonProps {
   width?: string;
@@ -46,11 +48,8 @@ export function LoadingSkeleton({
     </div>
   );
 }
-'use client';
 
-import { Skeleton } from '@/components/ui/skeleton';
-
-export function LoadingSkeleton() {
+export function ResumeLoadingSkeleton() {
   return (
     <div className="space-y-4 p-6">
       {/* Header skeleton */}
