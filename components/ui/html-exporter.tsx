@@ -45,11 +45,19 @@ export function HTMLExporter({
     setIsExporting(true);
 
     try {
-      // Find the resume element
-      const resumeElement = findResumeElement();
+      // Find the resume element with better selectors
+      let resumeElement = document.querySelector('[data-resume-preview]');
+      
+      if (!resumeElement) {
+        // Fallback selectors
+        resumeElement = document.querySelector('.resume-container') ||
+                       document.querySelector('[class*="template"]') ||
+                       document.querySelector('main > div > div') ||
+                       document.querySelector('body > div');
+      }
 
       if (!resumeElement) {
-        throw new Error('Resume element not found');
+        throw new Error('Resume content not found. Please ensure the resume is loaded and visible.');
       }
 
       // Create complete HTML document

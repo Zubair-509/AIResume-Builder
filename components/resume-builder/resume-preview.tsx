@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Suspense } from 'react';
 import { ResumeFormData } from '@/lib/validations';
 import { TemplateRenderer } from '@/components/resume-templates/template-renderer';
-import { LoadingSkeleton } from '@/components/ui/loading-skeleton';
+import { ResumeLoadingSkeleton } from '@/components/ui/loading-skeleton';
 
 interface ResumePreviewProps {
   data: ResumeFormData;
@@ -16,18 +16,18 @@ export function ResumePreview({ data, selectedTemplate }: ResumePreviewProps) {
   if (!data || !selectedTemplate || typeof data !== 'object') {
     return (
       <div className="w-full h-full flex items-center justify-center min-h-[400px]">
-        <LoadingSkeleton />
+        <ResumeLoadingSkeleton />
       </div>
     );
   }
 
   // Ensure data has required properties to prevent runtime errors
   const safeData = {
-    fullName: '',
-    email: '',
-    phone: '',
-    location: '',
-    summary: '',
+    fullName: 'John Doe',
+    email: 'john.doe@example.com',
+    phone: '+1 (555) 123-4567',
+    location: 'New York, NY',
+    summary: 'Professional summary placeholder',
     workExperience: [],
     education: [],
     skills: [],
@@ -42,7 +42,7 @@ export function ResumePreview({ data, selectedTemplate }: ResumePreviewProps) {
       className="w-full h-full"
       data-resume-preview // Add this attribute for PDF export
     >
-      <Suspense fallback={<LoadingSkeleton />}>
+      <Suspense fallback={<ResumeLoadingSkeleton />}>
         <TemplateRenderer
           templateId={selectedTemplate}
           data={safeData}
