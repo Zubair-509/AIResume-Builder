@@ -64,15 +64,7 @@ export function TemplateGallery({ resumeData, onTemplateSelect }: TemplateGaller
     ]
   };
 
-  const templates = [
-    { id: 'modern', name: 'Modern', description: 'Clean, contemporary design with blue accents', atsScore: 95 },
-    { id: 'classic', name: 'Classic', description: 'Traditional layout for corporate positions', atsScore: 98 },
-    { id: 'professional', name: 'Professional', description: 'Polished design for experienced professionals', atsScore: 97 },
-    { id: 'technical', name: 'Technical', description: 'Optimized for technical and IT roles', atsScore: 99 },
-    { id: 'entry-level', name: 'Entry Level', description: 'Perfect for new graduates and career starters', atsScore: 96 },
-    { id: 'executive', name: 'Executive', description: 'Sophisticated design for leadership positions', atsScore: 97 },
-    { id: 'creative', name: 'Creative', description: 'Unique layout for creative professionals', atsScore: 92 }
-  ];
+  const templates: any[] = [];
 
   const handleTemplateSelect = (templateId: string) => {
     setSelectedTemplate(templateId);
@@ -207,73 +199,17 @@ export function TemplateGallery({ resumeData, onTemplateSelect }: TemplateGaller
         </CardContent>
       </Card>
 
-      {/* Selected Template Live Preview */}
-      <div className="mb-8">
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
-          Selected Template Preview
-        </h3>
-        <LivePreview 
-          title={`${templates.find(t => t.id === selectedTemplate)?.name} Template`}
-          templateId={selectedTemplate}
-          showEditButton={true}
-          showDownloadButton={true}
-          onDownload={() => {
-            saveResumeData();
-            toast.success('Template ready for download');
-          }}
-        >
-          <div className="p-4">
-            <div className="scale-[0.6] origin-top-left w-[167%] h-[167%]">
-              <TemplateRenderer templateId={selectedTemplate} data={resumeData || sampleData} showEditButton={true} />
-            </div>
-          </div>
-        </LivePreview>
-      </div>
-
-      {/* Template Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {templates.map((template) => (
-          <TemplatePreview
-            key={template.id}
-            templateId={template.id}
-            data={resumeData || sampleData}
-            isSelected={selectedTemplate === template.id}
-            onClick={() => {
-              handleTemplateSelect(template.id);
-              saveResumeData(); // Save data for edit functionality
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Action Buttons */}
-      <div className="flex flex-wrap justify-center gap-4 mt-8">
-        <Link href={`/edit-resume?template=${selectedTemplate}`} onClick={saveResumeData}>
-          <Button
-            variant="outline"
-            size="lg"
-            className="border-2"
-          >
-            <Eye className="w-5 h-5 mr-2" />
-            Edit Selected Template
-          </Button>
-        </Link>
-        
-        <PDFExporter
-          resumeData={resumeData || sampleData}
-          templateId={selectedTemplate}
-          onExportComplete={handleExportComplete}
-          onExportError={handleExportError}
-        />
-        
-        <HTMLExporter
-          resumeData={resumeData || sampleData}
-          templateId={selectedTemplate}
-          size="lg"
-          className="border-2 border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
-          onExportComplete={handleExportComplete}
-          onExportError={handleExportError}
-        />
+      {/* Empty State */}
+      <div className="text-center py-16">
+        <div className="mx-auto max-w-md">
+          <FileText className="mx-auto h-16 w-16 text-gray-400 mb-4" />
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            No Templates Available
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400">
+            Templates have been temporarily removed. Please check back later for new templates.
+          </p>
+        </div>
       </div>
     </div>
     </MotionConfig>
