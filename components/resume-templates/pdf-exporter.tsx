@@ -1,9 +1,10 @@
+
 'use client';
 
 import React, { useState } from 'react';
 import { ResumeFormData } from '@/lib/validations';
 import { Button } from '@/components/ui/button';
-import { Download, Loader2, FileText } from 'lucide-react';
+import { Download, Loader2, FileText, Printer } from 'lucide-react';
 import { LoadingOverlay } from '@/components/ui/loading-overlay';
 import { exportResumeToPDF } from '@/lib/pdf-utils';
 
@@ -46,7 +47,7 @@ export function PDFExporter({
       // Save resume data to session storage for export functionality
       sessionStorage.setItem('resume-data', JSON.stringify(resumeData));
       
-      // Use the standardized export function
+      // Use the native browser printing method
       await exportResumeToPDF(resumeData, templateId, {
         filename: generateFilename(),
         pageSize: 'a4',
@@ -79,19 +80,19 @@ export function PDFExporter({
         {isExporting ? (
           <>
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            Generating PDF...
+            Opening Print Dialog...
           </>
         ) : (
           <>
-            <Download className="w-4 h-4 mr-2" />
-            Download PDF
+            <Printer className="w-4 h-4 mr-2" />
+            Print to PDF
           </>
         )}
       </Button>
       
       <LoadingOverlay 
         isLoading={isExporting} 
-        message="Generating your PDF..." 
+        message="Opening print dialog..." 
         fullScreen={false} 
       />
     </>

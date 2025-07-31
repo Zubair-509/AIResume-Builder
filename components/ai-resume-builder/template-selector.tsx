@@ -15,6 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ResumeFormData } from '@/lib/validations';
 import { ResumePreview } from '@/components/resume-builder/resume-preview';
 import { toast } from 'sonner';
+import { exportResumeToPDF } from '@/lib/pdf-utils';
 import Link from 'next/link';
 
 interface TemplateSelectorProps {
@@ -86,70 +87,19 @@ export function TemplateSelector({
   const handleDownloadPDF = async () => {
     setIsDownloading(true);
     try {
-      // Dynamically import html2pdf to avoid SSR issues
-      const html2pdf = (await import('html2pdf.js')).default;
-
-      // Find the resume preview element
-      const previewElement = document.querySelector('[data-resume-preview]') as HTMLElement;
-
-      if (!previewElement) {
-        throw new Error('Resume preview element not found');
-      }
-
-      // Clone the element for PDF generation
-      const clonedElement = previewElement.cloneNode(true) as HTMLElement;
-
-      // Apply styles for PDF generation
-      clonedElement.style.position = 'absolute';
-      clonedElement.style.left = '-9999px';
-      clonedElement.style.top = '0';
-      clonedElement.style.width = '210mm'; // A4 width
-      clonedElement.style.minHeight = '297mm'; // A4 height
-      clonedElement.style.backgroundColor = 'white';
-      clonedElement.style.boxShadow = 'none';
-      clonedElement.style.transform = 'scale(1)';
-      clonedElement.style.transformOrigin = 'top left';
-      clonedElement.style.padding = '20px';
-
-      // Append to body for processing
-      document.body.appendChild(clonedElement);
-
-      // Configure html2pdf options
-      const options = {
-        margin: [10, 10, 10, 10],
+      // Save resume data to session storage for export functionality
+      sessionStorage.setItem('resume-data', JSON.stringify(resumeData));
+      
+      // Use the standardized export function with native printing
+      await exportResumeToPDF(resumeData, selectedTemplate, {
         filename: generateFileName(),
-        image: { 
-          type: 'jpeg', 
-          quality: 1.0 
-        },
-        html2canvas: { 
-          scale: 2,
-          useCORS: true,
-          letterRendering: true,
-          allowTaint: false,
-          backgroundColor: '#ffffff',
-          width: 794, // A4 width in pixels at 96 DPI
-          height: 1123 // A4 height in pixels at 96 DPI
-        },
-        jsPDF: { 
-          unit: 'mm', 
-          format: 'a4', 
-          orientation: 'portrait',
-          compress: true
-        },
-        pagebreak: { 
-          mode: ['avoid-all', 'css', 'legacy'] 
-        }
-      };
+        pageSize: 'a4',
+        quality: 'high',
+        includeBackground: true
+      });
 
-      // Generate and download PDF
-      await html2pdf().set(options).from(clonedElement).save();
-
-      // Clean up
-      document.body.removeChild(clonedElement);
-
-      toast.success('PDF downloaded successfully!', {
-        description: 'Your resume has been saved to your downloads folder.',
+      toast.success('PDF export initiated!', {
+        description: 'Use your browser\'s print dialog to save as PDF.',
       });
     } catch (error) {
       console.error('PDF generation error:', error);
