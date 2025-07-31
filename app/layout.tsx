@@ -8,6 +8,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { PagePreloader } from '@/components/ui/page-preloader';
 import { PageLoader } from '@/components/ui/page-loader';
 import { LenisProvider } from '@/components/ui/lenis-provider';
+import { ErrorBoundary } from '@/components/ui/error-boundary';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -36,13 +37,29 @@ export default function RootLayout({
           <LenisProvider>
             <PagePreloader />
             <PageLoader />
-            <PageTransition>
-              {children}
-            </PageTransition>
+            <ErrorBoundary>
+              <PageTransition>
+                {children}
+              </PageTransition>
+            </ErrorBoundary>
             <ScrollToTop />
             <Toaster />
           </LenisProvider>
         </ThemeProvider>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.addEventListener('unhandledrejection', function(event) {
+                console.error('Unhandled promise rejection:', event.reason);
+                event.preventDefault();
+              });
+
+              window.addEventListener('error', function(event) {
+                console.error('Global error:', event.error);
+              });
+            `
+          }}
+        />
       </body>
     </html>
   );

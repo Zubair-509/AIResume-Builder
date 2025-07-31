@@ -12,13 +12,27 @@ interface ResumePreviewProps {
 }
 
 export function ResumePreview({ data, selectedTemplate }: ResumePreviewProps) {
-  if (!data || !selectedTemplate) {
+  // Validate data more thoroughly
+  if (!data || !selectedTemplate || typeof data !== 'object') {
     return (
-      <div className="w-full h-full flex items-center justify-center">
+      <div className="w-full h-full flex items-center justify-center min-h-[400px]">
         <LoadingSkeleton />
       </div>
     );
   }
+
+  // Ensure data has required properties to prevent runtime errors
+  const safeData = {
+    fullName: '',
+    email: '',
+    phone: '',
+    location: '',
+    summary: '',
+    workExperience: [],
+    education: [],
+    skills: [],
+    ...data
+  } as ResumeFormData;
 
   return (
     <motion.div
@@ -31,7 +45,7 @@ export function ResumePreview({ data, selectedTemplate }: ResumePreviewProps) {
       <Suspense fallback={<LoadingSkeleton />}>
         <TemplateRenderer
           templateId={selectedTemplate}
-          data={data}
+          data={safeData}
           showEditButton={false}
         />
       </Suspense>

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { ErrorBoundary } from 'react';
 import { ResumeFormData } from '@/lib/validations';
 import { ClassicTemplate } from './classic-template';
 import { ModernTemplate } from './modern-template';
@@ -67,7 +67,20 @@ export function TemplateRenderer({
 
   return (
     <div key={`template-${templateId}`} className="w-full h-full">
-      {renderTemplate()}
+      <ErrorBoundary
+        fallback={
+          <div className="w-full h-full flex items-center justify-center p-8">
+            <div className="text-center">
+              <div className="text-gray-500 mb-2">Template Error</div>
+              <div className="text-sm text-gray-400">
+                Unable to render {templateId} template
+              </div>
+            </div>
+          </div>
+        }
+      >
+        {renderTemplate()}
+      </ErrorBoundary>
     </div>
   );
 }
