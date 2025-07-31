@@ -1,10 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Suspense } from 'react';
 import { ResumeFormData } from '@/lib/validations';
-import { TemplateRenderer } from '@/components/resume-templates/template-renderer';
 import { ResumeLoadingSkeleton } from '@/components/ui/loading-skeleton';
+import { ATSProfessionalTemplate } from '@/components/resume-templates/ats-professional-template';
+import { ATSModernTemplate } from '@/components/resume-templates/ats-modern-template';
+import { ATSExecutiveTemplate } from '@/components/resume-templates/ats-executive-template';
 
 interface ResumePreviewProps {
   data: ResumeFormData;
@@ -27,12 +28,25 @@ export function ResumePreview({ data, selectedTemplate }: ResumePreviewProps) {
     email: 'john.doe@example.com',
     phone: '+1 (555) 123-4567',
     location: 'New York, NY',
-    summary: 'Professional summary placeholder',
+    professionalSummary: 'Professional summary placeholder',
     workExperience: [],
     education: [],
     skills: [],
     ...data
   } as ResumeFormData;
+
+  const renderTemplate = () => {
+    switch (selectedTemplate) {
+      case 'ats-professional':
+        return <ATSProfessionalTemplate data={safeData} />;
+      case 'ats-modern':
+        return <ATSModernTemplate data={safeData} />;
+      case 'ats-executive':
+        return <ATSExecutiveTemplate data={safeData} />;
+      default:
+        return <ATSProfessionalTemplate data={safeData} />;
+    }
+  };
 
   return (
     <motion.div
@@ -42,13 +56,9 @@ export function ResumePreview({ data, selectedTemplate }: ResumePreviewProps) {
       className="w-full h-full"
       data-resume-preview // Add this attribute for PDF export
     >
-      <Suspense fallback={<ResumeLoadingSkeleton />}>
-        <TemplateRenderer
-          templateId={selectedTemplate}
-          data={safeData}
-          showEditButton={false}
-        />
-      </Suspense>
+      <div className="resume-container">
+        {renderTemplate()}
+      </div>
     </motion.div>
   );
 }

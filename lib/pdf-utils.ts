@@ -346,23 +346,46 @@ export async function generatePDFWithCanvas(
 }
 
 /**
- * Utility function to find the resume preview element
+ * Helper function to find resume element for PDF export
  */
-export function findResumeElement(): HTMLElement | null {
+export function findResumeElement(): Element | null {
+  // Try multiple selectors in order of preference
   const selectors = [
+    '[data-resume-preview] .resume-container',
     '[data-resume-preview]',
-    '[data-template-id]',
-    '[data-resume-template]',
     '.resume-container',
-    '.resume-preview'
+    '[class*="ats-"][class*="template"]',
+    '[class*="template-container"]',
+    '[class*="resume"]'
   ];
 
   for (const selector of selectors) {
-    const element = document.querySelector(selector) as HTMLElement;
-    if (element) return element;
+    const element = document.querySelector(selector);
+    if (element && element.innerHTML.trim() && !element.innerHTML.includes('ResumeLoadingSkeleton')) {
+      // Make sure it's not just a loading skeleton
+      const hasActualContent = element.textContent && 
+                              element.textContent.trim().length > 50 &&
+                              !element.textContent.includes('loading') &&
+                              !element.querySelector('.animate-spin');
+
+      if (hasActualContent) {
+        return element;
+      }
+    }
   }
 
-  console.warn('Resume element not found using common selectors');
+  // Last resort: look for any element with substantial text content
+  const allDivs = document.querySelectorAll('div');
+  for (const div of allDivs) {
+    if (div.textContent && 
+        div.textContent.trim().length > 100 && 
+        div.textContent.includes('@') && // likely has email
+        !div.textContent.includes('loading') &&
+        !div.querySelector('.animate-spin')) {
+      return div;
+    }
+  }
+
   return null;
 }
 
@@ -436,5 +459,3 @@ export async function exportResumeToPDF(
     return false;
   }
 }
-
-

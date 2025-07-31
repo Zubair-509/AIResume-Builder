@@ -46,18 +46,27 @@ export function HTMLExporter({
 
     try {
       // Find the resume element with better selectors
-      let resumeElement = document.querySelector('[data-resume-preview]');
+      let resumeElement = document.querySelector('[data-resume-preview] .resume-container');
+      
+      if (!resumeElement) {
+        resumeElement = document.querySelector('[data-resume-preview]');
+      }
       
       if (!resumeElement) {
         // Fallback selectors
         resumeElement = document.querySelector('.resume-container') ||
-                       document.querySelector('[class*="template"]') ||
-                       document.querySelector('main > div > div') ||
-                       document.querySelector('body > div');
+                       document.querySelector('[class*="ats-"][class*="template"]') ||
+                       document.querySelector('[class*="template-container"]') ||
+                       document.querySelector('[class*="resume"]');
       }
 
-      if (!resumeElement) {
-        throw new Error('Resume content not found. Please ensure the resume is loaded and visible.');
+      // Validate that we have actual content, not just loading skeletons
+      if (!resumeElement || 
+          !resumeElement.textContent || 
+          resumeElement.textContent.trim().length < 50 ||
+          resumeElement.querySelector('.animate-spin') ||
+          resumeElement.innerHTML.includes('ResumeLoadingSkeleton')) {
+        throw new Error('Resume content not found or still loading. Please wait for the resume to fully load and try again.');
       }
 
       // Create complete HTML document
