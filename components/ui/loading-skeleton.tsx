@@ -1,4 +1,3 @@
-
 'use client';
 
 import { motion } from 'framer-motion';
@@ -34,14 +33,12 @@ export function LoadingSkeleton({
     >
       {animate && (
         <motion.div
-          className="h-full w-full bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700"
-          animate={{
-            x: ['0%', '100%', '0%'],
-          }}
+          className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent"
+          animate={{ x: [-100, 100] }}
           transition={{
-            duration: 1.5,
             repeat: Infinity,
-            ease: "easeInOut"
+            duration: 1.5,
+            ease: "linear"
           }}
         />
       )}
