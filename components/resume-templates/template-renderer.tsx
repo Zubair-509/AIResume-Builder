@@ -36,29 +36,32 @@ export function TemplateRenderer({
       customSettings: customSettings || undefined 
     };
 
+    // Generate a unique key based on template and data to force re-renders when data changes
+    const uniqueKey = `${templateId}-${JSON.stringify(data).slice(0, 50)}-${Date.now()}`;
+
     switch (templateId) {
       case 'classic':
-        return <ClassicTemplate key={`classic-${Date.now()}`} {...props} />;
+        return <ClassicTemplate key={uniqueKey} {...props} />;
       case 'modern':
-        return <ModernTemplate key={`modern-${Date.now()}`} {...props} />;
+        return <ModernTemplate key={uniqueKey} {...props} />;
       case 'professional':
-        return <ProfessionalTemplate key={`professional-${Date.now()}`} {...props} />;
+        return <ProfessionalTemplate key={uniqueKey} {...props} />;
       case 'technical':
-        return <TechnicalTemplate key={`technical-${Date.now()}`} {...props} />;
+        return <TechnicalTemplate key={uniqueKey} {...props} />;
       case 'entry-level':
-        return <EntryLevelTemplate key={`entry-level-${Date.now()}`} {...props} />;
+        return <EntryLevelTemplate key={uniqueKey} {...props} />;
       case 'executive':
-        return <ExecutiveTemplate key={`executive-${Date.now()}`} {...props} />;
+        return <ExecutiveTemplate key={uniqueKey} {...props} />;
       case 'creative':
-        return <CreativeTemplate key={`creative-${Date.now()}`} {...props} />;
+        return <CreativeTemplate key={uniqueKey} {...props} />;
       case 'ats-professional':
-        return <ATSProfessionalTemplate key={`ats-professional-${Date.now()}`} {...props} />;
+        return <ATSProfessionalTemplate key={uniqueKey} {...props} />;
       case 'ats-modern':
-        return <ATSModernTemplate key={`ats-modern-${Date.now()}`} {...props} />;
+        return <ATSModernTemplate key={uniqueKey} {...props} />;
       case 'ats-executive':
-        return <ATSExecutiveTemplate key={`ats-executive-${Date.now()}`} {...props} />;
+        return <ATSExecutiveTemplate key={uniqueKey} {...props} />;
       default:
-        return <ATSProfessionalTemplate key={`default-${Date.now()}`} {...props} />;
+        return <ATSProfessionalTemplate key={uniqueKey} {...props} />;
     }
   };
 

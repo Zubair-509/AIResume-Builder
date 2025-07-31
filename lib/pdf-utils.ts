@@ -1,4 +1,3 @@
-
 import { toast } from 'sonner';
 
 export interface PDFExportOptions {
@@ -33,10 +32,10 @@ export async function generatePDF(
 
     // Clone the element to avoid modifying the original
     const clonedElement = element.cloneNode(true) as HTMLElement;
-    
+
     // Create a new window for printing
     const printWindow = window.open('', '_blank', 'width=800,height=600');
-    
+
     if (!printWindow) {
       throw new Error('Failed to open print window. Please check your popup blocker settings.');
     }
@@ -64,12 +63,12 @@ export async function generatePDF(
             * {
               box-sizing: border-box;
             }
-            
+
             @page {
               size: ${pageSize};
               margin: ${options.margins ? `${options.margins[0]}mm ${options.margins[1]}mm ${options.margins[2]}mm ${options.margins[3]}mm` : '10mm'};
             }
-            
+
             html, body {
               margin: 0;
               padding: 0;
@@ -83,7 +82,7 @@ export async function generatePDF(
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
             }
-            
+
             .resume-container {
               width: 100%;
               max-width: none;
@@ -94,14 +93,14 @@ export async function generatePDF(
               border: none;
               page-break-inside: avoid;
             }
-            
+
             h1 {
               font-size: 24px;
               margin: 0 0 8px 0;
               font-weight: 700;
               page-break-after: avoid;
             }
-            
+
             h2 {
               font-size: 18px;
               margin: 16px 0 8px 0;
@@ -110,53 +109,53 @@ export async function generatePDF(
               border-bottom: 1px solid #333;
               padding-bottom: 4px;
             }
-            
+
             h3 {
               font-size: 14px;
               margin: 12px 0 4px 0;
               font-weight: 600;
               page-break-after: avoid;
             }
-            
+
             p, li {
               margin: 0 0 4px 0;
               page-break-inside: avoid;
             }
-            
+
             ul, ol {
               margin: 8px 0;
               padding-left: 20px;
             }
-            
+
             .section {
               margin-bottom: 20px;
               page-break-inside: avoid;
             }
-            
+
             .work-experience, .education-item, .project-item {
               margin-bottom: 16px;
               page-break-inside: avoid;
             }
-            
+
             .contact-info {
               display: flex;
               flex-wrap: wrap;
               gap: 16px;
               margin-bottom: 16px;
             }
-            
+
             .contact-item {
               display: flex;
               align-items: center;
               gap: 4px;
             }
-            
+
             .skills-list {
               display: flex;
               flex-wrap: wrap;
               gap: 8px;
             }
-            
+
             .skill-tag {
               background: #f0f0f0;
               padding: 4px 8px;
@@ -164,24 +163,24 @@ export async function generatePDF(
               font-size: 11px;
               border: 1px solid #ddd;
             }
-            
+
             .print\\:hidden {
               display: none !important;
             }
-            
+
             .no-print {
               display: none !important;
             }
-            
+
             /* Custom CSS injection */
             ${options.customCSS || ''}
-            
+
             @media print {
               html, body {
                 width: 100%;
                 height: 100%;
               }
-              
+
               .resume-container {
                 box-shadow: none;
                 border: none;
@@ -213,13 +212,13 @@ export async function generatePDF(
 
     // Focus print window and trigger print dialog
     printWindow.focus();
-    
+
     // Use a promise to handle the print dialog
     return new Promise((resolve, reject) => {
       try {
         // Set up print dialog
         printWindow.print();
-        
+
         // Monitor window state
         const checkClosed = setInterval(() => {
           if (printWindow.closed) {
@@ -238,7 +237,7 @@ export async function generatePDF(
           }
           resolve(true);
         }, 30000); // 30 second timeout
-        
+
       } catch (error) {
         printWindow.close();
         reject(error);
@@ -247,7 +246,7 @@ export async function generatePDF(
 
   } catch (error) {
     console.error('PDF generation error:', error);
-    
+
     if (error instanceof Error) {
       options.onError?.(error);
       return false;
@@ -317,7 +316,7 @@ export async function generatePDFWithCanvas(
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
     const margin = 10;
-    
+
     pdf.addImage(
       imgData,
       'JPEG',
@@ -356,12 +355,12 @@ export function findResumeElement(): HTMLElement | null {
     '.resume-container',
     '.resume-preview'
   ];
-  
+
   for (const selector of selectors) {
     const element = document.querySelector(selector) as HTMLElement;
     if (element) return element;
   }
-  
+
   console.warn('Resume element not found using common selectors');
   return null;
 }
@@ -376,37 +375,37 @@ export async function exportResumeToPDF(
 ): Promise<boolean> {
   try {
     const resumeElement = findResumeElement();
-    
+
     if (!resumeElement) {
       toast.error('Could not find resume content', {
         description: 'Please try again or contact support if the issue persists.'
       });
       return false;
     }
-    
+
     // Generate filename if not provided
     if (!options.filename) {
       const name = resumeData?.fullName?.replace(/\s+/g, '_') || 'Resume';
       const date = new Date().toISOString().split('T')[0];
       options.filename = `${name}_${templateId}_${date}.pdf`;
     }
-    
+
     // Sanitize filename
     options.filename = options.filename
       .replace(/[/\\?%*:|"<>]/g, '-')
       .replace(/\.{2,}/g, '.');
-    
+
     // Show initial toast
     const toastId = toast.loading('Preparing your PDF...', {
       description: 'Opening print dialog...'
     });
-    
+
     // Generate PDF with progress updates
     const success = await generatePDF(resumeElement, {
       ...options,
       onProgress: (progress, stage) => {
         options.onProgress?.(progress, stage);
-        
+
         if (progress < 100) {
           toast.loading(stage, { id: toastId });
         }
@@ -426,7 +425,7 @@ export async function exportResumeToPDF(
         options.onError?.(error);
       }
     });
-    
+
     return success;
   } catch (error) {
     console.error('PDF export error:', error);
@@ -434,5 +433,130 @@ export async function exportResumeToPDF(
       description: 'Please try again or contact support if the issue persists.'
     });
     return false;
+  }
+}
+
+
+export async function exportResumeToPDF(
+  resumeData: ResumeFormData,
+  templateId: string,
+  options: PDFExportOptions = {}
+): Promise<void> {
+  const {
+    filename = 'resume.pdf',
+    pageSize = 'a4',
+    quality = 'high',
+    includeBackground = true
+  } = options;
+
+  try {
+    // Find the resume preview element or template element
+    let previewElement = document.querySelector('[data-resume-preview]') as HTMLElement;
+
+    // If not found, try to find template element
+    if (!previewElement) {
+      previewElement = document.querySelector('[data-resume-template]') as HTMLElement;
+    }
+
+    if (!previewElement) {
+      throw new Error('Resume preview or template element not found');
+    }
+
+    // Clone the element to avoid modifying the original
+    const clonedElement = previewElement.cloneNode(true) as HTMLElement;
+
+    // Create a temporary container
+    const tempContainer = document.createElement('div');
+    tempContainer.style.position = 'absolute';
+    tempContainer.style.top = '-9999px';
+    tempContainer.style.left = '-9999px';
+    tempContainer.style.width = '8.5in';
+    tempContainer.style.background = 'white';
+    tempContainer.appendChild(clonedElement);
+    document.body.appendChild(tempContainer);
+
+    // Apply print-specific styles
+    clonedElement.style.transform = 'none';
+    clonedElement.style.width = '100%';
+    clonedElement.style.maxWidth = 'none';
+    clonedElement.style.boxShadow = 'none';
+    clonedElement.style.margin = '0';
+    clonedElement.style.padding = '0.5in';
+    clonedElement.style.minHeight = '11in';
+
+    // Remove any edit buttons and non-printable elements
+    const editButtons = clonedElement.querySelectorAll('[class*="print:hidden"], .print\\:hidden');
+    editButtons.forEach(btn => btn.remove());
+
+    // Configure page dimensions
+    const pageDimensions = getPageDimensions(pageSize);
+
+    // Use browser's print functionality
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      throw new Error('Could not open print window');
+    }
+
+    // Create print-friendly HTML
+    const printHTML = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>${filename}</title>
+          <style>
+            @media print {
+              body {
+                margin: 0;
+                padding: 0;
+                background: white;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+              }
+              @page {
+                size: ${pageSize};
+                margin: 0;
+              }
+              .print\\:hidden {
+                display: none !important;
+              }
+            }
+            body {
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+              margin: 0;
+              padding: 0;
+              background: white;
+              color: black;
+            }
+            * {
+              box-sizing: border-box;
+            }
+            .print\\:hidden {
+              display: none !important;
+            }
+          </style>
+        </head>
+        <body>
+          ${clonedElement.outerHTML}
+        </body>
+      </html>
+    `;
+
+    printWindow.document.write(printHTML);
+    printWindow.document.close();
+
+    // Wait for content to load then trigger print
+    printWindow.onload = () => {
+      setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+
+        // Clean up temporary container
+        document.body.removeChild(tempContainer);
+      }, 500);
+    };
+
+  } catch (error) {
+    console.error('PDF export failed:', error);
+    throw new Error(`Failed to export PDF: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
