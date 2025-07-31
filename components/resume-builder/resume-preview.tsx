@@ -6,10 +6,10 @@ import { format } from 'date-fns';
 
 interface ResumePreviewProps {
   data: ResumeFormData;
-  template: 'modern' | 'classic' | 'compact';
+  selectedTemplate: 'ats-professional' | 'ats-modern' | 'ats-executive';
 }
 
-export function ResumePreview({ data, template }: ResumePreviewProps) {
+export function ResumePreview({ data, selectedTemplate }: ResumePreviewProps) {
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
     try {
@@ -23,8 +23,8 @@ export function ResumePreview({ data, template }: ResumePreviewProps) {
   const skillsList = data.skills ? data.skills.split('\n').filter(skill => skill.trim()) : [];
 
   const getTemplateStyles = () => {
-    switch (template) {
-      case 'modern':
+    switch (selectedTemplate) {
+      case 'ats-professional':
         return {
           container: 'font-sans text-gray-800',
           header: 'bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-lg',
@@ -35,7 +35,7 @@ export function ResumePreview({ data, template }: ResumePreviewProps) {
           sectionTitle: 'text-lg font-semibold text-blue-600 mb-4 pb-2 border-b border-blue-100',
           content: 'space-y-4',
         };
-      case 'classic':
+      case 'ats-modern':
         return {
           container: 'font-serif text-gray-900',
           header: 'border-b-2 border-gray-800 p-6 text-center',
@@ -46,7 +46,7 @@ export function ResumePreview({ data, template }: ResumePreviewProps) {
           sectionTitle: 'text-xl font-bold text-gray-800 mb-4 uppercase tracking-wide',
           content: 'space-y-4',
         };
-      case 'compact':
+      case 'ats-executive':
         return {
           container: 'font-sans text-gray-800 text-sm',
           header: 'bg-gray-800 text-white p-4',
@@ -88,7 +88,7 @@ export function ResumePreview({ data, template }: ResumePreviewProps) {
         <h1 className={styles.name}>{data.fullName || 'Your Name'}</h1>
         <p className={styles.title}>{data.jobTitle || 'Your Job Title'}</p>
         <div className={styles.contact}>
-          {template === 'classic' ? (
+          {selectedTemplate === 'ats-modern' ? (
             <div className="flex justify-center space-x-4">
               {data.email && <span>{data.email}</span>}
               {data.phone && <span>{data.phone}</span>}
@@ -117,14 +117,14 @@ export function ResumePreview({ data, template }: ResumePreviewProps) {
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>Skills</h2>
           <div className={styles.content}>
-            <div className={template === 'compact' ? 'flex flex-wrap gap-2' : 'grid grid-cols-2 gap-2'}>
+            <div className={selectedTemplate === 'ats-executive' ? 'flex flex-wrap gap-2' : 'grid grid-cols-2 gap-2'}>
               {skillsList.map((skill, index) => (
                 <span
                   key={index}
                   className={
-                    template === 'modern'
+                    selectedTemplate === 'ats-professional'
                       ? 'bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm'
-                      : template === 'compact'
+                      : selectedTemplate === 'ats-executive'
                       ? 'bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs'
                       : 'text-gray-700'
                   }

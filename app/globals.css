@@ -202,15 +202,15 @@ html {
   .mobile-stack {
     @apply flex-col space-y-4 space-x-0;
   }
-  
+
   .mobile-full {
     @apply w-full;
   }
-  
+
   .mobile-center {
     @apply text-center;
   }
-  
+
   .mobile-padding {
     @apply px-4 py-2;
   }
@@ -247,11 +247,11 @@ html {
     min-height: 44px;
     min-width: 44px;
   }
-  
+
   .hover\:scale-105:hover {
     transform: none;
   }
-  
+
   .hover\:shadow-lg:hover {
     box-shadow: none;
   }
@@ -274,11 +274,11 @@ html {
   .border {
     border-width: 2px;
   }
-  
+
   .text-gray-500 {
     @apply text-gray-900 dark:text-gray-100;
   }
-  
+
   .bg-gray-50 {
     @apply bg-white dark:bg-black;
   }
@@ -289,15 +289,15 @@ html {
   .responsive-grid {
     @apply grid-cols-1;
   }
-  
+
   .responsive-text {
     @apply text-sm;
   }
-  
+
   .responsive-padding {
     @apply px-3 py-4;
   }
-  
+
   .responsive-margin {
     @apply mx-3 my-4;
   }
@@ -324,15 +324,15 @@ html {
   .responsive-grid {
     @apply grid-cols-2;
   }
-  
+
   .responsive-text {
     @apply text-base;
   }
-  
+
   .responsive-padding {
     @apply px-6 py-8;
   }
-  
+
   .responsive-margin {
     @apply mx-6 my-8;
   }
@@ -342,15 +342,15 @@ html {
   .responsive-grid {
     @apply grid-cols-3;
   }
-  
+
   .responsive-text {
     @apply text-lg;
   }
-  
+
   .responsive-padding {
     @apply px-8 py-12;
   }
-  
+
   .responsive-margin {
     @apply mx-8 my-12;
   }
@@ -405,47 +405,47 @@ html {
     color: black !important;
     -webkit-print-color-adjust: exact;
   }
-  
+
   .no-print {
     display: none !important;
   }
-  
+
   .print-break {
     page-break-before: always;
   }
-  
+
   .print-avoid-break {
     page-break-inside: avoid;
   }
-  
+
   .shadow-lg, .shadow-xl, .shadow-2xl {
     box-shadow: none !important;
   }
-  
+
   .border {
     border: 1px solid #000 !important;
   }
-  
+
   a {
     text-decoration: underline;
   }
-  
+
   a[href^="http"]:after {
     content: " (" attr(href) ")";
     font-size: 0.8em;
     color: #666;
   }
-  
+
   /* Ensure proper page breaks for resume sections */
   .resume-section {
     page-break-inside: avoid;
     margin-bottom: 1rem;
   }
-  
+
   .resume-header {
     page-break-after: avoid;
   }
-  
+
   .resume-experience-item {
     page-break-inside: avoid;
     margin-bottom: 0.5rem;
@@ -565,4 +565,59 @@ html {
 
 .btn-outline-enhanced {
   @apply border-2 border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium px-6 py-3 rounded-xl transition-all duration-300;
+}
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Print and PDF Export Styles */
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  [data-resume-preview] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Hide edit buttons and UI elements during print */
+  button,
+  .print\:hidden {
+    display: none !important;
+  }
+}
+
+/* Page size utilities for different formats */
+.page-a4 {
+  width: 210mm;
+  min-height: 297mm;
+}
+
+.page-letter {
+  width: 8.5in;
+  min-height: 11in;
+}
+
+.page-legal {
+  width: 8.5in;
+  min-height: 14in;
+}
+
+/* PDF export specific styles */
+.pdf-export {
+  background: white !important;
+  color: black !important;
+  font-size: 11pt !important;
+  line-height: 1.4 !important;
+}
+
+.pdf-export * {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }

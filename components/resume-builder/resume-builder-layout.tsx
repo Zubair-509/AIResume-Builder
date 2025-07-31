@@ -16,7 +16,7 @@ interface ResumeBuilderLayoutProps {
 }
 
 export function ResumeBuilderLayout({ formData, onDataChange }: ResumeBuilderLayoutProps) {
-  const [selectedTemplate, setSelectedTemplate] = useState<'modern' | 'classic' | 'compact'>('modern');
+  const [selectedTemplate, setSelectedTemplate] = useState<'ats-professional' | 'ats-modern' | 'ats-executive'>('ats-professional');
   const [isSticky, setIsSticky] = useState(false);
 
   useEffect(() => {

@@ -9,6 +9,9 @@ import { TechnicalTemplate } from './technical-template';
 import { EntryLevelTemplate } from './entry-level-template';
 import { ExecutiveTemplate } from './executive-template';
 import { CreativeTemplate } from './creative-template';
+import { ATSProfessionalTemplate } from './ats-professional-template';
+import { ATSModernTemplate } from './ats-modern-template';
+import { ATSExecutiveTemplate } from './ats-executive-template';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Edit } from 'lucide-react';
@@ -48,8 +51,14 @@ export function TemplateRenderer({
         return <ExecutiveTemplate key={`executive-${Date.now()}`} {...props} />;
       case 'creative':
         return <CreativeTemplate key={`creative-${Date.now()}`} {...props} />;
+      case 'ats-professional':
+        return <ATSProfessionalTemplate key={`ats-professional-${Date.now()}`} {...props} />;
+      case 'ats-modern':
+        return <ATSModernTemplate key={`ats-modern-${Date.now()}`} {...props} />;
+      case 'ats-executive':
+        return <ATSExecutiveTemplate key={`ats-executive-${Date.now()}`} {...props} />;
       default:
-        return <ModernTemplate key={`default-${Date.now()}`} {...props} />;
+        return <ATSProfessionalTemplate key={`default-${Date.now()}`} {...props} />;
     }
   };
 

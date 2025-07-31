@@ -89,7 +89,7 @@ export async function generatePDF(
     
     // Configure html2pdf options
     const pdfOptions = {
-      margin: options.margins || [10, 10, 10, 10],
+      margin: options.margins || [0, 0, 0, 0], // Minimal margins for ATS templates
       filename: options.filename || `resume_${new Date().toISOString().split('T')[0]}.pdf`,
       image: { 
         type: 'jpeg', 
@@ -100,10 +100,10 @@ export async function generatePDF(
         useCORS: true,
         letterRendering: true,
         allowTaint: true,
-        backgroundColor: options.includeBackground ? null : '#ffffff',
+        backgroundColor: '#ffffff',
         logging: process.env.NODE_ENV === 'development',
-        width: options.pageSize === 'letter' ? 816 : 794, // 8.5in at 96dpi or 210mm at 96dpi
-        height: options.pageSize === 'letter' ? 1056 : 1123 // 11in at 96dpi or 297mm at 96dpi
+        width: options.pageSize === 'letter' ? 816 : options.pageSize === 'legal' ? 816 : 794,
+        height: options.pageSize === 'letter' ? 1056 : options.pageSize === 'legal' ? 1344 : 1123
       },
       jsPDF: { 
         unit: 'mm', 
