@@ -176,12 +176,7 @@ export function CTASection() {
                     size="lg" 
                     className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-10 py-5 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-500 group w-full sm:w-auto text-lg font-semibold"
                   >
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                    >
-                      <Zap className="w-6 h-6 mr-3" />
-                    </motion.div>
+                    <Zap className="w-6 h-6 mr-3" />
                     Start Building Resume
                     <motion.div
                       whileHover={{ x: 5, scale: 1.2 }}
