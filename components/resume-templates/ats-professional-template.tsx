@@ -66,13 +66,13 @@ export function ATSProfessionalTemplate({ data, showEditButton = false, customSe
       </header>
 
       {/* Professional Summary */}
-      {data.summary && (
+      {data.professionalSummary && (
         <section className="mb-6">
           <h2 className="text-base font-bold uppercase tracking-wide mb-3 border-b border-gray-300 pb-1">
             Professional Summary
           </h2>
           <p className="text-sm leading-relaxed">
-            {data.summary}
+            {data.professionalSummary}
           </p>
         </section>
       )}
@@ -95,9 +95,9 @@ export function ATSProfessionalTemplate({ data, showEditButton = false, customSe
                 <span className="font-medium">{job.company}</span>
                 {job.location && <span> • {job.location}</span>}
               </div>
-              {job.description && (
+              {job.responsibilities && (
                 <div className="text-sm leading-relaxed">
-                  {job.description.split('\n').map((line, idx) => (
+                  {job.responsibilities.split('\n').map((line, idx) => (
                     <p key={idx} className="mb-1">
                       {line.startsWith('•') || line.startsWith('-') ? line : `• ${line}`}
                     </p>
@@ -123,8 +123,7 @@ export function ATSProfessionalTemplate({ data, showEditButton = false, customSe
               </div>
               <div className="text-sm text-gray-700">
                 <span>{edu.institution}</span>
-                {edu.location && <span> • {edu.location}</span>}
-                {edu.gpa && <span> • GPA: {edu.gpa}</span>}
+                {edu.fieldOfStudy && <span> • {edu.fieldOfStudy}</span>}
               </div>
             </div>
           ))}
@@ -132,13 +131,18 @@ export function ATSProfessionalTemplate({ data, showEditButton = false, customSe
       )}
 
       {/* Skills */}
-      {data.skills && data.skills.length > 0 && (
+      {data.skills && (
         <section className="mb-6">
           <h2 className="text-base font-bold uppercase tracking-wide mb-3 border-b border-gray-300 pb-1">
             Core Competencies
           </h2>
           <div className="text-sm leading-relaxed">
-            {data.skills.join(' • ')}
+            {typeof data.skills === 'string' 
+              ? data.skills.split('\n').filter(skill => skill.trim()).join(' • ')
+              : Array.isArray(data.skills) 
+                ? data.skills.join(' • ')
+                : data.skills
+            }
           </div>
         </section>
       )}

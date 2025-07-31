@@ -59,25 +59,59 @@ export function ResumeLoadingSkeleton() {
         <Skeleton className="h-4 w-2/3" />
       </div>
 
-      {/* Section skeletons */}
-      {[1, 2, 3].map((section) => (
-        <div key={section} className="space-y-3 pt-4">
-          <Skeleton className="h-6 w-1/3" />
+      {/* Content sections */}
+      <div className="space-y-6 mt-8">
+        {/* Professional Summary */}
+        <div>
+          <Skeleton className="h-6 w-1/3 mb-3" />
           <div className="space-y-2">
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-5/6" />
             <Skeleton className="h-4 w-4/5" />
           </div>
         </div>
-      ))}
 
-      {/* Skills skeleton */}
-      <div className="space-y-3 pt-4">
-        <Skeleton className="h-6 w-1/4" />
-        <div className="flex flex-wrap gap-2">
-          {[1, 2, 3, 4, 5].map((skill) => (
-            <Skeleton key={skill} className="h-6 w-16" />
-          ))}
+        {/* Work Experience */}
+        <div>
+          <Skeleton className="h-6 w-1/3 mb-3" />
+          <div className="space-y-4">
+            {[...Array(2)].map((_, i) => (
+              <div key={i} className="space-y-2">
+                <div className="flex justify-between">
+                  <Skeleton className="h-5 w-1/3" />
+                  <Skeleton className="h-4 w-1/4" />
+                </div>
+                <Skeleton className="h-4 w-1/2" />
+                <div className="space-y-1">
+                  <Skeleton className="h-3 w-full" />
+                  <Skeleton className="h-3 w-4/5" />
+                  <Skeleton className="h-3 w-5/6" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Education */}
+        <div>
+          <Skeleton className="h-6 w-1/4 mb-3" />
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <Skeleton className="h-5 w-2/5" />
+              <Skeleton className="h-4 w-1/5" />
+            </div>
+            <Skeleton className="h-4 w-1/3" />
+          </div>
+        </div>
+
+        {/* Skills */}
+        <div>
+          <Skeleton className="h-6 w-1/5 mb-3" />
+          <div className="flex flex-wrap gap-2">
+            {[...Array(6)].map((_, i) => (
+              <Skeleton key={i} className="h-8 w-20" />
+            ))}
+          </div>
         </div>
       </div>
     </div>

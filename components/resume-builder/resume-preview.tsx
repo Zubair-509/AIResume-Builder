@@ -9,12 +9,15 @@ import { ATSExecutiveTemplate } from '@/components/resume-templates/ats-executiv
 
 interface ResumePreviewProps {
   data: ResumeFormData;
-  selectedTemplate: 'ats-professional' | 'ats-modern' | 'ats-executive';
+  template?: 'ats-professional' | 'ats-modern' | 'ats-executive';
+  selectedTemplate?: 'ats-professional' | 'ats-modern' | 'ats-executive';
 }
 
-export function ResumePreview({ data, selectedTemplate }: ResumePreviewProps) {
+export function ResumePreview({ data, template, selectedTemplate }: ResumePreviewProps) {
+  const activeTemplate = template || selectedTemplate || 'ats-professional';
+  
   // Validate data more thoroughly
-  if (!data || !selectedTemplate || typeof data !== 'object') {
+  if (!data || typeof data !== 'object') {
     return (
       <div className="w-full h-full flex items-center justify-center min-h-[400px]">
         <ResumeLoadingSkeleton />
@@ -27,16 +30,19 @@ export function ResumePreview({ data, selectedTemplate }: ResumePreviewProps) {
     fullName: 'John Doe',
     email: 'john.doe@example.com',
     phone: '+1 (555) 123-4567',
-    location: 'New York, NY',
-    professionalSummary: 'Professional summary placeholder',
+    jobTitle: 'Professional Title',
+    professionalSummary: 'Professional summary placeholder text that describes key qualifications and experience.',
+    skills: 'JavaScript • React • Node.js • Python • Project Management',
     workExperience: [],
     education: [],
-    skills: [],
+    certifications: [],
+    projects: [],
+    languages: [],
     ...data
   } as ResumeFormData;
 
   const renderTemplate = () => {
-    switch (selectedTemplate) {
+    switch (activeTemplate) {
       case 'ats-professional':
         return <ATSProfessionalTemplate data={safeData} />;
       case 'ats-modern':
