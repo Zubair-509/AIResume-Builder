@@ -133,18 +133,19 @@ export function ATSModernTemplate({ data, showEditButton = false, customSettings
       )}
 
       {/* Skills */}
-      {data.skills && data.skills.length > 0 && (
+      {data.skills && (
         <section className="mb-6">
           <h2 className="text-lg font-bold text-blue-800 mb-3 pb-1 border-b-2 border-blue-200">
             Technical Skills
           </h2>
           <div className="grid grid-cols-2 gap-2 text-sm">
-            {data.skills.map((skill, index) => (
-              <div key={index} className="flex items-center">
-                <span className="w-2 h-2 bg-blue-600 rounded-full mr-2"></span>
-                <span>{skill}</span>
-              </div>
-            ))}
+            {(Array.isArray(data.skills) ? data.skills : data.skills.split('\n').filter(skill => skill.trim()))
+              .map((skill, index) => (
+                <div key={index} className="flex items-center">
+                  <span className="w-2 h-2 bg-blue-600 rounded-full mr-2"></span>
+                  <span>{skill.trim()}</span>
+                </div>
+              ))}
           </div>
         </section>
       )}

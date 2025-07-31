@@ -134,18 +134,19 @@ export function ATSExecutiveTemplate({ data, showEditButton = false, customSetti
       )}
 
       {/* Core Competencies */}
-      {data.skills && data.skills.length > 0 && (
+      {data.skills && (
         <section className="mb-7">
           <h2 className="text-lg font-bold text-gray-900 mb-4 tracking-wide">
             CORE COMPETENCIES
           </h2>
           <div className="grid grid-cols-3 gap-x-6 gap-y-2 text-sm">
-            {data.skills.map((skill, index) => (
-              <div key={index} className="flex items-center">
-                <span className="w-1 h-1 bg-gray-800 rounded-full mr-3"></span>
-                <span>{skill}</span>
-              </div>
-            ))}
+            {(Array.isArray(data.skills) ? data.skills : data.skills.split('\n').filter(skill => skill.trim()))
+              .map((skill, index) => (
+                <div key={index} className="flex items-center">
+                  <span className="w-1 h-1 bg-gray-800 rounded-full mr-3"></span>
+                  <span>{skill.trim()}</span>
+                </div>
+              ))}
           </div>
         </section>
       )}

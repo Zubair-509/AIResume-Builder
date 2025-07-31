@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -22,7 +21,7 @@ export function ATSProfessionalTemplate({ data, showEditButton = false, customSe
         padding: '20mm',
         fontSize: '11pt',
         lineHeight: '1.4',
-        fontFamily: 'Times, "Times New Roman", serif',
+        fontFamily: 'Times, \"Times New Roman\", serif',
         pageBreakInside: 'avoid',
         '@media print': {
           margin: '0',
@@ -36,7 +35,7 @@ export function ATSProfessionalTemplate({ data, showEditButton = false, customSe
         <h1 className="text-xl font-bold uppercase tracking-wide mb-2">
           {data.fullName || 'Your Name'}
         </h1>
-        
+
         <div className="flex flex-wrap gap-4 text-sm text-gray-700">
           {data.email && (
             <div className="flex items-center gap-1">
@@ -133,16 +132,17 @@ export function ATSProfessionalTemplate({ data, showEditButton = false, customSe
       {/* Skills */}
       {data.skills && (
         <section className="mb-6">
-          <h2 className="text-base font-bold uppercase tracking-wide mb-3 border-b border-gray-300 pb-1">
-            Core Competencies
+          <h2 className="text-lg font-bold text-gray-900 mb-3 pb-1 border-b border-gray-300">
+            Technical Skills
           </h2>
-          <div className="text-sm leading-relaxed">
-            {typeof data.skills === 'string' 
-              ? data.skills.split('\n').filter(skill => skill.trim()).join(' • ')
-              : Array.isArray(data.skills) 
-                ? data.skills.join(' • ')
-                : data.skills
-            }
+          <div className="grid grid-cols-2 gap-2 text-sm">
+            {(Array.isArray(data.skills) ? data.skills : data.skills.split('\n').filter(skill => skill.trim()))
+              .map((skill, index) => (
+                <div key={index} className="flex items-center">
+                  <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mr-2"></span>
+                  <span>{skill.trim()}</span>
+                </div>
+              ))}
           </div>
         </section>
       )}
