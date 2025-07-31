@@ -269,7 +269,7 @@ export function FeaturesSection() {
                       </motion.p>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-3">
                     {feature.benefits.map((benefit, benefitIndex) => (
                       <motion.div 
@@ -356,22 +356,22 @@ export function FeaturesSection() {
             Join thousands of professionals who have successfully landed their dream jobs with SnapCV. 
             Start building your winning resume today.
           </motion.p>
-          <motion.div 
-            className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6 relative z-10"
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ delay: 1, duration: 0.8 }}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.8, ease: "easeOut" }}
+            className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 justify-center items-center"
           >
             <Link href="/resume-builder">
               <motion.button
                 whileHover={{ 
-                  scale: 1.08, 
-                  boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-                  y: -5
+                  scale: 1.05, 
+                  backgroundColor: "rgba(59, 130, 246, 0.9)",
+                  y: -4 
                 }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                className="px-10 py-5 bg-white text-blue-600 rounded-2xl font-bold shadow-2xl hover:shadow-3xl transition-all duration-500 group text-lg"
+                className="px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 bg-white text-blue-600 rounded-xl sm:rounded-2xl font-bold shadow-2xl hover:shadow-3xl transition-all duration-500 group text-base sm:text-lg w-full sm:w-auto"
               >
                 <span>Start Building Now</span>
                 <motion.div
@@ -383,7 +383,7 @@ export function FeaturesSection() {
                 </motion.div>
               </motion.button>
             </Link>
-            
+
             <Link href="/resume-example">
               <motion.button
                 whileHover={{ 

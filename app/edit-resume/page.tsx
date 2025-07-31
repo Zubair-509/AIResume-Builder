@@ -209,11 +209,11 @@ export default function EditResumePage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-gray-900 dark:via-red-900/20 dark:to-orange-900/20">
         <Navigation />
-        <div className="pt-16 flex items-center justify-center min-h-screen">
+        <div className="pt-16 flex items-center justify-center min-h-screen px-3 sm:px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center max-w-md mx-auto px-4"
+            className="text-center max-w-md mx-auto w-full"
           >
             <Card className="border-0 shadow-2xl bg-white dark:bg-gray-800 overflow-hidden">
               <CardContent className="p-8">

@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -146,7 +145,7 @@ export function HeroSection() {
           className="absolute bottom-1/3 left-1/3 w-2 h-2 bg-pink-500 rounded-full opacity-60"
         />
 
-        
+
       </div>
 
       {/* Content */}
@@ -154,7 +153,7 @@ export function HeroSection() {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
+        className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 pt-16 sm:pt-20 pb-12 sm:pb-16 text-center relative z-10"
       >
         <motion.div variants={itemVariants} className="mb-8">
           <motion.div 

@@ -113,11 +113,11 @@ export function TemplateGallery({ resumeData, onTemplateSelect }: TemplateGaller
     <MotionConfig reducedMotion="user">
       <div className="space-y-8">
         {/* Header */}
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+        <div className="text-center px-3 sm:px-0">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-3 sm:mb-4">
             Professional Resume Templates
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
             Choose from our collection of ATS-optimized templates designed to help you land your dream job.
           </p>
         </div>

@@ -214,6 +214,31 @@ html {
   .mobile-padding {
     @apply px-4 py-2;
   }
+
+  /* Mobile-specific overrides */
+  .mobile-text-sm {
+    @apply text-sm leading-relaxed;
+  }
+
+  .mobile-text-xs {
+    @apply text-xs leading-normal;
+  }
+
+  .mobile-spacing-tight {
+    @apply space-y-2;
+  }
+
+  .mobile-grid-1 {
+    @apply grid-cols-1;
+  }
+
+  .mobile-hidden {
+    @apply hidden;
+  }
+
+  .mobile-block {
+    @apply block;
+  }
 }
 
 /* Touch-friendly interactive elements */
@@ -270,11 +295,28 @@ html {
   }
   
   .responsive-padding {
-    @apply px-4 py-6;
+    @apply px-3 py-4;
   }
   
   .responsive-margin {
-    @apply mx-4 my-6;
+    @apply mx-3 my-4;
+  }
+
+  /* Mobile container utilities */
+  .mobile-container {
+    @apply max-w-full px-3 mx-auto;
+  }
+
+  .mobile-section {
+    @apply py-8 px-3;
+  }
+
+  .mobile-card {
+    @apply mx-3 rounded-lg;
+  }
+
+  .mobile-button {
+    @apply w-full py-3 px-4 text-base;
   }
 }
 

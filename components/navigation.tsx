@@ -73,8 +73,8 @@ export function Navigation() {
         }`}
         style={{ scrollPaddingTop: '80px' }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-14 sm:h-16">
             {/* Animated Logo */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -85,7 +85,7 @@ export function Navigation() {
             </motion.div>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
+            <div className="hidden lg:flex items-center space-x-6 xl:space-x-8">
               {navItems.map((item, index) => (
                 <motion.div
                   key={item.name}
@@ -115,7 +115,7 @@ export function Navigation() {
             </div>
 
             {/* Mobile Menu Button */}
-            <div className="md:hidden">
+            <div className="lg:hidden">
               <AnimatedButton
                 variant="ghost"
                 size="sm"
@@ -158,9 +158,9 @@ export function Navigation() {
                 initial="hidden"
                 animate="visible"
                 exit="hidden"
-                className="md:hidden bg-white/95 dark:bg-gray-900/95 backdrop-blur-md overflow-hidden"
+                className="lg:hidden bg-white/95 dark:bg-gray-900/95 backdrop-blur-md overflow-hidden border-t border-gray-200 dark:border-gray-700"
               >
-                <div className="px-4 py-4 space-y-2">
+                <div className="px-3 py-3 space-y-1 max-h-[calc(100vh-4rem)] overflow-y-auto">
                   {navItems.map((item, index) => (
                     <motion.div
                       key={item.name}
@@ -171,7 +171,7 @@ export function Navigation() {
                     >
                       <Link
                         href={item.href}
-                        className="flex items-center space-x-3 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 px-3 py-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                        className="flex items-center space-x-3 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 px-3 py-2.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 text-base font-medium"
                         onClick={(e) => {
                           setIsMobileMenuOpen(false);
                           if (item.href.startsWith('#')) {

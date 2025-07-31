@@ -89,7 +89,7 @@ export function ProfessionalResume({
             <h1 className="text-3xl font-bold text-slate-800 mb-2 leading-tight">
               {name}
             </h1>
-            
+
             {/* Contact Information */}
             <div 
               className="flex flex-wrap gap-4 text-base text-slate-600"

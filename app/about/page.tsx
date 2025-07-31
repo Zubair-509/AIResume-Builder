@@ -151,7 +151,7 @@ export default function AboutPage() {
       <Navigation />
       
       {/* Hero Section */}
-      <section ref={heroRef} className="pt-24 pb-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-purple-900/20 relative overflow-hidden">
+      <section ref={heroRef} className="pt-20 sm:pt-24 pb-12 sm:pb-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-purple-900/20 relative overflow-hidden">
         <motion.div 
           className="absolute inset-0 w-full h-full"
           style={{ y: heroY, opacity: heroOpacity }}

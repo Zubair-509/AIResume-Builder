@@ -111,9 +111,9 @@ export default function ResumePreviewPage() {
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navigation />
       <div className="pt-16 pb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
           {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 sm:mb-8 space-y-4 md:space-y-0">
             <div>
               <div className="flex items-center mb-2">
                 <Link href="/templates">
@@ -134,7 +134,7 @@ export default function ResumePreviewPage() {
               </p>
             </div>
             
-            <div className="flex flex-wrap space-x-3 mt-4 md:mt-0">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 mt-4 md:mt-0">
               <Link href={`/edit-resume?template=${templateId}`}>
                 <Button variant="outline">
                   <Edit className="w-4 h-4 mr-2" />
