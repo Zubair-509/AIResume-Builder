@@ -1,8 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { Suspense } from 'react';
 import { ResumeFormData } from '@/lib/validations';
 import { TemplateRenderer } from '@/components/resume-templates/template-renderer';
+import { LoadingSkeleton } from '@/components/ui/loading-skeleton';
 
 interface ResumePreviewProps {
   data: ResumeFormData;
@@ -10,6 +12,14 @@ interface ResumePreviewProps {
 }
 
 export function ResumePreview({ data, selectedTemplate }: ResumePreviewProps) {
+  if (!data || !selectedTemplate) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <LoadingSkeleton />
+      </div>
+    );
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -18,11 +28,13 @@ export function ResumePreview({ data, selectedTemplate }: ResumePreviewProps) {
       className="w-full h-full"
       data-resume-preview // Add this attribute for PDF export
     >
-      <TemplateRenderer
-        templateId={selectedTemplate}
-        data={data}
-        showEditButton={false}
-      />
+      <Suspense fallback={<LoadingSkeleton />}>
+        <TemplateRenderer
+          templateId={selectedTemplate}
+          data={data}
+          showEditButton={false}
+        />
+      </Suspense>
     </motion.div>
   );
 }

@@ -91,16 +91,18 @@ export function TemplateSelector({
       sessionStorage.setItem('resume-data', JSON.stringify(resumeData));
       
       // Use the standardized export function with native printing
-      await exportResumeToPDF(resumeData, selectedTemplate, {
+      const success = await exportResumeToPDF(resumeData, selectedTemplate, {
         filename: generateFileName(),
         pageSize: 'a4',
         quality: 'high',
         includeBackground: true
       });
 
-      toast.success('PDF export initiated!', {
-        description: 'Use your browser\'s print dialog to save as PDF.',
-      });
+      if (success) {
+        toast.success('PDF export initiated!', {
+          description: 'Use your browser\'s print dialog to save as PDF.',
+        });
+      }
     } catch (error) {
       console.error('PDF generation error:', error);
       toast.error('Failed to download PDF', {

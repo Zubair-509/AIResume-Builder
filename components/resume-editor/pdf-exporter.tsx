@@ -68,7 +68,7 @@ export function PDFExporter({ resumeData, customizationSettings, onExport, isExp
     onExport();
   };
 
-  const handleCustomExport = () => {
+  const handleCustomExport = async () => {
     if (!filename.trim()) {
       toast.error('Please enter a filename');
       return;
@@ -86,24 +86,14 @@ export function PDFExporter({ resumeData, customizationSettings, onExport, isExp
       return;
     }
 
-    setIsExporting(true);
-
     try {
-      // Simulate export process
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
       if (!onExport) {
         throw new Error('Export function not provided');
       }
 
-      onExport({
-        format,
-        quality,
-        includePhoto,
-        filename: filename.trim()
-      });
+      await onExport(filename.trim());
 
-      toast.success(`Resume exported successfully as ${filename.trim()}.${format}`);
+      toast.success(`Resume exported successfully as ${filename.trim()}.pdf`);
     } catch (error) {
       console.error('Export error:', error);
       toast.error(`Failed to export resume: ${error instanceof Error ? error.message : 'Unknown error'}`);
