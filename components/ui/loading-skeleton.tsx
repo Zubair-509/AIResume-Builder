@@ -33,12 +33,14 @@ export function LoadingSkeleton({
     >
       {animate && (
         <motion.div
-          className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent"
-          animate={{ x: [-100, 100] }}
+          className="h-full w-full bg-gradient-to-r from-transparent via-white dark:via-gray-600 to-transparent opacity-50"
+          animate={{
+            x: ['-100%', '100%']
+          }}
           transition={{
-            repeat: Infinity,
             duration: 1.5,
-            ease: "linear"
+            repeat: Infinity,
+            ease: 'easeInOut'
           }}
         />
       )}
