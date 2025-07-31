@@ -16,7 +16,7 @@ export function ATSModernTemplate({ data, showEditButton = false, customSettings
     <div 
       data-resume-preview 
       data-template-id="ats-modern"
-      className="w-full max-w-[210mm] mx-auto bg-white text-black"
+      className="w-full max-w-[210mm] mx-auto bg-white text-black print:!bg-white print:!text-black print:!shadow-none"
       style={{
         minHeight: '297mm', // A4 height
         padding: '20mm',
@@ -24,11 +24,9 @@ export function ATSModernTemplate({ data, showEditButton = false, customSettings
         lineHeight: '1.5',
         fontFamily: 'Calibri, Arial, sans-serif',
         pageBreakInside: 'avoid',
-        '@media print': {
-          margin: '0',
-          boxShadow: 'none',
-          transform: 'none'
-        }
+        WebkitPrintColorAdjust: 'exact',
+        colorAdjust: 'exact',
+        printColorAdjust: 'exact'
       }}
     >
       {/* Header Section */}
@@ -40,25 +38,25 @@ export function ATSModernTemplate({ data, showEditButton = false, customSettings
         <div className="grid grid-cols-2 gap-x-8 gap-y-1 text-sm text-gray-700">
           {data.email && (
             <div className="flex items-center gap-2">
-              <Mail className="w-4 h-4 text-blue-600" />
+              <Mail className="w-4 h-4 text-blue-600 print:!text-blue-600" style={{color: '#1d4ed8'}} />
               <span>{data.email}</span>
             </div>
           )}
           {data.phone && (
             <div className="flex items-center gap-2">
-              <Phone className="w-4 h-4 text-blue-600" />
+              <Phone className="w-4 h-4 text-blue-600 print:!text-blue-600" style={{color: '#1d4ed8'}} />
               <span>{data.phone}</span>
             </div>
           )}
           {data.location && (
             <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-blue-600" />
+              <MapPin className="w-4 h-4 text-blue-600 print:!text-blue-600" style={{color: '#1d4ed8'}} />
               <span>{data.location}</span>
             </div>
           )}
           {data.website && (
             <div className="flex items-center gap-2">
-              <Globe className="w-4 h-4 text-blue-600" />
+              <Globe className="w-4 h-4 text-blue-600 print:!text-blue-600" style={{color: '#1d4ed8'}} />
               <span>{data.website}</span>
             </div>
           )}
@@ -68,7 +66,7 @@ export function ATSModernTemplate({ data, showEditButton = false, customSettings
       {/* Professional Summary */}
       {data.summary && (
         <section className="mb-6">
-          <h2 className="text-lg font-bold text-blue-800 mb-3 pb-1 border-b-2 border-blue-200">
+          <h2 className="text-lg font-bold text-blue-800 mb-3 pb-1 border-b-2 border-blue-200 print:!text-blue-800 print:!border-blue-200" style={{color: '#1e40af', borderBottomColor: '#bfdbfe'}}>
             Professional Summary
           </h2>
           <p className="text-sm leading-relaxed text-gray-800">
@@ -80,7 +78,7 @@ export function ATSModernTemplate({ data, showEditButton = false, customSettings
       {/* Work Experience */}
       {data.workExperience && data.workExperience.length > 0 && (
         <section className="mb-6">
-          <h2 className="text-lg font-bold text-blue-800 mb-3 pb-1 border-b-2 border-blue-200">
+          <h2 className="text-lg font-bold text-blue-800 mb-3 pb-1 border-b-2 border-blue-200 print:!text-blue-800 print:!border-blue-200" style={{color: '#1e40af', borderBottomColor: '#bfdbfe'}}>
             Professional Experience
           </h2>
           {data.workExperience.map((job, index) => (
@@ -113,7 +111,7 @@ export function ATSModernTemplate({ data, showEditButton = false, customSettings
       {/* Education */}
       {data.education && data.education.length > 0 && (
         <section className="mb-6">
-          <h2 className="text-lg font-bold text-blue-800 mb-3 pb-1 border-b-2 border-blue-200">
+          <h2 className="text-lg font-bold text-blue-800 mb-3 pb-1 border-b-2 border-blue-200 print:!text-blue-800 print:!border-blue-200" style={{color: '#1e40af', borderBottomColor: '#bfdbfe'}}>
             Education
           </h2>
           {data.education.map((edu, index) => (
@@ -134,18 +132,28 @@ export function ATSModernTemplate({ data, showEditButton = false, customSettings
 
       {/* Skills */}
       {data.skills && (
-        <section className="mb-6">
-          <h2 className="text-lg font-bold text-blue-800 mb-3 pb-1 border-b-2 border-blue-200">
+        <section className="mb-6 resume-section">
+          <h2 className="text-lg font-bold text-blue-800 mb-3 pb-1 border-b-2 border-blue-200 print:!text-blue-800 print:!border-blue-200">
             Technical Skills
           </h2>
           <div className="grid grid-cols-2 gap-2 text-sm">
-            {(Array.isArray(data.skills) ? data.skills : data.skills.split('\n').filter(skill => skill.trim()))
-              .map((skill, index) => (
+            {(() => {
+              let skillsList;
+              if (Array.isArray(data.skills)) {
+                skillsList = data.skills.filter(skill => skill && skill.trim());
+              } else if (typeof data.skills === 'string') {
+                skillsList = data.skills.split(/[,\n]/).filter(skill => skill && skill.trim());
+              } else {
+                skillsList = [];
+              }
+              
+              return skillsList.map((skill, index) => (
                 <div key={index} className="flex items-center">
-                  <span className="w-2 h-2 bg-blue-600 rounded-full mr-2"></span>
-                  <span>{skill.trim()}</span>
+                  <span className="w-2 h-2 bg-blue-600 rounded-full mr-2 print:!bg-blue-600" style={{backgroundColor: '#1d4ed8'}}></span>
+                  <span>{typeof skill === 'string' ? skill.trim() : skill}</span>
                 </div>
-              ))}
+              ));
+            })()}
           </div>
         </section>
       )}
@@ -153,7 +161,7 @@ export function ATSModernTemplate({ data, showEditButton = false, customSettings
       {/* Certifications */}
       {data.certifications && data.certifications.length > 0 && (
         <section className="mb-6">
-          <h2 className="text-lg font-bold text-blue-800 mb-3 pb-1 border-b-2 border-blue-200">
+          <h2 className="text-lg font-bold text-blue-800 mb-3 pb-1 border-b-2 border-blue-200 print:!text-blue-800 print:!border-blue-200" style={{color: '#1e40af', borderBottomColor: '#bfdbfe'}}>
             Certifications
           </h2>
           {data.certifications.map((cert, index) => (

@@ -31,231 +31,218 @@ export async function generatePDF(
   try {
     options.onProgress?.(10, 'Preparing PDF export...');
 
-    // Clone the element to avoid modifying the original
-    const clonedElement = element.cloneNode(true) as HTMLElement;
+    // Get all computed styles from the current element
+    const computedStyles = window.getComputedStyle(element);
 
-    // Create a new window for printing
-    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    // Create a comprehensive print stylesheet
+    const printStyles = `
+      <style id="pdf-export-styles">
+        @page {
+          size: ${options.pageSize === 'letter' ? '8.5in 11in' : 'A4'};
+          margin: 0.5in;
+        }
 
-    if (!printWindow) {
-      throw new Error('Failed to open print window. Please check your popup blocker settings.');
+        @media print {
+          * {
+            -webkit-print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
+          body { 
+            margin: 0 !important; 
+            padding: 0 !important; 
+            -webkit-print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+          }
+
+          [data-resume-preview] {
+            background: white !important;
+            color: black !important;
+            font-size: 11pt !important;
+            line-height: 1.4 !important;
+            max-width: none !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 20px !important;
+            box-shadow: none !important;
+            border: none !important;
+            transform: none !important;
+            -webkit-transform: none !important;
+          }
+
+          /* Preserve colors */
+          .text-blue-600, .text-blue-700, .text-blue-800 {
+            color: #1d4ed8 !important;
+          }
+
+          .bg-blue-600, .bg-blue-700, .bg-blue-800 {
+            background-color: #1d4ed8 !important;
+          }
+
+          .border-blue-200, .border-blue-300 {
+            border-color: #bfdbfe !important;
+          }
+
+          /* Preserve text colors */
+          .text-gray-900 { color: #111827 !important; }
+          .text-gray-800 { color: #1f2937 !important; }
+          .text-gray-700 { color: #374151 !important; }
+          .text-gray-600 { color: #4b5563 !important; }
+          .text-gray-500 { color: #6b7280 !important; }
+
+          /* Preserve background colors */
+          .bg-white { background-color: white !important; }
+          .bg-gray-50 { background-color: #f9fafb !important; }
+
+          /* Ensure icons are preserved */
+          svg {
+            width: 16px !important;
+            height: 16px !important;
+            display: inline-block !important;
+            vertical-align: middle !important;
+            margin-right: 8px !important;
+          }
+
+          /* Preserve layouts */
+          .grid { display: grid !important; }
+          .flex { display: flex !important; }
+          .items-center { align-items: center !important; }
+          .justify-between { justify-content: space-between !important; }
+          .gap-2 { gap: 8px !important; }
+          .gap-4 { gap: 16px !important; }
+          .gap-8 { gap: 32px !important; }
+
+          /* Preserve spacing */
+          .mb-1 { margin-bottom: 4px !important; }
+          .mb-2 { margin-bottom: 8px !important; }
+          .mb-3 { margin-bottom: 12px !important; }
+          .mb-4 { margin-bottom: 16px !important; }
+          .mb-5 { margin-bottom: 20px !important; }
+          .mb-6 { margin-bottom: 24px !important; }
+          .mb-8 { margin-bottom: 32px !important; }
+
+          .mr-2 { margin-right: 8px !important; }
+          .mr-3 { margin-right: 12px !important; }
+
+          .p-1 { padding: 4px !important; }
+          .p-2 { padding: 8px !important; }
+          .p-3 { padding: 12px !important; }
+          .p-4 { padding: 16px !important; }
+
+          .pb-1 { padding-bottom: 4px !important; }
+          .pb-2 { padding-bottom: 8px !important; }
+
+          /* Typography */
+          .text-xl { font-size: 20px !important; }
+          .text-lg { font-size: 18px !important; }
+          .text-base { font-size: 16px !important; }
+          .text-sm { font-size: 14px !important; }
+          .text-xs { font-size: 12px !important; }
+
+          .font-bold { font-weight: 700 !important; }
+          .font-semibold { font-weight: 600 !important; }
+          .font-medium { font-weight: 500 !important; }
+
+          /* Borders */
+          .border-b { border-bottom: 1px solid #e5e7eb !important; }
+          .border-b-2 { border-bottom: 2px solid #e5e7eb !important; }
+
+          /* Rounded elements */
+          .rounded-full { border-radius: 50% !important; }
+          .rounded-lg { border-radius: 8px !important; }
+
+          /* Grid layouts */
+          .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)) !important; }
+          .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+
+          /* Responsive adjustments for PDF */
+          .w-2 { width: 8px !important; }
+          .h-2 { height: 8px !important; }
+          .w-4 { width: 16px !important; }
+          .h-4 { height: 16px !important; }
+
+          /* Hide unnecessary elements */
+          .shadow, .shadow-lg, .shadow-xl, .shadow-2xl {
+            box-shadow: none !important;
+          }
+
+          /* Page breaks */
+          .page-break-before { page-break-before: always !important; }
+          .page-break-after { page-break-after: always !important; }
+          .page-break-inside-avoid { page-break-inside: avoid !important; }
+
+          /* Ensure content fits on page */
+          .resume-section {
+            page-break-inside: avoid !important;
+            margin-bottom: 16px !important;
+          }
+        }
+      </style>
+    `;
+
+    // Add styles to document head
+    const styleElement = document.createElement('div');
+    styleElement.innerHTML = printStyles;
+    document.head.appendChild(styleElement);
+
+    // Also inject styles directly into the resume element
+    const resumeElement = element.querySelector('[data-resume-preview]') as HTMLElement;
+    if (resumeElement) {
+      // Apply critical inline styles to ensure they're preserved
+      resumeElement.style.cssText += `
+        background: white !important;
+        color: black !important;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+        font-size: 11pt !important;
+        line-height: 1.4 !important;
+        padding: 20px !important;
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: none !important;
+        box-shadow: none !important;
+        border: none !important;
+      `;
+
+      // Preserve colors for specific elements
+      const blueElements = resumeElement.querySelectorAll('.text-blue-600, .text-blue-700, .text-blue-800');
+      blueElements.forEach(el => {
+        (el as HTMLElement).style.color = '#1d4ed8';
+      });
+
+      const blueBorders = resumeElement.querySelectorAll('.border-blue-200, .border-blue-300');
+      blueBorders.forEach(el => {
+        (el as HTMLElement).style.borderColor = '#bfdbfe';
+      });
     }
 
-    options.onProgress?.(25, 'Setting up print layout...');
+    options.onProgress?.(30, 'Applying print styles...');
 
-    // Page size configurations
-    const pageSizes = {
-      a4: { width: '210mm', height: '297mm' },
-      letter: { width: '8.5in', height: '11in' },
-      legal: { width: '8.5in', height: '14in' }
-    };
-
-    const pageSize = options.pageSize || 'a4';
-    const size = pageSizes[pageSize];
-
-    // Create print-optimized HTML
-    const printHTML = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="utf-8">
-          <title>${options.filename || 'Resume'}</title>
-          <style>
-            * {
-              box-sizing: border-box;
-            }
-
-            @page {
-              size: ${pageSize};
-              margin: ${options.margins ? `${options.margins[0]}mm ${options.margins[1]}mm ${options.margins[2]}mm ${options.margins[3]}mm` : '10mm'};
-            }
-
-            html, body {
-              margin: 0;
-              padding: 0;
-              width: 100%;
-              height: 100%;
-              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-              font-size: 12px;
-              line-height: 1.4;
-              color: #000;
-              background: ${options.includeBackground ? 'transparent' : '#fff'};
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
-            }
-
-            .resume-container {
-              width: 100%;
-              max-width: none;
-              margin: 0;
-              padding: 20px;
-              background: ${options.includeBackground ? 'transparent' : '#fff'};
-              box-shadow: none;
-              border: none;
-              page-break-inside: avoid;
-            }
-
-            h1 {
-              font-size: 24px;
-              margin: 0 0 8px 0;
-              font-weight: 700;
-              page-break-after: avoid;
-            }
-
-            h2 {
-              font-size: 18px;
-              margin: 16px 0 8px 0;
-              font-weight: 600;
-              page-break-after: avoid;
-              border-bottom: 1px solid #333;
-              padding-bottom: 4px;
-            }
-
-            h3 {
-              font-size: 14px;
-              margin: 12px 0 4px 0;
-              font-weight: 600;
-              page-break-after: avoid;
-            }
-
-            p, li {
-              margin: 0 0 4px 0;
-              page-break-inside: avoid;
-            }
-
-            ul, ol {
-              margin: 8px 0;
-              padding-left: 20px;
-            }
-
-            .section {
-              margin-bottom: 20px;
-              page-break-inside: avoid;
-            }
-
-            .work-experience, .education-item, .project-item {
-              margin-bottom: 16px;
-              page-break-inside: avoid;
-            }
-
-            .contact-info {
-              display: flex;
-              flex-wrap: wrap;
-              gap: 16px;
-              margin-bottom: 16px;
-            }
-
-            .contact-item {
-              display: flex;
-              align-items: center;
-              gap: 4px;
-            }
-
-            .skills-list {
-              display: flex;
-              flex-wrap: wrap;
-              gap: 8px;
-            }
-
-            .skill-tag {
-              background: #f0f0f0;
-              padding: 4px 8px;
-              border-radius: 4px;
-              font-size: 11px;
-              border: 1px solid #ddd;
-            }
-
-            .print\\:hidden {
-              display: none !important;
-            }
-
-            .no-print {
-              display: none !important;
-            }
-
-            /* Custom CSS injection */
-            ${options.customCSS || ''}
-
-            @media print {
-              html, body {
-                width: 100%;
-                height: 100%;
-              }
-
-              .resume-container {
-                box-shadow: none;
-                border: none;
-              }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="resume-container">
-            ${clonedElement.innerHTML}
-          </div>
-        </body>
-      </html>
-    `;
+    // Wait a moment for styles to apply
+    await new Promise(resolve => setTimeout(resolve, 500));
 
     options.onProgress?.(50, 'Opening print dialog...');
 
-    // Write content to print window
-    printWindow.document.write(printHTML);
-    printWindow.document.close();
+    // Open print dialog
+    window.print();
 
-    // Wait for content to load
-    await new Promise((resolve) => {
-      printWindow.onload = resolve;
-      setTimeout(resolve, 1000); // Fallback timeout
-    });
+    options.onProgress?.(100, 'Print dialog opened!');
 
-    options.onProgress?.(75, 'Generating PDF...');
-
-    // Focus print window and trigger print dialog
-    printWindow.focus();
-
-    // Use a promise to handle the print dialog
-    return new Promise((resolve, reject) => {
-      try {
-        // Set up print dialog
-        printWindow.print();
-
-        // Monitor window state
-        const checkClosed = setInterval(() => {
-          if (printWindow.closed) {
-            clearInterval(checkClosed);
-            options.onProgress?.(100, 'PDF export completed!');
-            options.onComplete?.();
-            resolve(true);
-          }
-        }, 1000);
-
-        // Cleanup timeout
-        setTimeout(() => {
-          clearInterval(checkClosed);
-          if (!printWindow.closed) {
-            printWindow.close();
-          }
-          resolve(true);
-        }, 30000); // 30 second timeout
-
-      } catch (error) {
-        printWindow.close();
-        reject(error);
+    // Clean up after a delay
+    setTimeout(() => {
+      const existingStyles = document.getElementById('pdf-export-styles');
+      if (existingStyles) {
+        existingStyles.remove();
       }
-    });
+      options.onComplete?.();
+    }, 2000);
 
+    return true;
   } catch (error) {
     console.error('PDF generation error:', error);
-
-    if (error instanceof Error) {
-      options.onError?.(error);
-      return false;
-    } else {
-      const genericError = new Error('Unknown error during PDF generation');
-      options.onError?.(genericError);
-      return false;
-    }
+    options.onError?.(error as Error);
+    return false;
   }
 }
 
