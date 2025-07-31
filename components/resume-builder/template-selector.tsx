@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ChevronDown, Download, Copy, Loader2, Globe } from 'lucide-react';
+import { ChevronDown, Download, Copy, Loader2, Globe, FileText } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -31,23 +31,7 @@ export function TemplateSelector({
   const [isDownloading, setIsDownloading] = useState(false);
   const [isCopying, setIsCopying] = useState(false);
 
-  const templates = [
-    {
-      value: 'modern',
-      label: 'Modern',
-      description: 'Minimalist design with sans-serif fonts',
-    },
-    {
-      value: 'classic',
-      label: 'Classic',
-      description: 'Traditional layout with serif fonts',
-    },
-    {
-      value: 'compact',
-      label: 'Compact',
-      description: 'Condensed layout with efficient spacing',
-    },
-  ];
+  const templates: any[] = [];
 
   const generateFileName = () => {
     const name = resumeData.fullName?.replace(/\s+/g, '_') || 'Resume';
@@ -117,42 +101,17 @@ export function TemplateSelector({
       transition={{ duration: 0.5 }}
       className="space-y-6"
     >
-      {/* Template Selector */}
-      <div className="space-y-3">
-        <label 
-          htmlFor="template-select"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >
-          Choose Template
-        </label>
-        <Select
-          value={selectedTemplate}
-          onValueChange={(value: 'modern' | 'classic' | 'compact') => onTemplateChange(value)}
-        >
-          <SelectTrigger 
-            id="template-select"
-            className="w-full bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 transition-colors duration-200 text-center"
-            aria-label="Select resume template"
-          >
-            <SelectValue placeholder="Select a template" className="text-center" />
-          </SelectTrigger>
-          <SelectContent>
-            {templates.map((template) => (
-              <SelectItem 
-                key={template.value} 
-                value={template.value}
-                className="cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20"
-              >
-                <div className="flex flex-col">
-                  <span className="font-medium">{template.label}</span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {template.description}
-                  </span>
-                </div>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      {/* Empty State */}
+      <div className="text-center py-8">
+        <div className="mx-auto max-w-sm">
+          <FileText className="mx-auto h-12 w-12 text-gray-400 mb-3" />
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+            No Templates Available
+          </h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Templates have been temporarily removed. Please check back later for new templates.
+          </p>
+        </div>
       </div>
 
       {/* Action Buttons */}
