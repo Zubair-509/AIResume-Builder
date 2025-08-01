@@ -4,10 +4,11 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { AnimatedButton } from '@/components/ui/animated-button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, X, FileText, Sparkles, User, ChevronDown } from 'lucide-react';
+import { Menu, X, FileText, Sparkles, User, ChevronDown, Home, FileImage, Zap, Edit } from 'lucide-react';
 import { AnimatedLogo } from '@/components/ui/animated-logo';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
 
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
