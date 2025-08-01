@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -34,7 +33,7 @@ export function ATSModernTemplate({ data, showEditButton = false, customSettings
         <h1 className="text-2xl font-bold text-gray-900 mb-3">
           {data.fullName || 'Your Name'}
         </h1>
-        
+
         <div className="grid grid-cols-2 gap-x-8 gap-y-1 text-sm text-gray-700">
           {data.email && (
             <div className="flex items-center gap-2">
@@ -146,7 +145,7 @@ export function ATSModernTemplate({ data, showEditButton = false, customSettings
               } else {
                 skillsList = [];
               }
-              
+
               return skillsList.map((skill, index) => (
                 <div key={index} className="flex items-center">
                   <span className="w-2 h-2 bg-blue-600 rounded-full mr-2 print:!bg-blue-600" style={{backgroundColor: '#1d4ed8'}}></span>

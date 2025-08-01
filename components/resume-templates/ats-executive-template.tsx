@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -22,7 +21,7 @@ export function ATSExecutiveTemplate({ data, showEditButton = false, customSetti
         padding: '25mm 20mm',
         fontSize: '11pt',
         lineHeight: '1.4',
-        fontFamily: 'Georgia, "Times New Roman", serif',
+        fontFamily: 'Georgia, \"Times New Roman\", serif',
         pageBreakInside: 'avoid',
         '@media print': {
           margin: '0',
@@ -36,7 +35,7 @@ export function ATSExecutiveTemplate({ data, showEditButton = false, customSetti
         <h1 className="text-2xl font-bold text-gray-900 mb-4 tracking-wide">
           {data.fullName || 'Your Name'}
         </h1>
-        
+
         <div className="flex justify-center flex-wrap gap-6 text-sm text-gray-700">
           {data.email && (
             <div className="flex items-center gap-1">

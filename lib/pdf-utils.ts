@@ -41,6 +41,39 @@ export async function generatePDF(
     // Wait a moment for any dynamic content to load
     await new Promise(resolve => setTimeout(resolve, 1000));
 
+    // Hide all UI elements that shouldn't be in the PDF
+    const elementsToHide = [
+      'button',
+      '.dialog',
+      '.dropdown-menu',
+      '.toast',
+      '.loading',
+      '.spinner',
+      '[role="dialog"]',
+      '.navigation',
+      '.sidebar',
+      '.toolbar',
+      '.controls',
+      '.pdf-export',
+      '.export-button',
+      '.download-button',
+      '.template-selector',
+      '.form-container',
+      '.builder-controls'
+    ];
+
+    const hiddenElements: HTMLElement[] = [];
+    elementsToHide.forEach(selector => {
+      const elements = document.querySelectorAll(selector);
+      elements.forEach(el => {
+        const htmlEl = el as HTMLElement;
+        if (htmlEl.style.display !== 'none') {
+          hiddenElements.push(htmlEl);
+          htmlEl.style.display = 'none';
+        }
+      });
+    });
+
     // Get all computed styles from the current element
     const computedStyles = window.getComputedStyle(element);
 
@@ -173,6 +206,33 @@ export async function generatePDF(
           .w-4 { width: 16px !important; }
           .h-4 { height: 16px !important; }
 
+          /* Hide UI elements that shouldn't be in PDF */
+          button, 
+          .button,
+          .btn,
+          .dialog,
+          .dropdown-menu,
+          .toast,
+          .loading,
+          .spinner,
+          [role="dialog"],
+          .navigation,
+          .sidebar,
+          .toolbar,
+          .controls,
+          .pdf-export,
+          .export-button,
+          .download-button,
+          .template-selector,
+          .form-container,
+          .builder-controls,
+          .edit-button,
+          .action-buttons,
+          .ui-controls {
+            display: none !important;
+            visibility: hidden !important;
+          }
+
           /* Hide unnecessary elements */
           .shadow, .shadow-lg, .shadow-xl, .shadow-2xl {
             box-shadow: none !important;
@@ -245,6 +305,12 @@ export async function generatePDF(
       if (existingStyles) {
         existingStyles.remove();
       }
+      
+      // Restore hidden elements
+      hiddenElements.forEach(el => {
+        el.style.display = '';
+      });
+      
       options.onComplete?.();
     }, 2000);
 
@@ -252,6 +318,14 @@ export async function generatePDF(
   } catch (error) {
     console.error('PDF generation error:', error);
     options.onError?.(error as Error);
+    
+    // Restore hidden elements even on error
+    if (typeof hiddenElements !== 'undefined') {
+      hiddenElements.forEach(el => {
+        el.style.display = '';
+      });
+    }
+    
     return false;
   }
 }
@@ -350,28 +424,52 @@ export function findResumeElement(): Element | null {
   const waitForContent = () => {
     return new Promise(resolve => {
       const checkContent = () => {
+        // Priority selectors for resume templates
         const selectors = [
+          // First try to find the actual resume template content
+          '[data-resume-preview] > div',
           '[data-resume-preview]',
+          '.resume-template',
+          '.template-content',
+          '[class*="ats-professional-template"]',
+          '[class*="ats-modern-template"]', 
+          '[class*="ats-executive-template"]',
+          '[class*="template-container"] > div:first-child',
+          '.resume-preview-content',
+          // Fallback selectors
           '.resume-container',
-          '[class*="ats-"][class*="template"]',
-          '[class*="template-container"]',
-          '.template-renderer',
-          '[class*="resume"]'
+          '[class*="template-renderer"]'
         ];
 
         for (const selector of selectors) {
           const element = document.querySelector(selector);
           if (element && element.innerHTML.trim() && !element.innerHTML.includes('ResumeLoadingSkeleton')) {
-            // Make sure it's not just a loading skeleton
+            // Make sure it contains actual resume content, not UI elements
             const hasActualContent = element.textContent && 
                                     element.textContent.trim().length > 50 &&
+                                    !element.textContent.includes('Download PDF') &&
+                                    !element.textContent.includes('Select Template') &&
+                                    !element.textContent.includes('Resume Builder') &&
                                     !element.textContent.includes('loading') &&
                                     !element.querySelector('.animate-spin') &&
-                                    !element.querySelector('.skeleton');
+                                    !element.querySelector('.skeleton') &&
+                                    !element.querySelector('button') && // Avoid UI buttons
+                                    !element.querySelector('.dialog') && // Avoid dialogs
+                                    !element.querySelector('.dropdown'); // Avoid dropdowns
 
             if (hasActualContent) {
-              resolve(element);
-              return;
+              // Extra check: make sure this looks like a resume template
+              const looksLikeResume = element.textContent.includes('@') || // email
+                                     element.textContent.includes('Experience') ||
+                                     element.textContent.includes('Education') ||
+                                     element.textContent.includes('Skills') ||
+                                     element.textContent.includes('PROFESSIONAL') ||
+                                     element.querySelector('h1, h2, h3'); // Has headings
+
+              if (looksLikeResume) {
+                resolve(element);
+                return;
+              }
             }
           }
         }
@@ -382,15 +480,16 @@ export function findResumeElement(): Element | null {
             document.querySelector('[class*="loading"]')) {
           setTimeout(checkContent, 100);
         } else {
-          // Last resort: look for any element with substantial resume content
-          const allDivs = document.querySelectorAll('div');
-          for (const div of allDivs) {
-            if (div.textContent && 
-                div.textContent.trim().length > 100 && 
-                (div.textContent.includes('@') || div.textContent.includes('PROFESSIONAL')) && // likely has email or resume content
-                !div.textContent.includes('loading') &&
-                !div.querySelector('.animate-spin')) {
-              resolve(div);
+          // Last resort: look specifically for template content
+          const templates = document.querySelectorAll('[class*="template"], [data-template], .resume-content');
+          for (const template of templates) {
+            if (template.textContent && 
+                template.textContent.trim().length > 100 && 
+                (template.textContent.includes('@') || template.textContent.includes('Experience')) &&
+                !template.textContent.includes('Download') &&
+                !template.textContent.includes('Builder') &&
+                !template.querySelector('button')) {
+              resolve(template);
               return;
             }
           }
