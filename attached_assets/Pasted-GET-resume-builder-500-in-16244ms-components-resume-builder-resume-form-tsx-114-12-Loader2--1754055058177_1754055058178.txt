@@ -1,0 +1,40 @@
+GET /resume-builder 500 in 16244ms
+ ⨯ components/resume-builder/resume-form.tsx (114:12) @ Loader2
+ ⨯ ReferenceError: Loader2 is not defined
+    at ResumeForm (./components/resume-builder/resume-form.tsx:119:97)
+digest: "3934852021"
+  112 |       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+  113 |         <div className="text-center">
+> 114 |           <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
+      |            ^
+  115 |           <p className="text-gray-600 dark:text-gray-400">Loading form...</p>
+  116 |         </div>
+  117 |       </div>
+ ✓ Compiled in 1458ms (614 modules)
+ ⨯ components/resume-builder/resume-form.tsx (114:12) @ Loader2
+ ⨯ ReferenceError: Loader2 is not defined
+    at ResumeForm (./components/resume-builder/resume-form.tsx:119:97)
+digest: "3934852021"
+  112 |       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+  113 |         <div className="text-center">
+> 114 |           <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
+      |            ^
+  115 |           <p className="text-gray-600 dark:text-gray-400">Loading form...</p>
+  116 |         </div>
+  117 |       </div>
+ GET /resume-builder 500 in 56ms
+ ○ Compiling / ...
+ ✓ Compiled / in 3s (1328 modules)
+ GET / 200 in 3680ms
+ ⨯ components/resume-builder/resume-form.tsx (114:12) @ Loader2
+ ⨯ ReferenceError: Loader2 is not defined
+    at ResumeForm (./components/resume-builder/resume-form.tsx:119:97)
+digest: "3934852021"
+  112 |       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+  113 |         <div className="text-center">
+> 114 |           <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
+      |            ^
+  115 |           <p className="text-gray-600 dark:text-gray-400">Loading form...</p>
+  116 |         </div>
+  117 |       </div>
+ GET /resume-builder 500 in 100ms
