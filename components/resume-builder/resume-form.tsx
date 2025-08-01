@@ -83,16 +83,16 @@ export function ResumeForm() {
 
   const onSubmit = async (data: ResumeFormData) => {
     setIsSubmitting(true);
-    
+
     try {
       // Simulate form processing
       await new Promise(resolve => setTimeout(resolve, 800));
-      
+
       console.log('Form data:', data);
       console.log('Profile photo:', profilePhoto);
-      
+
       setShowPreview(true);
-      
+
       toast.success('Resume form completed!', {
         description: 'You can now preview and customize your resume.',
       });
