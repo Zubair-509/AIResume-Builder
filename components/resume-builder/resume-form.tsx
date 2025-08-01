@@ -10,10 +10,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Plus, Minus, Save, Download, Eye } from 'lucide-react';
+import { Plus, Minus, Save, Download, Eye, Loader2, FileText, User, Mail, Phone, FileCheck } from 'lucide-react';
 import { toast } from 'sonner';
+import { motion } from 'framer-motion';
 import { WorkExperienceForm } from './work-experience-form';
 import { EducationForm } from './education-form';
+import { FileUpload } from '@/components/ui/file-upload';
+import { ResumeBuilderLayout } from './resume-builder-layout';
 
 export function ResumeForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
