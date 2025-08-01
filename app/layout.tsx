@@ -17,7 +17,11 @@ export const metadata: Metadata = {
   description: 'Create professional resumes in minutes with our AI-powered builder. Stand out from the crowd with beautiful, ATS-friendly designs.',
   keywords: 'resume builder, CV creator, AI resume, professional resume, job application',
   authors: [{ name: 'SnapCV Team' }],
-  viewport: 'width=device-width, initial-scale=1',
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
 };
 
 export default function RootLayout({
