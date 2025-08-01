@@ -21,15 +21,25 @@ export async function generatePDF(
   element: HTMLElement | null,
   options: PDFExportOptions = {}
 ): Promise<boolean> {
-  if (!element) {
-    const error = new Error('Element not found for PDF generation');
-    console.error(error);
-    options.onError?.(error);
-    return false;
-  }
-
   try {
-    options.onProgress?.(10, 'Preparing PDF export...');
+    options.onProgress?.(10, 'Finding resume content...');
+
+    // Find the resume element if not provided
+    if (!element) {
+      const foundElement = await findResumeElement();
+      if (!foundElement) {
+        const error = new Error('Resume content not found for PDF generation');
+        console.error(error);
+        options.onError?.(error);
+        return false;
+      }
+      element = foundElement as HTMLElement;
+    }
+
+    options.onProgress?.(20, 'Preparing PDF export...');
+
+    // Wait a moment for any dynamic content to load
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Get all computed styles from the current element
     const computedStyles = window.getComputedStyle(element);
@@ -336,44 +346,63 @@ export async function generatePDFWithCanvas(
  * Helper function to find resume element for PDF export
  */
 export function findResumeElement(): Element | null {
-  // Try multiple selectors in order of preference
-  const selectors = [
-    '[data-resume-preview] .resume-container',
-    '[data-resume-preview]',
-    '.resume-container',
-    '[class*="ats-"][class*="template"]',
-    '[class*="template-container"]',
-    '[class*="resume"]'
-  ];
+  // Wait for content to be fully loaded
+  const waitForContent = () => {
+    return new Promise(resolve => {
+      const checkContent = () => {
+        const selectors = [
+          '[data-resume-preview]',
+          '.resume-container',
+          '[class*="ats-"][class*="template"]',
+          '[class*="template-container"]',
+          '.template-renderer',
+          '[class*="resume"]'
+        ];
 
-  for (const selector of selectors) {
-    const element = document.querySelector(selector);
-    if (element && element.innerHTML.trim() && !element.innerHTML.includes('ResumeLoadingSkeleton')) {
-      // Make sure it's not just a loading skeleton
-      const hasActualContent = element.textContent && 
-                              element.textContent.trim().length > 50 &&
-                              !element.textContent.includes('loading') &&
-                              !element.querySelector('.animate-spin');
+        for (const selector of selectors) {
+          const element = document.querySelector(selector);
+          if (element && element.innerHTML.trim() && !element.innerHTML.includes('ResumeLoadingSkeleton')) {
+            // Make sure it's not just a loading skeleton
+            const hasActualContent = element.textContent && 
+                                    element.textContent.trim().length > 50 &&
+                                    !element.textContent.includes('loading') &&
+                                    !element.querySelector('.animate-spin') &&
+                                    !element.querySelector('.skeleton');
 
-      if (hasActualContent) {
-        return element;
-      }
-    }
-  }
+            if (hasActualContent) {
+              resolve(element);
+              return;
+            }
+          }
+        }
 
-  // Last resort: look for any element with substantial text content
-  const allDivs = document.querySelectorAll('div');
-  for (const div of allDivs) {
-    if (div.textContent && 
-        div.textContent.trim().length > 100 && 
-        div.textContent.includes('@') && // likely has email
-        !div.textContent.includes('loading') &&
-        !div.querySelector('.animate-spin')) {
-      return div;
-    }
-  }
+        // Check if content is still loading
+        if (document.querySelector('.animate-spin') || 
+            document.querySelector('.skeleton') ||
+            document.querySelector('[class*="loading"]')) {
+          setTimeout(checkContent, 100);
+        } else {
+          // Last resort: look for any element with substantial resume content
+          const allDivs = document.querySelectorAll('div');
+          for (const div of allDivs) {
+            if (div.textContent && 
+                div.textContent.trim().length > 100 && 
+                (div.textContent.includes('@') || div.textContent.includes('PROFESSIONAL')) && // likely has email or resume content
+                !div.textContent.includes('loading') &&
+                !div.querySelector('.animate-spin')) {
+              resolve(div);
+              return;
+            }
+          }
+          resolve(null);
+        }
+      };
 
-  return null;
+      checkContent();
+    });
+  };
+
+  return waitForContent() as Promise<Element | null>;
 }
 
 /**
@@ -385,14 +414,25 @@ export async function exportResumeToPDF(
   options: Partial<PDFExportOptions> = {}
 ): Promise<boolean> {
   try {
-    const resumeElement = findResumeElement();
+    // Show initial loading
+    const toastId = toast.loading('Finding resume content...', {
+      description: 'Please wait while we locate your resume'
+    });
+
+    const resumeElement = await findResumeElement();
 
     if (!resumeElement) {
       toast.error('Could not find resume content', {
-        description: 'Please try again or contact support if the issue persists.'
+        id: toastId,
+        description: 'Please make sure your resume is fully loaded and try again.'
       });
       return false;
     }
+
+    toast.loading('Preparing your PDF...', {
+      id: toastId,
+      description: 'Setting up export options...'
+    });
 
     // Generate filename if not provided
     if (!options.filename) {
