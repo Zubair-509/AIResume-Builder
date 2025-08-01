@@ -109,8 +109,12 @@ export function ResumeForm() {
   };
 
   // Add loading state for dynamic components
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoaded(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   if (!isLoaded) {
-    setTimeout(() => setIsLoaded(true), 100);
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">

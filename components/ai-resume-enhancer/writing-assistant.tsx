@@ -343,7 +343,7 @@ export function WritingAssistant() {
         <p className="text-gray-600 dark:text-gray-400">
           Advanced grammar, style, and ATS optimization for your resume content
         </p>
-      </div>v>
+      </div>
 
       {/* Settings */}
       <Card className="border border-gray-200 dark:border-gray-700">
@@ -587,7 +587,7 @@ export function WritingAssistant() {
                       >
                         <div className="flex items-start space-x-3">
                           <Icon className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                          <div className="flex-1">">
+                          <div className="flex-1">
                             <div className="flex items-center justify-between mb-1">
                               <h4 className="font-medium capitalize">
                                 {issue.type} {issue.severity}
