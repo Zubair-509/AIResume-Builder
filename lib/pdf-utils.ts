@@ -446,8 +446,9 @@ export async function exportResumeToPDF(
       .replace(/[/\\?%*:|"<>]/g, '-')
       .replace(/\.{2,}/g, '.');
 
-    // Show initial toast
-    const toastId = toast.loading('Preparing your PDF...', {
+    // Update existing toast
+    toast.loading('Preparing your PDF...', {
+      id: toastId,
       description: 'Opening print dialog...'
     });
 
