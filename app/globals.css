@@ -19,14 +19,14 @@
 @layer base {
   /* Print-specific styles for PDF export */
   @media print {
-    .print\:!bg-white { background-color: white !important; }
-    .print\:!text-black { color: black !important; }
-    .print\:!text-blue-600 { color: #2563eb !important; }
-    .print\:!text-blue-700 { color: #1d4ed8 !important; }
-    .print\:!text-blue-800 { color: #1e40af !important; }
-    .print\:!border-blue-200 { border-color: #bfdbfe !important; }
-    .print\:!bg-blue-600 { background-color: #2563eb !important; }
-    .print\:!shadow-none { box-shadow: none !important; }
+    .print-bg-white { background-color: white !important; }
+    .print-text-black { color: black !important; }
+    .print-text-blue-600 { color: #2563eb !important; }
+    .print-text-blue-700 { color: #1d4ed8 !important; }
+    .print-text-blue-800 { color: #1e40af !important; }
+    .print-border-blue-200 { border-color: #bfdbfe !important; }
+    .print-bg-blue-600 { background-color: #2563eb !important; }
+    .print-shadow-none { box-shadow: none !important; }
 
     * {
       -webkit-print-color-adjust: exact !important;
