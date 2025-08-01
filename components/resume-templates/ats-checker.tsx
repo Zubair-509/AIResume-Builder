@@ -6,8 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle, AlertCircle, Info, Loader2 } from 'lucide-react';
+import { CheckCircle, AlertCircle, Info, Loader2, Target } from 'lucide-react';
 import { toast } from 'sonner';
+import { PDFExporter } from './pdf-exporter'; // Corrected import
 
 interface ATSCheckerProps {
   resumeData: ResumeFormData;
@@ -30,19 +31,19 @@ export function ATSChecker({ resumeData, templateId }: ATSCheckerProps) {
 
   const checkATS = async () => {
     setIsChecking(true);
-    
+
     try {
       // Simulate ATS check
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       // Generate mock results
       const templateScore = templateScores[templateId as keyof typeof templateScores] || 95;
       const contentScore = calculateContentScore(resumeData);
       const formatScore = calculateFormatScore(resumeData);
       const keywordScore = calculateKeywordScore(resumeData);
-      
+
       const overallScore = Math.round((templateScore + contentScore + formatScore + keywordScore) / 4);
-      
+
       const results = {
         overallScore,
         templateScore,
@@ -52,9 +53,9 @@ export function ATSChecker({ resumeData, templateId }: ATSCheckerProps) {
         issues: generateIssues(resumeData),
         recommendations: generateRecommendations(resumeData)
       };
-      
+
       setResults(results);
-      
+
       if (overallScore >= 90) {
         toast.success('Your resume is ATS-friendly!', {
           description: `Overall score: ${overallScore}%`
@@ -74,12 +75,12 @@ export function ATSChecker({ resumeData, templateId }: ATSCheckerProps) {
 
   const calculateContentScore = (data: ResumeFormData): number => {
     let score = 100;
-    
+
     // Check professional summary
     if (!data.professionalSummary || data.professionalSummary.length < 100) {
       score -= 10;
     }
-    
+
     // Check work experience
     if (!data.workExperience || data.workExperience.length === 0) {
       score -= 20;
@@ -88,17 +89,17 @@ export function ATSChecker({ resumeData, templateId }: ATSCheckerProps) {
       const hasQuantifiableAchievements = data.workExperience.some(exp => 
         exp.responsibilities && /\d+%|\$\d+|\d+ (years|months|weeks)/.test(exp.responsibilities)
       );
-      
+
       if (!hasQuantifiableAchievements) {
         score -= 10;
       }
     }
-    
+
     // Check skills
     if (!data.skills || data.skills.split('\n').filter(s => s.trim()).length < 5) {
       score -= 10;
     }
-    
+
     return Math.max(60, score);
   };
 
@@ -120,21 +121,21 @@ export function ATSChecker({ resumeData, templateId }: ATSCheckerProps) {
       'Use standard fonts like Arial, Calibri, or Times New Roman',
       'Save your resume in both PDF and Word formats for different ATS systems'
     ];
-    
+
     if (!data.professionalSummary || data.professionalSummary.length < 100) {
       recommendations.push('Expand your professional summary to better highlight your key qualifications');
     }
-    
+
     if (data.skills && data.skills.split('\n').filter(s => s.trim()).length < 5) {
       recommendations.push('Add more relevant technical and soft skills');
     }
-    
+
     return recommendations;
   };
 
   const generateIssues = (data: ResumeFormData): any[] => {
     const issues = [];
-    
+
     if (!data.professionalSummary || data.professionalSummary.length < 100) {
       issues.push({
         type: 'content',
@@ -143,12 +144,12 @@ export function ATSChecker({ resumeData, templateId }: ATSCheckerProps) {
         recommendation: 'Expand your professional summary to at least 100 characters'
       });
     }
-    
+
     if (data.workExperience && data.workExperience.length > 0) {
       const hasQuantifiableAchievements = data.workExperience.some(exp => 
         exp.responsibilities && /\d+%|\$\d+|\d+ (years|months|weeks)/.test(exp.responsibilities)
       );
-      
+
       if (!hasQuantifiableAchievements) {
         issues.push({
           type: 'content',
@@ -158,7 +159,7 @@ export function ATSChecker({ resumeData, templateId }: ATSCheckerProps) {
         });
       }
     }
-    
+
     if (templateId === 'creative') {
       issues.push({
         type: 'format',
@@ -167,32 +168,8 @@ export function ATSChecker({ resumeData, templateId }: ATSCheckerProps) {
         recommendation: 'Consider using a more traditional template for corporate applications'
       });
     }
-    
-    return issues;
-  };
 
-  const generateRecommendations = (data: ResumeFormData): string[] => {
-    const recommendations = [
-      'Use industry-specific keywords from the job description',
-      'Ensure all dates are in consistent format (MM/YYYY)',
-      'Use standard section headings (Experience, Education, Skills)'
-    ];
-    
-    if (!data.professionalSummary || data.professionalSummary.length < 150) {
-      recommendations.push('Expand your professional summary to highlight key qualifications');
-    }
-    
-    if (data.workExperience && data.workExperience.length > 0) {
-      const hasActionVerbs = data.workExperience.some(exp => 
-        exp.responsibilities && /(Led|Managed|Developed|Implemented|Created|Designed|Improved)/i.test(exp.responsibilities)
-      );
-      
-      if (!hasActionVerbs) {
-        recommendations.push('Start bullet points with strong action verbs (e.g., Led, Developed, Implemented)');
-      }
-    }
-    
-    return recommendations;
+    return issues;
   };
 
   const getScoreColor = (score: number) => {
@@ -222,7 +199,7 @@ export function ATSChecker({ resumeData, templateId }: ATSCheckerProps) {
               Check if your resume is optimized for Applicant Tracking Systems (ATS). 
               This will analyze your content, format, and keywords to ensure your resume gets past automated screening.
             </p>
-            
+
             <Button
               onClick={checkATS}
               disabled={isChecking}
@@ -265,7 +242,7 @@ export function ATSChecker({ resumeData, templateId }: ATSCheckerProps) {
                 <div className="text-sm text-gray-600">Template</div>
                 <Progress value={results.templateScore} className="h-1 mt-2" />
               </div>
-              
+
               <div className={`p-4 rounded-lg ${getScoreBg(results.contentScore)}`}>
                 <div className={`text-xl font-bold ${getScoreColor(results.contentScore)}`}>
                   {results.contentScore}%
@@ -273,7 +250,7 @@ export function ATSChecker({ resumeData, templateId }: ATSCheckerProps) {
                 <div className="text-sm text-gray-600">Content</div>
                 <Progress value={results.contentScore} className="h-1 mt-2" />
               </div>
-              
+
               <div className={`p-4 rounded-lg ${getScoreBg(results.formatScore)}`}>
                 <div className={`text-xl font-bold ${getScoreColor(results.formatScore)}`}>
                   {results.formatScore}%
@@ -281,7 +258,7 @@ export function ATSChecker({ resumeData, templateId }: ATSCheckerProps) {
                 <div className="text-sm text-gray-600">Format</div>
                 <Progress value={results.formatScore} className="h-1 mt-2" />
               </div>
-              
+
               <div className={`p-4 rounded-lg ${getScoreBg(results.keywordScore)}`}>
                 <div className={`text-xl font-bold ${getScoreColor(results.keywordScore)}`}>
                   {results.keywordScore}%
@@ -290,7 +267,7 @@ export function ATSChecker({ resumeData, templateId }: ATSCheckerProps) {
                 <Progress value={results.keywordScore} className="h-1 mt-2" />
               </div>
             </div>
-            
+
             {/* Issues */}
             {results.issues.length > 0 && (
               <div className="space-y-3">
@@ -329,7 +306,7 @@ export function ATSChecker({ resumeData, templateId }: ATSCheckerProps) {
                 ))}
               </div>
             )}
-            
+
             {/* Recommendations */}
             <div className="space-y-3">
               <h3 className="font-semibold text-gray-900 dark:text-gray-100">
@@ -346,7 +323,7 @@ export function ATSChecker({ resumeData, templateId }: ATSCheckerProps) {
                 ))}
               </ul>
             </div>
-            
+
             {/* Action Buttons */}
             <div className="flex justify-end space-x-3 pt-4">
               <Button

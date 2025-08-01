@@ -1,10 +1,42 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Search, Loader2, Target, CheckCircle, AlertCircle, TrendingUp, Star } from 'lucide-react';
+import { toast } from 'sonner';
+
+interface SkillMatch {
+  matched: string[];
+  missing: string[];
+  score: number;
+}
+
+interface ExperienceMatch {
+  matched: string[];
+  gaps: string[];
+  score: number;
+}
+
+interface MatchAnalysis {
+  overallScore: number;
+  technicalSkills: SkillMatch;
+  softSkills: SkillMatch;
+  keywords: {
+    matched: string[];
+    suggested: string[];
+    score: number;
+  };
+  experience: ExperienceMatch;
+  recommendations: string[];
+}
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Upload, 
-  Target, 
+  
   Loader2, 
   CheckCircle, 
   AlertTriangle,
@@ -16,14 +48,8 @@ import {
   Download,
   BarChart3
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
-import { toast } from 'sonner';
+
 
 interface MatchResult {
   overallScore: number;
@@ -65,7 +91,7 @@ export function JobDescriptionMatcher({ onMatch }: JobDescriptionMatcherProps) {
     const file = event.target.files?.[0];
     if (file) {
       setUploadedFile(file);
-      
+
       // Simulate file reading
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -84,14 +110,14 @@ export function JobDescriptionMatcher({ onMatch }: JobDescriptionMatcherProps) {
     }
 
     setIsAnalyzing(true);
-    
+
     try {
       // Simulate AI analysis
       await new Promise(resolve => setTimeout(resolve, 3000));
-      
+
       const result = await simulateJobMatching(jobDescription, resumeContent);
       setMatchResult(result);
-      
+
       onMatch({
         type: 'job-matching',
         result,
@@ -104,7 +130,7 @@ export function JobDescriptionMatcher({ onMatch }: JobDescriptionMatcherProps) {
           ]
         }
       });
-      
+
       toast.success('Job matching analysis complete!', {
         description: `Overall match score: ${result.overallScore}%`
       });
@@ -120,28 +146,28 @@ export function JobDescriptionMatcher({ onMatch }: JobDescriptionMatcherProps) {
   const simulateJobMatching = async (jobDesc: string, resume: string): Promise<MatchResult> => {
     // Simulate AI processing
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
+
     // Mock analysis based on common patterns
     const technicalSkillsPool = ['JavaScript', 'React', 'Node.js', 'Python', 'AWS', 'Docker', 'SQL', 'Git', 'TypeScript', 'MongoDB'];
     const softSkillsPool = ['Leadership', 'Communication', 'Problem-solving', 'Teamwork', 'Adaptability', 'Critical thinking'];
     const keywordsPool = ['Agile', 'Scrum', 'CI/CD', 'Microservices', 'API', 'Database', 'Testing', 'Performance', 'Security', 'Analytics'];
-    
+
     const matchedTechnical = technicalSkillsPool.slice(0, Math.floor(Math.random() * 6) + 3);
     const missingTechnical = technicalSkillsPool.slice(matchedTechnical.length, matchedTechnical.length + 3);
-    
+
     const matchedSoft = softSkillsPool.slice(0, Math.floor(Math.random() * 4) + 2);
     const missingSoft = softSkillsPool.slice(matchedSoft.length, matchedSoft.length + 2);
-    
+
     const matchedKeywords = keywordsPool.slice(0, Math.floor(Math.random() * 5) + 3);
     const suggestedKeywords = keywordsPool.slice(matchedKeywords.length, matchedKeywords.length + 4);
-    
+
     const technicalScore = Math.floor((matchedTechnical.length / (matchedTechnical.length + missingTechnical.length)) * 100);
     const softScore = Math.floor((matchedSoft.length / (matchedSoft.length + missingSoft.length)) * 100);
     const keywordScore = Math.floor((matchedKeywords.length / (matchedKeywords.length + suggestedKeywords.length)) * 100);
     const experienceScore = Math.floor(Math.random() * 30) + 70;
-    
+
     const overallScore = Math.floor((technicalScore + softScore + keywordScore + experienceScore) / 4);
-    
+
     return {
       overallScore,
       technicalSkills: {
@@ -244,7 +270,7 @@ export function JobDescriptionMatcher({ onMatch }: JobDescriptionMatcherProps) {
                 )}
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="job-description">Or Paste Job Description</Label>
               <Textarea
@@ -314,7 +340,7 @@ export function JobDescriptionMatcher({ onMatch }: JobDescriptionMatcherProps) {
           className="space-y-6"
         >
           <Separator />
-          
+
           {/* Overall Score */}
           <Card className={`border-0 shadow-lg ${getScoreBg(matchResult.overallScore)}`}>
             <CardContent className="p-6">
@@ -364,7 +390,7 @@ export function JobDescriptionMatcher({ onMatch }: JobDescriptionMatcherProps) {
                     ))}
                   </div>
                 </div>
-                
+
                 {matchResult.technicalSkills.missing.length > 0 && (
                   <div>
                     <h4 className="font-medium text-red-700 dark:text-red-300 mb-2">
@@ -410,7 +436,7 @@ export function JobDescriptionMatcher({ onMatch }: JobDescriptionMatcherProps) {
                     ))}
                   </div>
                 </div>
-                
+
                 {matchResult.softSkills.missing.length > 0 && (
                   <div>
                     <h4 className="font-medium text-red-700 dark:text-red-300 mb-2">
@@ -455,7 +481,7 @@ export function JobDescriptionMatcher({ onMatch }: JobDescriptionMatcherProps) {
                     ))}
                   </div>
                 </div>
-                
+
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="font-medium text-blue-700 dark:text-blue-300">
@@ -509,7 +535,7 @@ export function JobDescriptionMatcher({ onMatch }: JobDescriptionMatcherProps) {
                     ))}
                   </div>
                 </div>
-                
+
                 {matchResult.experience.gaps.length > 0 && (
                   <div>
                     <h4 className="font-medium text-orange-700 dark:text-orange-300 mb-2">
