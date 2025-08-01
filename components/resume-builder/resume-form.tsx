@@ -1,63 +1,19 @@
 'use client';
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { useForm } from 'react-hook-form';
+import React, { useState, useEffect } from 'react';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, FileText, User, Mail, Phone, FileCheck, Eye } from 'lucide-react';
-import dynamic from 'next/dynamic';
-import { toast } from 'sonner';
-
-// Dynamically import components to avoid potential circular dependencies
-const AnimatedButton = dynamic(() => import('@/components/ui/animated-button').then(mod => ({ default: mod.AnimatedButton })), {
-  ssr: false
-});
-
-const Input = dynamic(() => import('@/components/ui/input').then(mod => ({ default: mod.Input })), {
-  ssr: false
-});
-
-const Label = dynamic(() => import('@/components/ui/label').then(mod => ({ default: mod.Label })), {
-  ssr: false
-});
-
-const Textarea = dynamic(() => import('@/components/ui/textarea').then(mod => ({ default: mod.Textarea })), {
-  ssr: false
-});
-
-const Card = dynamic(() => import('@/components/ui/card').then(mod => ({ default: mod.Card })), {
-  ssr: false
-});
-
-const CardContent = dynamic(() => import('@/components/ui/card').then(mod => ({ default: mod.CardContent })), {
-  ssr: false
-});
-
-const CardHeader = dynamic(() => import('@/components/ui/card').then(mod => ({ default: mod.CardHeader })), {
-  ssr: false
-});
-
-const CardTitle = dynamic(() => import('@/components/ui/card').then(mod => ({ default: mod.CardTitle })), {
-  ssr: false
-});
-
-const FileUpload = dynamic(() => import('@/components/ui/file-upload').then(mod => ({ default: mod.FileUpload })), {
-  ssr: false
-});
-
-const WorkExperienceForm = dynamic(() => import('./work-experience-form').then(mod => ({ default: mod.WorkExperienceForm })), {
-  ssr: false
-});
-
-const EducationForm = dynamic(() => import('./education-form').then(mod => ({ default: mod.EducationForm })), {
-  ssr: false
-});
-
-const ResumeBuilderLayout = dynamic(() => import('./resume-builder-layout').then(mod => ({ default: mod.ResumeBuilderLayout })), {
-  ssr: false
-});
-
 import { resumeFormSchema, type ResumeFormData } from '@/lib/validations';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Plus, Minus, Save, Download, Eye } from 'lucide-react';
+import { toast } from 'sonner';
+import { WorkExperienceForm } from './work-experience-form';
+import { EducationForm } from './education-form';
 
 export function ResumeForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);

@@ -4,7 +4,95 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Globe, Loader2, Code } from 'lucide-react';
 import { toast } from 'sonner';
-import { findResumeElement } from '@/lib/pdf-utils';
+
+interface HtmlExporterProps {
+  resumeElement?: HTMLElement | null;
+  className?: string;
+}
+
+export function HtmlExporter({ resumeElement, className }: HtmlExporterProps) {
+  const [isExporting, setIsExporting] = useState(false);
+
+  const exportToHtml = async () => {
+    if (!resumeElement) {
+      toast.error('No resume content found');
+      return;
+    }
+
+    setIsExporting(true);
+    
+    try {
+      const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            line-height: 1.6; 
+            margin: 0; 
+            padding: 20px; 
+            background: white; 
+        }
+        .resume-container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 20px; 
+        }
+        @media print {
+            body { margin: 0; padding: 0; }
+            .resume-container { padding: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="resume-container">
+        ${resumeElement.innerHTML}
+    </div>
+</body>
+</html>`;
+
+      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'resume.html';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      URL.revokeObjectURL(url);
+      
+      toast.success('HTML file exported successfully!');
+    } catch (error) {
+      console.error('Export failed:', error);
+      toast.error('Failed to export HTML file');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  return (
+    <Button
+      onClick={exportToHtml}
+      disabled={isExporting}
+      variant="outline"
+      className={className}
+    >
+      {isExporting ? (
+        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+      ) : (
+        <Globe className="w-4 h-4 mr-2" />
+      )}
+      {isExporting ? 'Exporting...' : 'Export HTML'}
+    </Button>
+  );
+}
 
 interface HTMLExporterProps {
   resumeData?: any;

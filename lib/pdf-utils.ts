@@ -305,12 +305,12 @@ export async function generatePDF(
       if (existingStyles) {
         existingStyles.remove();
       }
-      
+
       // Restore hidden elements
       hiddenElements.forEach(el => {
         el.style.display = '';
       });
-      
+
       options.onComplete?.();
     }, 2000);
 
@@ -318,14 +318,14 @@ export async function generatePDF(
   } catch (error) {
     console.error('PDF generation error:', error);
     options.onError?.(error as Error);
-    
+
     // Restore hidden elements even on error
     if (typeof hiddenElements !== 'undefined') {
       hiddenElements.forEach(el => {
         el.style.display = '';
       });
     }
-    
+
     return false;
   }
 }
@@ -416,93 +416,58 @@ export async function generatePDFWithCanvas(
   }
 }
 
-/**
- * Helper function to find resume element for PDF export
- */
-export function findResumeElement(): Element | null {
-  // Wait for content to be fully loaded
-  const waitForContent = () => {
-    return new Promise(resolve => {
-      const checkContent = () => {
-        // Priority selectors for resume templates
-        const selectors = [
-          // First try to find the actual resume template content
-          '[data-resume-preview] > div',
-          '[data-resume-preview]',
-          '.resume-template',
-          '.template-content',
-          '[class*="ats-professional-template"]',
-          '[class*="ats-modern-template"]', 
-          '[class*="ats-executive-template"]',
-          '[class*="template-container"] > div:first-child',
-          '.resume-preview-content',
-          // Fallback selectors
-          '.resume-container',
-          '[class*="template-renderer"]'
-        ];
+export const findResumeElement = (): HTMLElement | null => {
+  // Try multiple selectors to find the resume content
+  const selectors = [
+    '.resume-preview',
+    '.resume-container',
+    '[data-resume]',
+    '.pdf-content',
+    '#resume-content'
+  ];
 
-        for (const selector of selectors) {
-          const element = document.querySelector(selector);
-          if (element && element.innerHTML.trim() && !element.innerHTML.includes('ResumeLoadingSkeleton')) {
-            // Make sure it contains actual resume content, not UI elements
-            const hasActualContent = element.textContent && 
-                                    element.textContent.trim().length > 50 &&
-                                    !element.textContent.includes('Download PDF') &&
-                                    !element.textContent.includes('Select Template') &&
-                                    !element.textContent.includes('Resume Builder') &&
-                                    !element.textContent.includes('loading') &&
-                                    !element.querySelector('.animate-spin') &&
-                                    !element.querySelector('.skeleton') &&
-                                    !element.querySelector('button') && // Avoid UI buttons
-                                    !element.querySelector('.dialog') && // Avoid dialogs
-                                    !element.querySelector('.dropdown'); // Avoid dropdowns
+  for (const selector of selectors) {
+    const element = document.querySelector(selector) as HTMLElement;
+    if (element) {
+      return element;
+    }
+  }
 
-            if (hasActualContent) {
-              // Extra check: make sure this looks like a resume template
-              const looksLikeResume = element.textContent.includes('@') || // email
-                                     element.textContent.includes('Experience') ||
-                                     element.textContent.includes('Education') ||
-                                     element.textContent.includes('Skills') ||
-                                     element.textContent.includes('PROFESSIONAL') ||
-                                     element.querySelector('h1, h2, h3'); // Has headings
+  return null;
+};
 
-              if (looksLikeResume) {
-                resolve(element);
-                return;
-              }
-            }
-          }
-        }
+export const optimizeElementForPdf = (element: HTMLElement): HTMLElement => {
+  const clonedElement = element.cloneNode(true) as HTMLElement;
 
-        // Check if content is still loading
-        if (document.querySelector('.animate-spin') || 
-            document.querySelector('.skeleton') ||
-            document.querySelector('[class*="loading"]')) {
-          setTimeout(checkContent, 100);
-        } else {
-          // Last resort: look specifically for template content
-          const templates = document.querySelectorAll('[class*="template"], [data-template], .resume-content');
-          for (const template of templates) {
-            if (template.textContent && 
-                template.textContent.trim().length > 100 && 
-                (template.textContent.includes('@') || template.textContent.includes('Experience')) &&
-                !template.textContent.includes('Download') &&
-                !template.textContent.includes('Builder') &&
-                !template.querySelector('button')) {
-              resolve(template);
-              return;
-            }
-          }
-          resolve(null);
-        }
-      };
+  // Remove interactive elements
+  const interactiveElements = clonedElement.querySelectorAll('button, input, select, textarea');
+  interactiveElements.forEach(el => el.remove());
 
-      checkContent();
-    });
-  };
+  // Fix image loading
+  const images = clonedElement.querySelectorAll('img');
+  images.forEach(img => {
+    img.style.maxWidth = '100%';
+    img.style.height = 'auto';
+  });
 
-  return waitForContent() as Promise<Element | null>;
-}
+  return clonedElement;
+};
+
+export const generatePdfOptions = () => ({
+  margin: 0.5,
+  filename: 'resume.pdf',
+  image: { type: 'jpeg', quality: 0.98 },
+  html2canvas: { 
+    scale: 2,
+    useCORS: true,
+    allowTaint: false
+  },
+  jsPDF: { 
+    unit: 'in', 
+    format: 'letter', 
+    orientation: 'portrait' 
+  }
+});
 
 /**
  * Helper function to export resume as PDF with standardized UI feedback

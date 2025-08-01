@@ -1,68 +1,73 @@
-export interface Contact {
+
+export interface PersonalInfo {
+  fullName: string;
   email: string;
   phone: string;
-  location?: string;
-  linkedin?: string;
+  location: string;
   website?: string;
+  linkedin?: string;
+  github?: string;
 }
 
 export interface WorkExperience {
-  id: string;
+  jobTitle: string;
   company: string;
-  position: string;
+  location: string;
   startDate: string;
-  endDate: string;
-  current: boolean;
-  location?: string;
+  endDate?: string;
+  isCurrentJob?: boolean;
   responsibilities: string;
 }
 
 export interface Education {
-  id: string;
-  institution: string;
   degree: string;
-  fieldOfStudy: string;
+  school: string;
+  location: string;
   graduationDate: string;
   gpa?: string;
   honors?: string;
 }
 
 export interface Certification {
-  id: string;
   name: string;
   issuer: string;
   date: string;
-  credentialId?: string;
+  expirationDate?: string;
 }
 
 export interface Project {
-  id: string;
   name: string;
   description: string;
   technologies: string[];
-  url?: string;
-  highlights: string[];
+  link?: string;
 }
 
-export interface ResumeData {
-  id: string;
+export interface Language {
+  language: string;
+  proficiency: 'Basic' | 'Intermediate' | 'Advanced' | 'Native';
+}
+
+export interface ResumeFormData {
   fullName: string;
-  jobTitle: string;
   email: string;
   phone: string;
-  location?: string;
-  linkedin?: string;
+  location: string;
   website?: string;
+  linkedin?: string;
+  github?: string;
   professionalSummary: string;
-  skills: Record<string, string[]>;
   workExperience: WorkExperience[];
   education: Education[];
+  skills: string[];
   certifications?: Certification[];
   projects?: Project[];
+  languages?: Language[];
+  achievements?: string[];
 }
 
-export interface ResumeViewerProps {
-  resumeData: ResumeData;
-  isLoading?: boolean;
-  error?: string | null;
+export interface ResumeData extends ResumeFormData {
+  id?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  template?: string;
 }
