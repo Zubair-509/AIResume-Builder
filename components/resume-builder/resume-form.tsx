@@ -4,33 +4,69 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, FileText, User, Mail, Phone, Briefcase, FileCheck, Eye } from 'lucide-react';
-import { AnimatedButton } from '@/components/ui/animated-button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { FileUpload } from '@/components/ui/file-upload';
-import { WorkExperienceForm } from './work-experience-form';
-import { EducationForm } from './education-form';
-import { ResumeBuilderLayout } from './resume-builder-layout';
-import { resumeFormSchema, ResumeFormData } from '@/lib/validations';
+import { Loader2, FileText, User, Mail, Phone, FileCheck, Eye } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import { toast } from 'sonner';
+
+// Dynamically import components to avoid potential circular dependencies
+const AnimatedButton = dynamic(() => import('@/components/ui/animated-button').then(mod => ({ default: mod.AnimatedButton })), {
+  ssr: false
+});
+
+const Input = dynamic(() => import('@/components/ui/input').then(mod => ({ default: mod.Input })), {
+  ssr: false
+});
+
+const Label = dynamic(() => import('@/components/ui/label').then(mod => ({ default: mod.Label })), {
+  ssr: false
+});
+
+const Textarea = dynamic(() => import('@/components/ui/textarea').then(mod => ({ default: mod.Textarea })), {
+  ssr: false
+});
+
+const Card = dynamic(() => import('@/components/ui/card').then(mod => ({ default: mod.Card })), {
+  ssr: false
+});
+
+const CardContent = dynamic(() => import('@/components/ui/card').then(mod => ({ default: mod.CardContent })), {
+  ssr: false
+});
+
+const CardHeader = dynamic(() => import('@/components/ui/card').then(mod => ({ default: mod.CardHeader })), {
+  ssr: false
+});
+
+const CardTitle = dynamic(() => import('@/components/ui/card').then(mod => ({ default: mod.CardTitle })), {
+  ssr: false
+});
+
+const FileUpload = dynamic(() => import('@/components/ui/file-upload').then(mod => ({ default: mod.FileUpload })), {
+  ssr: false
+});
+
+const WorkExperienceForm = dynamic(() => import('./work-experience-form').then(mod => ({ default: mod.WorkExperienceForm })), {
+  ssr: false
+});
+
+const EducationForm = dynamic(() => import('./education-form').then(mod => ({ default: mod.EducationForm })), {
+  ssr: false
+});
+
+const ResumeBuilderLayout = dynamic(() => import('./resume-builder-layout').then(mod => ({ default: mod.ResumeBuilderLayout })), {
+  ssr: false
+});
+
+import { resumeFormSchema, type ResumeFormData } from '@/lib/validations';
 
 export function ResumeForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string>('');
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors },
-    watch,
-  } = useForm<ResumeFormData>({
+  const form = useForm<ResumeFormData>({
     resolver: zodResolver(resumeFormSchema),
     defaultValues: {
       fullName: '',
@@ -57,6 +93,14 @@ export function ResumeForm() {
       }],
     },
   });
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+    watch,
+  } = form;
 
   const formData = watch();
   const professionalSummary = watch('professionalSummary');
@@ -104,6 +148,19 @@ export function ResumeForm() {
       setIsSubmitting(false);
     }
   };
+
+  // Add loading state for dynamic components
+  if (!isLoaded) {
+    setTimeout(() => setIsLoaded(true), 100);
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
+          <p className="text-gray-600 dark:text-gray-400">Loading form...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (showPreview) {
     return <ResumeBuilderLayout formData={formData} />;
@@ -404,11 +461,10 @@ export function ResumeForm() {
             variants={itemVariants}
             className="flex justify-center pt-8"
           >
-            <AnimatedButton
+            <button
               type="submit"
-              size="lg"
               disabled={isSubmitting}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 sm:px-12 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto flex items-center justify-center"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 sm:px-12 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto flex items-center justify-center text-lg font-semibold"
             >
               {isSubmitting ? (
                 <>
@@ -421,7 +477,7 @@ export function ResumeForm() {
                   <span>Preview Resume</span>
                 </>
               )}
-            </AnimatedButton>
+            </button>
           </motion.div>
         </motion.form>
       </div>
